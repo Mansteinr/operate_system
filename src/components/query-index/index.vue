@@ -91,7 +91,7 @@
 
 <script>
 import moment from 'moment'
-import $http from '../../common/js/api'
+import $http from '../../common/js/ajax'
 import { setOtherLineData } from '../../common/js/myCharts'
 import echarts from 'echarts'
 export default {

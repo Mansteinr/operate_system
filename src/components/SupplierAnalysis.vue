@@ -68,177 +68,177 @@
 </template>
 
 <script>
-  import $http from '../common/js/api'
-  import moment from 'moment'
-  import { setOtherLineData } from '../common/js/myCharts'
-  import echarts from 'echarts'
-  export default {
-    data() {
-      return {
-        formInline: {
-          classNames: [],
-          supId: '',
-          supServiceId: ''
-        },
-        supInfoList: [],
-        supServiceList: [],
-        pipeList: [],
-        flag: false,
-        minutesArr: [],
-        timeId: null,
-        m: 0
-      }
-    },
-    methods: {
-      services () {
-        let url = '/operation/upper/querySupInfoList'
-        $http(url, {}, 'get').then((res) => {
-          this.supInfoList = res.resData.supInfos
-          if (this.supInfoList.length) {
-            this.formInline.supId = this.supInfoList[0].supId
-          }
-        })
+import $http from '../common/js/ajax'
+import moment from 'moment'
+import { setOtherLineData } from '../common/js/myCharts'
+import echarts from 'echarts'
+export default {
+  data () {
+    return {
+      formInline: {
+        classNames: [],
+        supId: '',
+        supServiceId: ''
       },
-      querySupServiceList () {
-        let url = '/operation/upper/querySupServiceList'
-         $http(url, {}, 'get').then((res) => {
-          this.supServiceList = res.resData.supServiceInfos
-          if (this.supServiceList.length) {
-            this.formInline.supServiceId = this.supServiceList[0].supServiceId
-            // this.queryPipeList(this.formInline.supServiceId)
-          }
-        })
-      },
-      // queryPipeList (param) { // tedstetewtewt
-      //   let url = '/operation/upper/queryPipeList/' + param
-      //   $http(url, {}, 'get').then((res) => {
-      //     this.pipeList = res.resData.simplePipeInfos
-      //     if (this.pipeList.length) {
-      //       this.formInline.classNames[0] = this.pipeList[0].pipeName
-      //     }
-      //   })
-      // },
-      realTime () {
-        let startTime = + new Date('2018-11-20 17:25:36') - 1 * 24 * 3600 * 1000
-        let arr = []
-        for (let i = 0; i <= 1440; i++) {
-          arr.push(moment(startTime + (i * 60 * 1000)).format('YYYYMMDDHHmm'))
-        }
-        this.minutesArr = arr
-        let url = '/qualityanalyze/supplier/realTime'
-        this.formInline.date = moment(+new Date()).format('YYYY-MM-DD HH:mm:ss')
-        $http(url, this.formInline).then((res) => {
-          var myChart = echarts.init(this.$refs.charts)
-          myChart.clear()
-          let dataArr = Object.keys(res.resData.avgCallTime) /* 因为返回是个对象 所以提取对象的key并组成一个数组 这是平均相应时长*/
-          if (dataArr && dataArr.length > 0) {
-            this.flag = true
-            let data = res.resData.avgCallTime
-            let dataCall = res.resData.callNum
-            let xFiled = [] /* x轴数据 */
-            let yFiled = [] /* y平均响应时间y轴数据 */
-            let yCallFiled = [] /* 平均调用量y轴数据 */
-            let handleObj = {}
-            this.minutesArr.forEach(v => {
-              if (data[v]) { /* 检测某个点是否存在 则不动 反之 补一个空  这样写的好处 就是不会改变时间点的顺序 */
-                handleObj[v] = data[v]
-              } else {
-                handleObj[v] = ''
-              }
-            })
-            for (let k in handleObj) {
-              xFiled.push(this.substrTime(k)) /* x轴 */
-              yFiled.push(handleObj[k]) /* y轴 */
-              if (dataCall[k]) {
-                yCallFiled.push(dataCall[k])
-              } else {
-                yCallFiled.push('')
-              }
-            }
-            let lineData = [{
-              "name": "实时响应分析(ms)",
-              type: 'line',
-              smooth: true, //是否平滑曲线显示
-              lineStyle: { //线条样式 
-                normal: {
-                  width: 1,
-                  color: 'rgba(44,181,171, 1)'
-                }
-              },
-              areaStyle: { //区域填充样式
-                normal: {
-                  //线性渐变，前4个参数分别是x0,y0,x2,y2(范围0~1);相当于图形包围盒中的百分比。如果最后一个参数是‘true’，则该四个值是绝对像素位置。
-                  color: 'rgba(44,181,171, 0.3)'
-                }
-              },
-              itemStyle: { //折现拐点标志的样式
-                normal: {
-                  color: 'rgba(44,181,171, 1)'
-                }
-              },
-              "data": yFiled
-            }, {
-              "name": "实时调用量(条)",
-              yAxisIndex: 1,
-              type: 'line',
-              smooth: true, //是否平滑曲线显示
-              lineStyle: { //线条样式 
-                normal: {
-                  width: 1,
-                  color: 'rgb(248,168,159)'
-                }
-              },
-              areaStyle: { //区域填充样式
-                normal: {
-                  //线性渐变，前4个参数分别是x0,y0,x2,y2(范围0~1);相当于图形包围盒中的百分比。如果最后一个参数是‘true’，则该四个值是绝对像素位置。
-                  color: 'rgb(248,168,159,0.3)'
-                }
-              },
-              itemStyle: { //折现拐点标志的样式
-                normal: {
-                  color: 'rgb(248,168,159)'
-                }
-              },
-              "data": yCallFiled
-            }]
-            myChart.setOption(setOtherLineData(xFiled, lineData))
-            window.onresize = function () {
-              myChart.resize()
-            }
-          } else {
-            this.flag = false
-          }
-        })
-      },
-      onSubmit () {
-        this.setIntervalFun()
-      },
-      substrTime (params) {
-        return params.substr(params.length - 4).substr(0, 2) + ':' + params.substr(params.length - 4).substr(2, 4)
-      },
-      setIntervalFun () {
-        if (this.timeId) {
-          clearInterval(this.timeId); /* 每次调用定时器 先清除定时器 */
-        }
-        this.realTime() /* 第一次调用 */
-        this.timeId = setInterval(this.playerInterVal, 1000 * 60);
-      },
-      playerInterVal () {
-        this.m++
-        if (this.m > 20) { /* 执行20次以后清除定时器 */
-          this.m= 0
-          this.setIntervalFun() /* 重启定时器 */
-        } else {
-          this.realTime()
-        }
-      },
-      changeValue (value) {
-        // this.queryPipeList(value)
-      }
-    },
-    mounted() {
-      this.services()
-      this.querySupServiceList()
+      supInfoList: [],
+      supServiceList: [],
+      pipeList: [],
+      flag: false,
+      minutesArr: [],
+      timeId: null,
+      m: 0
     }
+  },
+  methods: {
+    services () {
+      let url = '/operation/upper/querySupInfoList'
+      $http(url, {}, 'get').then((res) => {
+        this.supInfoList = res.resData.supInfos
+        if (this.supInfoList.length) {
+          this.formInline.supId = this.supInfoList[0].supId
+        }
+      })
+    },
+    querySupServiceList () {
+      let url = '/operation/upper/querySupServiceList'
+      $http(url, {}, 'get').then((res) => {
+        this.supServiceList = res.resData.supServiceInfos
+        if (this.supServiceList.length) {
+          this.formInline.supServiceId = this.supServiceList[0].supServiceId
+          // this.queryPipeList(this.formInline.supServiceId)
+        }
+      })
+    },
+    // queryPipeList (param) { // tedstetewtewt
+    //   let url = '/operation/upper/queryPipeList/' + param
+    //   $http(url, {}, 'get').then((res) => {
+    //     this.pipeList = res.resData.simplePipeInfos
+    //     if (this.pipeList.length) {
+    //       this.formInline.classNames[0] = this.pipeList[0].pipeName
+    //     }
+    //   })
+    // },
+    realTime () {
+      let startTime = + new Date('2018-11-20 17:25:36') - 1 * 24 * 3600 * 1000
+      let arr = []
+      for (let i = 0; i <= 1440; i++) {
+        arr.push(moment(startTime + (i * 60 * 1000)).format('YYYYMMDDHHmm'))
+      }
+      this.minutesArr = arr
+      let url = '/qualityanalyze/supplier/realTime'
+      this.formInline.date = moment(+new Date()).format('YYYY-MM-DD HH:mm:ss')
+      $http(url, this.formInline).then((res) => {
+        var myChart = echarts.init(this.$refs.charts)
+        myChart.clear()
+        let dataArr = Object.keys(res.resData.avgCallTime) /* 因为返回是个对象 所以提取对象的key并组成一个数组 这是平均相应时长*/
+        if (dataArr && dataArr.length > 0) {
+          this.flag = true
+          let data = res.resData.avgCallTime
+          let dataCall = res.resData.callNum
+          let xFiled = [] /* x轴数据 */
+          let yFiled = [] /* y平均响应时间y轴数据 */
+          let yCallFiled = [] /* 平均调用量y轴数据 */
+          let handleObj = {}
+          this.minutesArr.forEach(v => {
+            if (data[v]) { /* 检测某个点是否存在 则不动 反之 补一个空  这样写的好处 就是不会改变时间点的顺序 */
+              handleObj[v] = data[v]
+            } else {
+              handleObj[v] = ''
+            }
+          })
+          for (let k in handleObj) {
+            xFiled.push(this.substrTime(k)) /* x轴 */
+            yFiled.push(handleObj[k]) /* y轴 */
+            if (dataCall[k]) {
+              yCallFiled.push(dataCall[k])
+            } else {
+              yCallFiled.push('')
+            }
+          }
+          let lineData = [{
+            "name": "实时响应分析(ms)",
+            type: 'line',
+            smooth: true, //是否平滑曲线显示
+            lineStyle: { //线条样式 
+              normal: {
+                width: 1,
+                color: 'rgba(44,181,171, 1)'
+              }
+            },
+            areaStyle: { //区域填充样式
+              normal: {
+                //线性渐变，前4个参数分别是x0,y0,x2,y2(范围0~1);相当于图形包围盒中的百分比。如果最后一个参数是‘true’，则该四个值是绝对像素位置。
+                color: 'rgba(44,181,171, 0.3)'
+              }
+            },
+            itemStyle: { //折现拐点标志的样式
+              normal: {
+                color: 'rgba(44,181,171, 1)'
+              }
+            },
+            "data": yFiled
+          }, {
+            "name": "实时调用量(条)",
+            yAxisIndex: 1,
+            type: 'line',
+            smooth: true, //是否平滑曲线显示
+            lineStyle: { //线条样式 
+              normal: {
+                width: 1,
+                color: 'rgb(248,168,159)'
+              }
+            },
+            areaStyle: { //区域填充样式
+              normal: {
+                //线性渐变，前4个参数分别是x0,y0,x2,y2(范围0~1);相当于图形包围盒中的百分比。如果最后一个参数是‘true’，则该四个值是绝对像素位置。
+                color: 'rgb(248,168,159,0.3)'
+              }
+            },
+            itemStyle: { //折现拐点标志的样式
+              normal: {
+                color: 'rgb(248,168,159)'
+              }
+            },
+            "data": yCallFiled
+          }]
+          myChart.setOption(setOtherLineData(xFiled, lineData))
+          window.onresize = function () {
+            myChart.resize()
+          }
+        } else {
+          this.flag = false
+        }
+      })
+    },
+    onSubmit () {
+      this.setIntervalFun()
+    },
+    substrTime (params) {
+      return params.substr(params.length - 4).substr(0, 2) + ':' + params.substr(params.length - 4).substr(2, 4)
+    },
+    setIntervalFun () {
+      if (this.timeId) {
+        clearInterval(this.timeId); /* 每次调用定时器 先清除定时器 */
+      }
+      this.realTime() /* 第一次调用 */
+      this.timeId = setInterval(this.playerInterVal, 1000 * 60);
+    },
+    playerInterVal () {
+      this.m++
+      if (this.m > 20) { /* 执行20次以后清除定时器 */
+        this.m = 0
+        this.setIntervalFun() /* 重启定时器 */
+      } else {
+        this.realTime()
+      }
+    },
+    changeValue (value) {
+      // this.queryPipeList(value)
+    }
+  },
+  mounted () {
+    this.services()
+    this.querySupServiceList()
   }
+}
 </script>

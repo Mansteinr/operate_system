@@ -7,23 +7,9 @@ import API from './config/api'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/common/css/index.styl'
 import router from './router/index'
-// import axios from 'axios'
-// import $http from './common/js/api'
 Vue.config.productionTip = false
-// Vue.use(axios)
-// Vue.prototype.$axios = axios
 Vue.use(ElementUI)
 Vue.use(VueI18n) // 通过插件的形式挂载
-// test
-// console.log(axios)
-// axios.interceptors.response.use(
-//   response => {
-//     console.log(router, 'response')
-//   },
-//   error => {
-//     console.log(router, 'response')
-//     // console.log(error)
-//   })
 const i18n = new VueI18n({
   locale: 'zh-CN', // 语言标识 //this.$i18n.locale // 通过切换locale的值来实现语言切换
   messages: {
@@ -31,8 +17,8 @@ const i18n = new VueI18n({
     'en-US': require('./common/lang/en') // 英文语言包
   }
 })
+console.log(API)
 Vue.prototype.API = API
-// console.log(API)
 router.beforeEach((to, from, next) => {
   let path = to.path
   let login = localStorage.getItem('mtk')

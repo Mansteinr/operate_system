@@ -29,11 +29,10 @@ export default {
       if (!this.username || !this.password) {
         showModal('密码账号不能为空', 'error')
       } else {
-        // let url = 'operation/auth/login'
-        // this.password = 'minivision'
         console.log(90)
-        localStorage.setItem('mtk', 'ddb68990-0cd6-44b4-a2cb-cfc4d0fc1b0')
-        this.$router.push('/')
+        console.log(this.PAI)
+        // localStorage.setItem('mtk', 'ddb68990-0cd6-44b4-a2cb-cfc4d0fc1b0')
+        // this.$router.push('/')
         // $http(url, {password: this.password,username: this.username}).then((res) => {
         //   if (res.resCode/1 === 1) {
         //     localStorage.setItem('mtk',res.resData.token)

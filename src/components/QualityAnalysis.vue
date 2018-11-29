@@ -109,71 +109,71 @@
 
 <script>
 /* eslint-disable */
-  import $http from '../common/js/api'
-  import moment from 'moment'
-  import Pagination from '../base/Pagination'
-  export default {
-    data() {
-      return {
-        currentPage: 1,
-        pageSize: 10,
-        tatalPage: 0,
-        serviceArr: [],
-        serviceName: '',
-        loginName: '',
-        search: '',
-        customerArr: [],
-        tableData: [],
-        flag: false,
-        time: [new Date().getTime() - 3600 * 1000 * 24 * 7,new Date()],
-        pickerOptions2: {
-          shortcuts: [{
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        }
+import $http from '../common/js/ajax'
+import moment from 'moment'
+import Pagination from '../base/Pagination'
+export default {
+  data () {
+    return {
+      currentPage: 1,
+      pageSize: 10,
+      tatalPage: 0,
+      serviceArr: [],
+      serviceName: '',
+      loginName: '',
+      search: '',
+      customerArr: [],
+      tableData: [],
+      flag: false,
+      time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],
+      pickerOptions2: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick (picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近一个月',
+          onClick (picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            picker.$emit('pick', [start, end]);
+          }
+        }, {
+          text: '最近三个月',
+          onClick (picker) {
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            picker.$emit('pick', [start, end]);
+          }
+        }]
       }
+    }
+  },
+  components: {
+    Pagination
+  },
+  methods: {
+    changePage (value) {
+      this[value.split('-')[0]] = value.split('-')[1] / 1
     },
-    components: {
-      Pagination
-    },
-    methods: {
-      changePage (value) {
-        this[value.split('-')[0]] = value.split('-')[1] / 1
-      },
-      getSummaries(param) {
-        const { columns, data } = param
-        const sums = []
-        columns.forEach((column, index) => {
-          if (index === 0) {
-            sums[index] = '合计'
-            return
-          }
-          if (index === 1 || index === 2 || index === 3) {
-            sums[index] = '-'
-            return
-          }
+    getSummaries (param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        if (index === 1 || index === 2 || index === 3) {
+          sums[index] = '-'
+          return
+        }
         const values = this.tableData.map(item => Number(item[column.property]))
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
@@ -185,89 +185,89 @@
             }
           }, 0)
           sums[index]
-          } else {
-            sums[index] = ''
-          }
-        })
-        return sums
-      },
-      services () {
-        let url = '/operation/down/queryServices'
-        $http(url, {}, 'get').then((res) => {
-          this.serviceArr = res.resData
-          if (this.serviceArr && this.serviceArr.length) {
-            this.serviceName = this.serviceArr[0].serviceName
-            this.queryCustomersByService(this.serviceArr[0].serviceName)
-          }
-        })
-      },
-      queryCustomersByService (param) {
-        let url = '/operation/down/queryCustomersByService/' + param
-        $http(url, {}, 'get').then((res) => {
-          this.customerArr = res.resData
-          if (this.customerArr && this.customerArr.length) {
-            this.loginName = this.customerArr[0].loginName
-          } else {
-            this.loginName = ''
-          }
-        })
-      },
-      UsageByResult (opt) {
-        let url = '/operator/down/UsageByResult'
-        $http(url, opt).then((res) => {
-          this.tableData = res.resData
-          this.tatalPage = res.resData.length
-        })
-      },
-      changeValue (value) {
-        
-        this.queryCustomersByService(value)
-      },
-      handleSizeChange(val) {
-        if (val) {
-          this.pageSize = val
         } else {
-          this.pageSize = this.tableData.length
+          sums[index] = ''
         }
-      },
-      filterTable (data) {
-        return !this.search || (data.serviceNameZh+'').toLowerCase().includes(this.search.toLowerCase()) || (data.serviceName+'').toLowerCase().includes(this.search.toLowerCase()) || data.resultCode.toLowerCase().includes(this.search.toLowerCase())  || (data.result+'').toLowerCase().includes(this.search.toLowerCase())
-      },
-      handleCurrentChange(val) {
-        this.currentPage = val
-      },
-      onSubmit () {
-        const start = moment(this.time[0]).format('YYYY-MM-DD')
-        const end = moment(this.time[1]).format('YYYY-MM-DD')
-        const loginName = this.loginName
-        const serviceName = this.serviceName
-        const businessType = ''
-        let opt = {
-          start,
-          end,
-          loginName,
-          serviceName,
-          businessType
+      })
+      return sums
+    },
+    services () {
+      let url = '/operation/down/queryServices'
+      $http(url, {}, 'get').then((res) => {
+        this.serviceArr = res.resData
+        if (this.serviceArr && this.serviceArr.length) {
+          this.serviceName = this.serviceArr[0].serviceName
+          this.queryCustomersByService(this.serviceArr[0].serviceName)
         }
-        this.UsageByResult(opt)
-      },
-      formatterMoney (value) {
-        return value.downCost = Math.round(value.downCost * 100) / 100
+      })
+    },
+    queryCustomersByService (param) {
+      let url = '/operation/down/queryCustomersByService/' + param
+      $http(url, {}, 'get').then((res) => {
+        this.customerArr = res.resData
+        if (this.customerArr && this.customerArr.length) {
+          this.loginName = this.customerArr[0].loginName
+        } else {
+          this.loginName = ''
+        }
+      })
+    },
+    UsageByResult (opt) {
+      let url = '/operator/down/UsageByResult'
+      $http(url, opt).then((res) => {
+        this.tableData = res.resData
+        this.tatalPage = res.resData.length
+      })
+    },
+    changeValue (value) {
+
+      this.queryCustomersByService(value)
+    },
+    handleSizeChange (val) {
+      if (val) {
+        this.pageSize = val
+      } else {
+        this.pageSize = this.tableData.length
       }
     },
-    mounted() {
-      this.services()
+    filterTable (data) {
+      return !this.search || (data.serviceNameZh + '').toLowerCase().includes(this.search.toLowerCase()) || (data.serviceName + '').toLowerCase().includes(this.search.toLowerCase()) || data.resultCode.toLowerCase().includes(this.search.toLowerCase()) || (data.result + '').toLowerCase().includes(this.search.toLowerCase())
     },
-    computed: {
-      tableDataComputed () {
-        if (this.tableData && this.tableData.length) {
-          let start = this.pageSize * (this.currentPage -1)
-          let end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
-          return this.tableData.slice(start, end)
-        } else {
-          return []
-        }
+    handleCurrentChange (val) {
+      this.currentPage = val
+    },
+    onSubmit () {
+      const start = moment(this.time[0]).format('YYYY-MM-DD')
+      const end = moment(this.time[1]).format('YYYY-MM-DD')
+      const loginName = this.loginName
+      const serviceName = this.serviceName
+      const businessType = ''
+      let opt = {
+        start,
+        end,
+        loginName,
+        serviceName,
+        businessType
+      }
+      this.UsageByResult(opt)
+    },
+    formatterMoney (value) {
+      return value.downCost = Math.round(value.downCost * 100) / 100
+    }
+  },
+  mounted () {
+    this.services()
+  },
+  computed: {
+    tableDataComputed () {
+      if (this.tableData && this.tableData.length) {
+        let start = this.pageSize * (this.currentPage - 1)
+        let end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
+        return this.tableData.slice(start, end)
+      } else {
+        return []
       }
     }
   }
+}
 </script>

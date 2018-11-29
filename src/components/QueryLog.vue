@@ -82,7 +82,7 @@
 
   <script>
 /* eslint-disable */
-import $http from '../common/js/api'
+import $http from '../common/js/ajax'
 import moment from 'moment'
 import Pagination from '../base/Pagination'
 export default {
@@ -234,7 +234,8 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-  .serarch-input
-    width auto
-    float right
+.serarch-input {
+  width: auto;
+  float: right;
+}
 </style>
