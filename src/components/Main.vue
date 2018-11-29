@@ -4,10 +4,22 @@
     <el-header>
       <div class="header-logo"></div>
       <div class="header-menu-warp">
+        <el-select v-model="value4" placeholder="请选择">
+          <el-option @click.native="selectLang('zh-CN')" value="中文"></el-option>
+          <el-option @click.native="selectLang('en-US')" value="English"></el-option>
+        </el-select>
         <div class="avatar">
           <img src="../common/images/default.jpg">
         </div>
-        <div @click="loginOut" class="loginOut">退出</div>
+        <el-dropdown class="el-select">
+          <span class="el-dropdown-link">
+            {{userName}}<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="choseProject">项目选择</el-dropdown-item>
+            <el-dropdown-item @click.native="loginOut">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </el-header>
     <el-container class="m-body">
@@ -50,11 +62,21 @@
 
 export default {
   data () {
-    return {}
+    return {
+      value4: '中文',
+      userName: 'zhoumingye',
+    }
   },
   methods: {
     selectItem (value) {
+      console.log(value)
       this.$router.push({ name: value })
+    },
+    selectLang (value) {
+      console.log(value)
+    },
+    choseProject () {
+      console.log('choseProject')
     },
     loginOut () {
       localStorage.removeItem('mtk')
@@ -64,59 +86,100 @@ export default {
 }
 </script>
 
-<style scoped lang="stylus" rel="stylesheet/stylus">
-@import '../common/css/variable'
+<style  lang="stylus" rel="stylesheet/stylus">
+@import '../common/css/variable';
 
-.el-container 
-  min-width 715px
-  height 100%
-  .el-header 
-    box-shadow 0 4px 16px rgba(0, 0, 0, 0.08)
-    margin-bottom 10px
-    .header-menu-warp 
-      position relative
-      float right
-      height 60px
-      line-height 60px
-      width 120px
-      padding 0
-      display flex
-      .avatar
-        width 50%
-        height 100%
-        margin 8px
-        img
-          width 44px
-          height 44px
-          border-radius 50%
-      .loginOut
-        width 50%
-        text-align center
-        cursor pointer
-    .header-logo 
-      display inline-block
-      width 250px
-      height 100%
-      background url('../common/images/logo.png') no-repeat 16px center;
-  .m-body 
-    .aside 
-      height 100%;
-      width 140px;
-      background none repeat scroll 0 0 rgba(0, 0, 0, 0.1)
-      .el-menu 
-        background-color rgba(0, 0, 0, 0.1)
-        .el-menu-item 
-          height 40px
-          line-height 40px
-          cursor pointer
-          &:hover 
-            color $color-white
-          &.is-active 
-            color $color-white
-            background none 0px 0px repeat scroll rgba(0, 0, 0, 0.3)
-          span 
-            font-size $font-size-medium
-            color $color-aside-text
-          i:before 
-            font-size $font-size-medium-x
+.el-container {
+  min-width: 715px;
+  height: 100%;
+
+  .el-header {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    margin-bottom: 10px;
+
+    .header-menu-warp {
+      position: relative;
+      float: right;
+      height: 60px;
+      line-height: 60px;
+      width: 240px;
+      padding: 0;
+      display: flex;
+
+      .avatar {
+        width: 25%;
+        height: calc(100% -12px);
+        display: table-cell;
+        text-align: center;
+        padding-top: 12px;
+
+        img {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+        }
+      }
+
+      .el-select {
+        &:first-child {
+          width: 76px;
+        }
+
+        span {
+          color: white;
+        }
+      }
+
+      input {
+        background-color: rgba(43, 63, 115, 0) !important;
+        border: none !important;
+        color: white;
+        padding: 0;
+      }
+    }
+
+    .header-logo {
+      display: inline-block;
+      width: 250px;
+      height: 100%;
+      background: url('../common/images/logo.png') no-repeat 16px center;
+    }
+  }
+
+  .m-body {
+    .aside {
+      height: 100%;
+      width: 140px;
+      background: none repeat scroll 0 0 rgba(0, 0, 0, 0.1);
+
+      .el-menu {
+        background-color: rgba(0, 0, 0, 0.1);
+
+        .el-menu-item {
+          height: 40px;
+          line-height: 40px;
+          cursor: pointer;
+
+          &:hover {
+            color: $color-white;
+          }
+
+          &.is-active {
+            color: $color-white;
+            background: none 0px 0px repeat scroll rgba(0, 0, 0, 0.3);
+          }
+
+          span {
+            font-size: $font-size-medium;
+            color: $color-aside-text;
+          }
+
+          i:before {
+            font-size: $font-size-medium-x;
+          }
+        }
+      }
+    }
+  }
+}
 </style>

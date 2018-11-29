@@ -2,12 +2,12 @@
   <section class="login-space">
     <header class="login-header" style="background-image: url(static/company/login-logo.png);"></header>
     <div class="element-center login-warp">
-      <div class="login-title">小视科技运营平台</div>
+      <div class="login-title">{{$t('m.login.title')}}</div>
       <div class="login-input-warp">
-        <input type="text" v-model="username" placeholder="账号" @keyup.enter="goLogin" />
+        <input type="text" v-model="username" :placeholder="$t('m.login.username')" @keyup.enter="goLogin" />
       </div>
       <div class="login-input-warp login-pwd">
-        <input type="password" v-model="password" placeholder="密码" @keyup.enter="goLogin" />
+        <input type="password" v-model="password" :placeholder="$t('m.login.password')" @keyup.enter="goLogin" />
       </div>
       <el-button type="primary" @click="goLogin" class="login-btn">登录</el-button>
     </div>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import $http from '../common/js/api'
+import $http from '../common/js/ajax'
 import { showModal } from '../utils'
 export default {
   data () {
@@ -29,24 +29,23 @@ export default {
       if (!this.username || !this.password) {
         showModal('密码账号不能为空', 'error')
       } else {
-        if (this.username !== 'minivision' || this.password !== 'minivision123456') {
-          showModal('密码或者账户错误', 'warning')
-          return
-        }
-        let url = 'operation/auth/login'
-        this.password = 'minivision'
-        $http(url, {password: this.password,username: this.username}).then((res) => {
-          if (res.resCode/1 === 1) {
-            localStorage.setItem('mtk',res.resData.token)
-            this.$router.push('/')
-            showModal(res.resMsg[0].msgText)
-          } else {
-              showModal('未登录', 'warning')
-          }
-        }).catch( err => {
-          showModal('网络有问题', 'warning')
-        })
-     }
+        // let url = 'operation/auth/login'
+        // this.password = 'minivision'
+        console.log(90)
+        localStorage.setItem('mtk', 'ddb68990-0cd6-44b4-a2cb-cfc4d0fc1b0')
+        this.$router.push('/')
+        // $http(url, {password: this.password,username: this.username}).then((res) => {
+        //   if (res.resCode/1 === 1) {
+        //     localStorage.setItem('mtk',res.resData.token)
+        //     this.$router.push('/')
+        //     showModal(res.resMsg[0].msgText)
+        //   } else {
+        //       showModal('未登录', 'warning')
+        //   }
+        // }).catch( err => {
+        //   showModal('网络有问题', 'warning')
+        // })
+      }
     }
   }
 }
@@ -55,6 +54,7 @@ export default {
 input {
   outline: 0;
 }
+
 .login-header {
   margin: auto;
   max-width: 1400px;
@@ -72,13 +72,16 @@ input {
 }
 
 .login-warp {
+  position: absolute;
   width: 500px;
   height: 400px;
   padding: 30px;
   background-color: rgba(255, 255, 255, 0.7);
   border-radius: 10px;
-  top: 16%;
-  margin: 0 auto;
+  left: 50%;
+  margin-left: -250px;
+  top: 50%;
+  margin-top: -200px;
 }
 
 .login-title {

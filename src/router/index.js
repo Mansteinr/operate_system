@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import QueryIndex from '../components/QueryIndex'
+import QueryIndex from '../components/query-index'
 import ServiceAnalysis from '../components/ServiceAnalysis'
 import SupplierAnalysis from '../components/SupplierAnalysis'
 import SensitiveWord from '../components/SensitiveWord'
