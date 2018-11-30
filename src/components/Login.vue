@@ -9,6 +9,10 @@
       <div class="login-input-warp login-pwd">
         <input type="password" v-model="password" :placeholder="$t('m.login.password')" @keyup.enter="goLogin" />
       </div>
+      <div class="input-code">
+        <input type="text" id="code" v-model.trim="vcode" class="user-input" placeholder="验证码" maxlength="4">
+        <img class="code-img" :src="imgSrc" alt="点击刷新验证码">
+      </div>
       <el-button type="primary" @click="goLogin" class="login-btn">登录</el-button>
     </div>
   </section>
@@ -17,35 +21,44 @@
 <script>
 import $http from '../common/js/ajax'
 import { showModal } from '../utils'
+import { mapMutations } from 'vuex' // 引入mapMutations函数
+import md5 from 'js-md5'
 export default {
   data () {
     return {
       username: '',
       password: '',
+      imgSrc: '',
+      uuid: '',
+      vcode: ''
     }
   },
+  mounted () {
+    this.getVerifyCode()
+  },
   methods: {
+    getVerifyCode () {
+      $http(this.API.base.getVerifyCode, {}, 'get').then((res) => {
+        this.uuid = res.resData.uuid
+        this.imgSrc = 'data:image/png;base64,' + res.resData.vcode
+      })
+    },
     goLogin: function () {
       if (!this.username || !this.password) {
         showModal('密码账号不能为空', 'error')
       } else {
-        console.log(90)
-        console.log(this.PAI)
-        // localStorage.setItem('mtk', 'ddb68990-0cd6-44b4-a2cb-cfc4d0fc1b0')
-        // this.$router.push('/')
-        // $http(url, {password: this.password,username: this.username}).then((res) => {
-        //   if (res.resCode/1 === 1) {
-        //     localStorage.setItem('mtk',res.resData.token)
-        //     this.$router.push('/')
-        //     showModal(res.resMsg[0].msgText)
-        //   } else {
-        //       showModal('未登录', 'warning')
-        //   }
-        // }).catch( err => {
-        //   showModal('网络有问题', 'warning')
-        // })
+        $http(this.API.base.login, { pwd: md5(this.password), account: this.username, uuid: this.uuid,vcode: this.vcode }, 'post').then((res) => {
+          localStorage.setItem('mtk', res.resData.mtk)
+          localStorage.setItem('userId', res.resData.userId)
+          localStorage.setItem('accountName', res.resData.accountName)
+          this.$router.push('/')
+          showModal('登录成功')
+        })
       }
-    }
+    },
+    ...mapMutations({ // 修改mutation 拿到定义在mutations里面的修改函数
+      setMtk: 'SET_MTK'
+    })
   }
 }
 </script>
@@ -104,6 +117,30 @@ input {
   transition: all 0.3s;
 }
 
+.input-code {
+  margin-bottom: 8px;
+  height: 42px;
+}
+
+.input-code .user-input {
+  width: 75%;
+  height: 40px;
+  line-height: 42px;
+  text-indent: 10px;
+  outline: none;
+  border: solid 1px rgba(153, 153, 153, 0.75);
+  box-shadow: 0 0 4px rgba(153, 153, 153, 0.5);
+  float: left;
+}
+
+.input-code .code-img {
+  float: right;
+  width: 20%;
+  height: 40px;
+  border: solid 1px rgba(153, 153, 153, 0.3);
+  box-shadow: 0 0 4px rgba(153, 153, 153, 0.5);
+}
+
 .login-input-warp:hover {
   background-color: #ffffff;
   border-color: #3b99fc;
@@ -113,7 +150,7 @@ input {
   background-image: url('../common/images/login/pwd.png');
 }
 
-.login-input-warp input {
+.login-inputs input, .login-input-warp input {
   width: 100%;
   background-color: transparent;
   line-height: 50px;

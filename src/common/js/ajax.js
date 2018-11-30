@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Loading } from 'element-ui'
+import { showModal } from '../../utils'
 let loading
 export default function $http (url, data, method = 'post') {
   startLoading()
@@ -9,14 +10,24 @@ export default function $http (url, data, method = 'post') {
       url: url,
       data: data,
       headers: {
-        mtk: localStorage.getItem('mtk')
+        'mtk': localStorage.getItem('mtk'),
+        'Content-Type': 'application/json;charset=UTF-8'
       },
     }).then(res => {
-      resolve(res.data)
+      // 成功
+      if (res.data.resCode) { // 成功并且返回码为1
+        resolve(res.data)
+      } else { // 返回吗 不为1
+        showModal(res.data.resMsg[0].msgText, 'error')
+        if (res.data.resMsg[0].msgCode === '10005') { // 若没有登录 则强制到登录页面
+          this.$router.push('/')
+        }
+      }
       endLoading()
-    }).catch(err => {
+    }).catch(err => { // 错误
       reject(err)
       endLoading()
+      showModal('网络有问题', 'warning')
     })
   })
 }

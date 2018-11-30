@@ -8,9 +8,9 @@ const baseConfig = {
   },
   /*生产环境*/
   prod: {
-    base: '172.16.9.183:5010/agw/',	/* ! 当前系统api服务器地址 */
-    rbacweb: '172.16.9.216:8020/',	/* ! 系统权限管理web页面地址 */
-    rbacapi: '172.16.6.83:58080/',	/* ! 系统权限管理api服务器地址 */
+    base: 'boss.miniscores.cn:7202/agw/',	/* ! 当前系统api服务器地址 */
+    rbacweb: 'boss.miniscores.cn:80/',	/* ! 系统权限管理web页面地址 */
+    rbacapi: 'boss.miniscores.cn:9023/',	/* ! 系统权限管理api服务器地址 */
     upapi: '121.196.226.17:7200/',	/* ! 上游服务有关接口 */
     vehicleapi: '121.196.226.17:7200/',	/* ! 车辆维保 */
     qualityanalyzeapi: '121.196.226.17:7200/',	/* ! 质量分析 */
@@ -56,16 +56,19 @@ const baseConfig = {
 let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.prod[hostkey] + api
 const api = {
   base: {
-    login: apiFormat('boss2-0-web/rbac-web/login.html', 'rbacweb'),
+    login: apiFormat('login/doLogin', 'rbacapi'),
     loginout: apiFormat('logout/ajaxLogout', 'rbacapi'),
     querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi'),
     projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb'),
-    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb')
+    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb'),
+    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi')
   },
   /*定义功能名称或者api分组名称*/
-  demoApi: {
+  creditApi: {
     /*！能力域api*/
-    demo: apiFormat('demo/demo')
+    querySubSystemMenuList: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi'),
+    UsageByDate: apiFormat('operator/down/UsageByDate', 'upapi'),
+    UsageByCustomer: apiFormat('operator/down/UsageByDate', 'upapi')
   }
 }
 export default api

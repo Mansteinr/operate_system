@@ -235,8 +235,6 @@ export default {
             that.tableDataService[k].cost = that.tableDataService[k].cost.toFixed(2)
           })
         }
-
-
         var nuqinexFild = []
         for (var k in xFiled) {
           nuqinexFild.push(k)

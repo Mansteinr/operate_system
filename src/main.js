@@ -4,6 +4,7 @@ import ElementUI from 'element-ui'
 // import moment from 'moment'
 import VueI18n from 'vue-i18n'
 import API from './config/api'
+import store from './store'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/common/css/index.styl'
 import router from './router/index'
@@ -17,7 +18,6 @@ const i18n = new VueI18n({
     'en-US': require('./common/lang/en') // 英文语言包
   }
 })
-console.log(API)
 Vue.prototype.API = API
 router.beforeEach((to, from, next) => {
   let path = to.path
@@ -45,5 +45,6 @@ new Vue({
   el: '#app',
   router,  // 注入到根实例中
   i18n,
+  store,
   render: h => h(App)
 })

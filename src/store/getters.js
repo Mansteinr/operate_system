@@ -1,0 +1,1 @@
+export const mtk = state => state.mtk // es6语法简写 ruturn state.mtk
