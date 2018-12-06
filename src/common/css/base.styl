@@ -7,7 +7,7 @@
   box-shadow 0 4px 8px rgba(0,0,0,.1)
   border-radius 5px
   &.card-content
-    padding-top 0
+    padding-top 10px
     margin-top 20px
   .card-title
     position relative
@@ -15,10 +15,13 @@
     line-height 40px
     font-size 16px
     padding-right 12px
-    .el-button
+    .el-button-group
       position absolute
       right 0
-      top 5px
+      .el-button:not(.active)
+        color #409EFF
+        border-color #c6e2ff
+        background-color #ecf5ff
     &::before
       content ''
       display inline-block
@@ -53,25 +56,35 @@
       &.card-query
         position absolute
         right 0
-table
-  .param-item
-    display block
-    padding 4px 4px
-    margin 0 0 5px 0
-    font-size 12px
-    border-radius 3px
-    background-color #f5f5f5
-    height 16px
-    line-height 16px
-    white-space nowrap
-    text-overflow ellipsis
-    overflow hidden
-    word-wrap break-word
-    word-break break-all
-  tr
-    .cell
-      white-space nowrap !important
-      text-overflow ellipsis !important
-      overflow hidden !important
-      word-wrap break-word !important
-      word-break break-all !important
+.table
+  .serarch-input
+    width 15%
+    left: 85% 
+  table
+    .param-item
+      display block
+      padding 4px 4px
+      margin 0 0 5px 0
+      font-size 12px
+      border-radius 3px
+      background-color #f5f5f5
+      height 16px
+      line-height 16px
+      white-space nowrap
+      text-overflow ellipsis
+      overflow hidden
+      word-wrap break-word
+      word-break break-all
+    tr
+      .cell
+        white-space nowrap !important
+        text-overflow ellipsis !important
+        overflow hidden !important
+        word-wrap break-word !important
+        word-break break-all !important
+    td 
+      padding 8px 0 !important
+
+.el-picker-panel.el-date-range-picker.el-popper.has-sidebar
+  left 50% !important
+  margin-left -440px !important

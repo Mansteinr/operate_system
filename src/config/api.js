@@ -64,11 +64,20 @@ const api = {
     getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi')
   },
   /*定义功能名称或者api分组名称*/
-  creditApi: {
+  upApi: {
     /*！能力域api*/
-    querySubSystemMenuList: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi'),
-    UsageByDate: apiFormat('operator/down/UsageByDate', 'upapi'),
-    UsageByCustomer: apiFormat('operator/down/UsageByDate', 'upapi')
+    querySubSystemMenuList: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi'), // 菜单
+    UsageByDate: apiFormat('operator/down/UsageByDate', 'upapi'), // 
+    UsageByCustomer: apiFormat('operator/down/UsageByCustomer', 'upapi')
+  },
+  downApi: {
+
+  },
+  secureApi: { // 安全中心
+
+  },
+  qualityanalyApi: { // 平台质量分析
+
   }
 }
 export default api

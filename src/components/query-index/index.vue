@@ -29,61 +29,69 @@
     <div class="card-wrapper card-content">
       <div class="card-title">
         查询结果
+        <el-button-group>
+          <el-button :type="tabFlag?'':'primary'" :class="tabFlag?'':'active'" @click="switchTab(false)">图表</el-button>
+          <el-button :type="tabFlag?'primary':''" :class="tabFlag?'active':''"  @click="switchTab(true)">数据</el-button>
+        </el-button-group>
       </div>
       <div class="card-container">
-        <div :class="tableDataDay.length ?'':'no-charts'" ref="charts" style="height:400px;"></div>
+        <div v-show="!tabFlag" :class="tableData.length ?'':'no-charts'" ref="charts" style="height:400px;width:100%;"></div>
+        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
+          <el-table-column
+            label="使用日期"
+            sortable
+            prop="dayTime">
+          </el-table-column>
+          <el-table-column
+            label="共计使用量"
+            sortable
+            prop="usedCount">
+          </el-table-column>
+          <el-table-column
+            label="计费使用量"
+            sortable
+            prop="downChargedCount">
+          </el-table-column>
+          <el-table-column
+            label="消费金额"
+            sortable
+            prop="downCost">
+          </el-table-column>
+        </Table>
       </div>
     </div>
     <div class="card-wrapper card-content">
       <div class="card-title">
         查询结果
+        <el-button-group>
+          <el-button :type="tabFlag2?'':'primary'" :class="tabFlag2?'':'active'" @click="switchTab2(false)">图表</el-button>
+          <el-button :type="tabFlag2?'primary':''" :class="tabFlag2?'active':''"  @click="switchTab2(true)">数据</el-button>
+        </el-button-group>
       </div>
       <div class="card-container">
-        <el-table
-          :data="tableDataComputed.filter(data => filterTable(data))"
-          :show-summary=true
-          :summary-method="getSummaries"
-          style="width: 100%">
+        <div v-show="!tabFlag2" :class="tableData2.length ?'':'no-charts'" ref="charts2" style="height:400px;width:100%;"></div>
+        <Table class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2">
           <el-table-column
-            label="服务名称"
+            label="客户名称"
             sortable
-            prop="serviceNameZh">
+            prop="customerName">
           </el-table-column>
           <el-table-column
-            label="共计条数"
+            label="共计使用量"
             sortable
             prop="usedCount">
           </el-table-column>
           <el-table-column
-            label="计费条数"
+            label="计费使用量"
             sortable
-            prop="chargeUsedCount">
+            prop="downChargedCount">
           </el-table-column>
           <el-table-column
-            label="不计费条数"
+            label="消费金额"
             sortable
-            prop="noChargeCount">
+            prop="downCost">
           </el-table-column>
-          <el-table-column
-            align="right">
-            <template slot="header" slot-scope="slot">
-              <el-input
-                v-model="search"
-                size="mini"
-                placeholder="Type to search"/>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 50, 'all']"
-          :page-size="pageSize"
-          background
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="tatalPage">
-        </el-pagination>
+        </Table>
       </div>
     </div>
   </div>
@@ -92,194 +100,99 @@
 <script>
 import moment from 'moment'
 import $http from '../../common/js/ajax'
-import { setOtherLineData } from '../../common/js/myCharts'
+import { setLineData, renderChart } from '../../common/js/myCharts'
 import echarts from 'echarts'
+import { switchMixin, hotKeyTime } from '../../common/js/mixin'
+import Table from '../../base/Table'
+let chartsArr = []
 export default {
+  mixins: [switchMixin, hotKeyTime],
   data () {
     return {
-      currentPage: 1,
-      pageSize: 10,
-      tatalPage: 0,
       formInline: {
         user: '',
         region: ''
       },
-      pickerOptions2: {
-        disabledDate (time) {
-          return time.getTime() > Date.now() || time.getTime() < new Date('2018-09-30')
-        },
-        shortcuts: [{
-          text: '最近一周',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近一个月',
-          onClick (picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      },
-      time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
-      tableDataService: [],
-      tableDataDay: [],
-      search: ''
+      tableData: [],
+      tableData2: []
     }
   },
   mounted () {
-    this.UsageByDate()
-  },
-  computed: {
-    tableDataComputed () {
-      if (this.tableDataService && this.tableDataService.length) {
-        let start = this.pageSize * (this.currentPage - 1)
-        let end = Math.min(this.pageSize * (this.currentPage), this.tableDataService.length)
-        return this.tableDataService.slice(start, end)
-      } else {
-        return []
+    this.initFun()
+    window.onresize = function () {
+      for (var i = 0; i < chartsArr.length; i++) {
+        chartsArr[i].resize()
       }
     }
   },
+  components: {
+    Table
+  },
   methods: {
-    getSummaries (param) {
-      const { columns } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计'
-          return
-        }
-        const values = this.tableDataService.map(item => Number(item[column.property]))
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr)
-            if (!isNaN(value)) {
-              return prev + curr
-            } else {
-              return prev
-            }
-          }, 0)
-          sums[index]
-        } else {
-          sums[index] = ''
-        }
-      })
-      sums.forEach((v, k) => {
-        if (Number(v)) {
-          sums[k] = Math.round(v * 100) / 100
-        }
-      })
-      return sums
-    },
     onSubmit () {
+      this.chartsArr = []
+      this.initFun()
+    },
+    initFun () {
       this.UsageByDate()
-    },
-    handleSizeChange (val) {
-      if (val) {
-        this.pageSize = val
-      } else {
-        this.pageSize = this.tableDataDay.length
-      }
-    },
-    filterTable (data) {
-      return !this.search || (data.chargeUsedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (data.serviceNameZh + '').toLowerCase().includes(this.search.toLowerCase()) || data.serviceName.toLowerCase().includes(this.search.toLowerCase()) || (data.chargeUsedCount + '').toLowerCase().includes(this.search.toLowerCase())
-    },
-    handleCurrentChange (val) {
-      this.currentPage = val
+      this.UsageByCustomer()
     },
     UsageByDate () {
-      let url = '/operator/up/getOutServiceChargeInfoBySupplier'
       let data = {
         start: moment(this.time[0]).format('YYYY-MM-DD'),
-        end: moment(this.time[1]).format('YYYY-MM-DD'),
-        companyName: 'chaxunzhongxin'
+        end: moment(this.time[1]).format('YYYY-MM-DD')
       }
-      var myChart = echarts.init(this.$refs.charts)
-      myChart.clear()
-      let that = this
-      $http(url, data).then((res) => {
-        that.tableDataService = []
-        var xFiled = {},
-          finalArr = {}
-        that.tableDataDay = res.resData.dayCompany
-        that.tableDataService = res.resData.serviceCompany
-        if (that.tableDataDay && that.tableDataDay.length) {
-          that.tableDataDay.forEach((v, k) => {
-            v.noChargeCount = v.usedCount - v.chargeUsedCount
-            v.cost = v.cost.toFixed(2)
-            var dayKey = v.dayTime,
-              serviceKey = v.serviceName
-            if (!finalArr[v.serviceName]) {//是以服务名为主线  查看服务名是否已经存储
-              finalArr[v.serviceName] = {
-                name: v.serviceNameZh,
-                dataArr: []
-              }
-            }
-            if (xFiled[dayKey]) {//如果日期存在  则将对应的服务名及对应的使用量生成key value
-              xFiled[dayKey][serviceKey] = v.usedCount
-            } else {
-              xFiled[dayKey] = {};//如果日期不存在  则生成一个空对象
-            }
-            xFiled[dayKey][serviceKey] = v.usedCount
+      $http(this.API.upApi.UsageByDate, data).then((res) => {
+        let xAxisData = [], series= [{
+              name: '共计使用量',
+              data:[]
+            },{
+              name: '计费使用量',
+              data:[]
+            },{
+              name: '消费金额',
+              data:[]
+            }]
+        this.tableData = res.resData
+        if (this.tableData.length) {
+          this.tableData.forEach((v, k) => {
+            xAxisData.push(v.dayTime)
+            series[0].data.push(v.usedCount)
+            series[1].data.push(v.downChargedCount)
+            series[2].data.push(Math.floor(v.downCost * 100) / 100)
           })
+          let charts = renderChart(this.$refs.charts, setLineData('总体情况-按日期统计', xAxisData, series))
+          chartsArr.push(charts)
         }
-        if (that.tableDataService && that.tableDataService.length) {
-          that.tableDataService.forEach((v, k) => {
-            v.noChargeCount = v.usedCount - v.chargeUsedCount
-            that.tableDataService[k].cost = that.tableDataService[k].cost.toFixed(2)
+      })
+    },
+    UsageByCustomer () {
+      let data = {
+        start: moment(this.time[0]).format('YYYY-MM-DD'),
+        end: moment(this.time[1]).format('YYYY-MM-DD')
+      }
+      $http(this.API.upApi.UsageByCustomer, data).then((res) => {
+        let xAxisData = [], series= [{
+              name: '共计使用量',
+              data:[]
+            },{
+              name: '计费使用量',
+              data:[]
+            },{
+              name: '消费金额',
+              data:[]
+            }]
+        this.tableData2 = res.resData
+        if (this.tableData2.length) {
+          this.tableData2.forEach((v, k) => {
+            xAxisData.push(v.customerName)
+            series[0].data.push(v.usedCount)
+            series[1].data.push(v.downChargedCount)
+            series[2].data.push(Math.floor(v.downCost * 100) / 100)
           })
+          let charts = renderChart(this.$refs.charts2, setLineData('总体情况-按客户统计', xAxisData, series))
+          chartsArr.push(charts)
         }
-        var nuqinexFild = []
-        for (var k in xFiled) {
-          nuqinexFild.push(k)
-          for (let k1 in finalArr) {
-            if (xFiled[k][k1]) {
-              finalArr[k1].dataArr.push(xFiled[k][k1])
-            } else {
-              finalArr[k1].dataArr.push(0)
-            }
-          }
-        }
-        var mycolor = ['#86D560', '#AF89D6', '#59ADF3', '#FF999A', '#FFCC67', '#2cb5ab', '#91bf5d', '#f8a89f', '#00FFFF', '#7FFFAA', '#2E8B57', '#F5F5DC', '#BC8F8F', '	#808080'];
-        var k = 0,
-          lineData = []
-        for (let k3 in finalArr) {
-          lineData.push({
-            name: finalArr[k3].name,
-            type: 'line',
-            smooth: true,
-            lineStyle: {
-              normal: {
-                width: 1,
-                color: mycolor[k]
-              }
-            },
-            areaStyle: {
-              normal: {
-                color: mycolor[k]
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: mycolor[k]
-              }
-            },
-            "data": finalArr[k3].dataArr
-          })
-          k += 1
-        }
-        myChart.setOption(setOtherLineData(nuqinexFild, lineData))
-        window.onresize = function () {
-          myChart.resize()
-        }
-      }).catch(error => {
-        console.log(error)
       })
     }
   }

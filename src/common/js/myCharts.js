@@ -1,3 +1,4 @@
+import echarts from 'echarts'
 
 let color = ['rgba(44,181,171, 1)', 'rgba(44,181,171,.3)', 'rgba(145,191,93,1)', 'rgba(145,191,93, .3)', 'rgba(248,168,159,1)', 'rgba(248,168,159,.3)',
   'rgba(138, 43, 226, 1)', 'rgba(220, 20, 60, 1)', 'rgba(0, 0, 139, 1)', 'rgba(255,140,0,1)', 'rgba(121,85,72,1)', 'rgba(124,252,0,1)',
@@ -187,9 +188,11 @@ export function setLineData (title, xAxisData, series) {
       })
     option.dataZoom = dataZoom
     option.grid.bottom = 120 + Math.ceil(legendData.length / 8) * 20
+    option.legend.bottom = 70
+
   } else {
-    option.grid.bottom = 120
-    option.grid.bottom = 120 + Math.ceil(legendData.length / 8) * 20
+    option.grid.bottom = 70
+    option.legend.bottom = 20
   }
   return option
 }
@@ -368,7 +371,13 @@ export function setOtherLineData (xAxisData, series) {
     option.grid.bottom = 120 + Math.ceil(legendData.length / 8) * 20;
   } else {
     option.grid.bottom = 120;
-    option.grid.bottom = 120 + Math.ceil(legendData.length / 8) * 20;
   }
   return option
+}
+
+export function renderChart (container, option) {
+  var myChart = echarts.init(container)
+  myChart.clear()
+  myChart.setOption(option);
+  return myChart
 }

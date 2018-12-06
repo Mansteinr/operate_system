@@ -1,3 +1,4 @@
+
 import axios from 'axios'
 import { Loading } from 'element-ui'
 import { showModal } from '../../utils'
@@ -18,9 +19,10 @@ export default function $http (url, data, method = 'post') {
       if (res.data.resCode) { // 成功并且返回码为1
         resolve(res.data)
       } else { // 返回吗 不为1
-        showModal(res.data.resMsg[0].msgText, 'error')
         if (res.data.resMsg[0].msgCode === '10005') { // 若没有登录 则强制到登录页面
-          this.$router.push('/')
+          window.location.href = window.location.origin + '/#/Login' // 跳转页面
+        } else {
+          showModal(res.data.resMsg[0].msgText, 'error')
         }
       }
       endLoading()
@@ -35,7 +37,7 @@ export default function $http (url, data, method = 'post') {
 function startLoading () {    //使用Element loading-start 方法
   loading = Loading.service({
     lock: true,
-    text: '加载中……',
+    text: '加载中…',
     background: 'rgba(0, 0, 0, 0.7)'
   })
 }
