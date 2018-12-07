@@ -70,6 +70,8 @@ export default {
   },
   methods: {
     selectItem (value) {
+      let paramArr = value.resourceUrl.split('/')
+      this.$router.push({name: paramArr[paramArr.length - 1].split('.')[0]})
       this.menuActive = value.id+'' // 需要传入字符串 传入number会报错
     },
     selectLang (value) {

@@ -64,6 +64,10 @@ const api = {
     getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi')
   },
   /*定义功能名称或者api分组名称*/
+  commonApi: {
+    /*！能力域api*/
+    businessTypes: apiFormat('operator/businessTypes', 'upapi'), // 获取行业类型
+  },
   upApi: {
     /*！能力域api*/
     querySubSystemMenuList: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi'), // 菜单

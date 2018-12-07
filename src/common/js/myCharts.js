@@ -192,7 +192,7 @@ export function setLineData (title, xAxisData, series) {
 
   } else {
     option.grid.bottom = 70
-    option.legend.bottom = 20
+    option.legend.bottom = 5
   }
   return option
 }

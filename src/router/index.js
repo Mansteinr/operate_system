@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import QueryIndex from '../components/query-index'
-import ServiceAnalysis from '../components/ServiceAnalysis'
+import QueryUsage from '../components/usage-statistics/query_usage'
 import SupplierAnalysis from '../components/SupplierAnalysis'
 import SensitiveWord from '../components/SensitiveWord'
 import QueryLog from '../components/QueryLog'
@@ -18,12 +18,12 @@ const router = new Router({
     component: Main,
     children: [{
       path: '/QueryIndex',
-      name: 'QueryIndex',
+      name: 'query-index',
       component: QueryIndex
     }, {
-      path: '/ServiceAnalysis',
-      name: 'ServiceAnalysis',
-      component: ServiceAnalysis
+      path: '/QueryUsage',
+      name: 'query_usage',
+      component: QueryUsage
     }, {
       path: '/SensitiveWord',
       name: 'SensitiveWord',

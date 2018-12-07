@@ -29,7 +29,7 @@ router.beforeEach((to, from, next) => {
   if (login) {
     if (path === '/') {
       next({
-        path: '/QueryIndex'
+        name: 'query-index'
       })
     } else {
       next()

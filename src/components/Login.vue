@@ -10,7 +10,7 @@
         <input type="password" v-model="password" :placeholder="$t('m.login.password')" @keyup.enter="goLogin" />
       </div>
       <div class="input-code">
-        <input type="text" id="code" v-model.trim="vcode" class="user-input" placeholder="验证码" maxlength="4">
+        <input type="text" id="code" v-model.trim="vcode" class="user-input" placeholder="验证码" @keyup.enter="goLogin" maxlength="4">
         <img class="code-img" :src="imgSrc" alt="点击刷新验证码">
       </div>
       <el-button type="primary" @click="goLogin" class="login-btn">登录</el-button>

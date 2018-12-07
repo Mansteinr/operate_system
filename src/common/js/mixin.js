@@ -1,3 +1,4 @@
+import $http from './ajax'
 // 切换table相关方法
 export const switchMixin = {
   data () {
@@ -130,6 +131,25 @@ export const hotKeyTime = {
         }]
       },
       time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
+    }
+  }
+}
+
+export const businessType = {
+  data () {
+    return {
+      businessType: [],
+      value: ''
+    }
+  },
+  mounted () {
+    this.businessTypes()
+  },
+  methods: {
+    businessTypes () {
+      $http(this.API.commonApi.businessTypes, {}).then((res) => {
+        this.businessType = res.resData
+      })
     }
   }
 }
