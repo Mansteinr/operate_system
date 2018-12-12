@@ -129,13 +129,32 @@ export const hotKeyTime = {
             picker.$emit('pick', [start, end]);
           }
         }]
-      },
-      time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
+      }
     }
   }
 }
 
 export const businessType = {
+  data () {
+    return {
+      businessType: []
+    }
+  },
+  mounted () {
+    this.businessTypes()
+  },
+  methods: {
+    businessTypes () {
+      $http(this.API.upApi.businessTypes, {}).then((res) => {
+        this.businessType = []
+        this.businessType = res.resData
+        this.queryParams.type = this.businessType[0].typeId
+      })
+    }
+  }
+}
+
+export const customers = {
   data () {
     return {
       businessType: [],
@@ -147,7 +166,7 @@ export const businessType = {
   },
   methods: {
     businessTypes () {
-      $http(this.API.commonApi.businessTypes, {}).then((res) => {
+      $http(this.API.upApi.businessTypes, {}).then((res) => {
         this.businessType = res.resData
       })
     }

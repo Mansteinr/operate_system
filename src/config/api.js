@@ -63,16 +63,14 @@ const api = {
     loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb'),
     getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi')
   },
-  /*定义功能名称或者api分组名称*/
-  commonApi: {
-    /*！能力域api*/
-    businessTypes: apiFormat('operator/businessTypes', 'upapi'), // 获取行业类型
-  },
   upApi: {
     /*！能力域api*/
-    querySubSystemMenuList: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi'), // 菜单
     UsageByDate: apiFormat('operator/down/UsageByDate', 'upapi'), // 
-    UsageByCustomer: apiFormat('operator/down/UsageByCustomer', 'upapi')
+    UsageByCustomer: apiFormat('operator/down/UsageByCustomer', 'upapi'),
+    businessTypes: apiFormat('operator/businessTypes', 'upapi'), // 获取行业类型
+    customers: apiFormat('operator/businessTypes', 'upapi'), // 获取行业类型
+    services: apiFormat('operator/services', 'upapi'), // 获取接口服务
+    hasServices: apiFormat('operator/hasServices', 'upapi'), // 客户拥有的服务
   },
   downApi: {
 

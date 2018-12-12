@@ -5,11 +5,11 @@
         查询条件
       </div>
       <div class="card-container">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form :inline="true" :model="queryParams" class="query-form">
           <el-form-item label="选择时间：">
             <div class="block">
               <el-date-picker
-                v-model="time"
+                v-model="queryParams.time"
                 type="daterange"
                 align="right"
                 unlink-panels
@@ -20,8 +20,8 @@
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item class="card-query">
-            <el-button type="primary" @click="onSubmit" round>查询</el-button>
+          <el-form-item>
+            <el-button class="query-button" type="primary" @click="onSubmit">查询</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -109,9 +109,8 @@ export default {
   mixins: [switchMixin, hotKeyTime],
   data () {
     return {
-      formInline: {
-        user: '',
-        region: ''
+      queryParams: {
+        time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
       },
       tableData: [],
       tableData2: []
@@ -138,11 +137,7 @@ export default {
       this.UsageByCustomer()
     },
     UsageByDate () {
-      let data = {
-        start: moment(this.time[0]).format('YYYY-MM-DD'),
-        end: moment(this.time[1]).format('YYYY-MM-DD')
-      }
-      $http(this.API.upApi.UsageByDate, data).then((res) => {
+      $http(this.API.upApi.UsageByDate, this.queryParams).then((res) => {
         let xAxisData = [], series= [{
               name: '共计使用量',
               data:[]
@@ -167,11 +162,7 @@ export default {
       })
     },
     UsageByCustomer () {
-      let data = {
-        start: moment(this.time[0]).format('YYYY-MM-DD'),
-        end: moment(this.time[1]).format('YYYY-MM-DD')
-      }
-      $http(this.API.upApi.UsageByCustomer, data).then((res) => {
+      $http(this.API.upApi.UsageByCustomer, this.queryParams).then((res) => {
         let xAxisData = [], series= [{
               name: '共计使用量',
               data:[]

@@ -53,9 +53,6 @@
         width 500px
         .el-select
           width 400px
-      &.card-query
-        position absolute
-        right 0
 .table
   .serarch-input
     width 15%
@@ -89,10 +86,23 @@
   left 50% !important
   margin-left -440px !important
 
-.el-form.demo-form-inline.el-form--inline 
-  display flex
-  flex-wrap wrap
+.query-form
   .el-form-item
-    max-width 33%
-    min-width 25%
+    width 32%
+    .el-form-item__content
+      width calc(100% - 82px)
+      float right
+      .el-date-editor
+        width 100%
+      .el-select 
+        width 100%
+      .query-button
+        float right
+.query-item
+  width 28.8% !important
+  float right 
+  padding-right 1.8%
+  .el-form-item__content
+    width 100% !important
+  
     

@@ -5,23 +5,22 @@
         查询条件
       </div>
       <div class="card-container">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <el-form :inline="true"  ref="form" :model="queryParams" class="query-form">
           <el-form-item label="选择时间：">
             <div class="block">
               <el-date-picker
-                v-model="time"
-                type="daterange"
-                align="right"
+                type="daterange" 
                 unlink-panels
-                range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                v-model="queryParams.time"
+                range-separator="至"
                 :picker-options="pickerOptions2">
               </el-date-picker>
             </div>
           </el-form-item>
           <el-form-item label="行业类型：">
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="queryParams.type" placeholder="请选择">
               <el-option
                 v-for="item in businessType"
                 :key="item.typeId"
@@ -30,8 +29,8 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="行业类型：">
-            <el-select v-model="value" placeholder="请选择">
+          <el-form-item label="客户名称：">
+            <el-select v-model="queryParams.loginName" placeholder="请选择">
               <el-option
                 v-for="item in businessType"
                 :key="item.typeId"
@@ -40,8 +39,8 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="行业类型：">
-            <el-select v-model="value" placeholder="请选择">
+          <el-form-item label="接口类型：">
+            <el-select v-model="queryParams.serviceName" placeholder="请选择">
               <el-option
                 v-for="item in businessType"
                 :key="item.typeId"
@@ -50,48 +49,9 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="行业类型：">
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in businessType"
-                :key="item.typeId"
-                :label="item.typeName"
-                :value="item.typeId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="行业类型：">
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in businessType"
-                :key="item.typeId"
-                :label="item.typeName"
-                :value="item.typeId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="行业类型：">
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in businessType"
-                :key="item.typeId"
-                :label="item.typeName"
-                :value="item.typeId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="行业类型：">
-            <el-select v-model="value" placeholder="请选择">
-              <el-option
-                v-for="item in businessType"
-                :key="item.typeId"
-                :label="item.typeName"
-                :value="item.typeId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item class="card-query">
-            <el-button type="primary" @click="onSubmit" round>查询</el-button>
+          <el-form-item class="query-item">
+            <el-button class="query-button ml" type="primary" @click="onSubmit">重置</el-button>
+            <el-button class="query-button" type="success" @click="onSubmit">查询</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -134,7 +94,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import $http from '../../common/js/ajax'
 import { setLineData, renderChart } from '../../common/js/myCharts'
 import echarts from 'echarts'
@@ -145,16 +104,15 @@ export default {
   mixins: [switchMixin, hotKeyTime, businessType],
   data () {
     return {
-      formInline: {
-        user: '',
-        region: ''
+      queryParams: {
+        time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
+        type: ''
       },
-      tableData: [],
-      tableData2: []
+      tableData: []
     }
   },
   mounted () {
-    this.initFun()
+    this.UsageByDate()
     window.onresize = function () {
       for (var i = 0; i < chartsArr.length; i++) {
         chartsArr[i].resize()
@@ -167,28 +125,21 @@ export default {
   methods: {
     onSubmit () {
       this.chartsArr = []
-      this.initFun()
-    },
-    initFun () {
       this.UsageByDate()
-      this.UsageByCustomer()
     },
     UsageByDate () {
-      let data = {
-        start: moment(this.time[0]).format('YYYY-MM-DD'),
-        end: moment(this.time[1]).format('YYYY-MM-DD')
-      }
-      $http(this.API.upApi.UsageByDate, data).then((res) => {
-        let xAxisData = [], series= [{
-              name: '共计使用量',
-              data:[]
-            },{
-              name: '计费使用量',
-              data:[]
-            },{
-              name: '消费金额',
-              data:[]
-            }]
+      $http(this.API.upApi.UsageByDate, this.queryParams).then((res) => {
+        let xAxisData = [], 
+          series= [{
+            name: '共计使用量',
+            data:[]
+          },{
+            name: '计费使用量',
+            data:[]
+          },{
+            name: '消费金额',
+            data:[]
+          }]
         this.tableData = res.resData
         if (this.tableData.length) {
           this.tableData.forEach((v, k) => {
@@ -198,35 +149,6 @@ export default {
             series[2].data.push(Math.floor(v.downCost * 100) / 100)
           })
           let charts = renderChart(this.$refs.charts, setLineData('总体情况-按日期统计', xAxisData, series))
-          chartsArr.push(charts)
-        }
-      })
-    },
-    UsageByCustomer () {
-      let data = {
-        start: moment(this.time[0]).format('YYYY-MM-DD'),
-        end: moment(this.time[1]).format('YYYY-MM-DD')
-      }
-      $http(this.API.upApi.UsageByCustomer, data).then((res) => {
-        let xAxisData = [], series= [{
-              name: '共计使用量',
-              data:[]
-            },{
-              name: '计费使用量',
-              data:[]
-            },{
-              name: '消费金额',
-              data:[]
-            }]
-        this.tableData2 = res.resData
-        if (this.tableData2.length) {
-          this.tableData2.forEach((v, k) => {
-            xAxisData.push(v.customerName)
-            series[0].data.push(v.usedCount)
-            series[1].data.push(v.downChargedCount)
-            series[2].data.push(Math.floor(v.downCost * 100) / 100)
-          })
-          let charts = renderChart(this.$refs.charts2, setLineData('总体情况-按客户统计', xAxisData, series))
           chartsArr.push(charts)
         }
       })

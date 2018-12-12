@@ -6,6 +6,7 @@ import SupplierAnalysis from '../components/SupplierAnalysis'
 import SensitiveWord from '../components/SensitiveWord'
 import QueryLog from '../components/QueryLog'
 import Login from '../components/Login'
+import Demo from '../components/demo'
 import QualityAnalysis from '../components/QualityAnalysis'
 import Main from '../components/Main'
 
@@ -40,6 +41,10 @@ const router = new Router({
       path: '/QualityAnalysis',
       name: 'QualityAnalysis',
       component: QualityAnalysis
+    }, {
+      path: '/Demo',
+      name: 'Demo',
+      component: Demo
     }]
   }, {
     path: '/Login',
