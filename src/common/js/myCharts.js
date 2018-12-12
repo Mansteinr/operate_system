@@ -378,6 +378,9 @@ export function setOtherLineData (xAxisData, series) {
 export function renderChart (container, option) {
   var myChart = echarts.init(container)
   myChart.clear()
-  myChart.setOption(option);
+  myChart.setOption(option)
+  myChart.resize({
+    width: document.getElementsByClassName('no-charts')[0].clientWidth > 0 ? document.getElementsByClassName('no-charts')[0].clientWidth : document.getElementsByClassName('charts')[0].clientWidth
+  })
   return myChart
 }

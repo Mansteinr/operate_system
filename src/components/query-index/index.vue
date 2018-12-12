@@ -5,8 +5,8 @@
         查询条件
       </div>
       <div class="card-container">
-        <el-form :inline="true" :model="queryParams" class="query-form">
-          <el-form-item label="选择时间：">
+        <el-form :inline="true" :model="queryParams" ref="querForm" class="query-form">
+          <el-form-item label="选择时间：" prop="time">
             <div class="block">
               <el-date-picker
                 v-model="queryParams.time"
@@ -20,8 +20,8 @@
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item>
-            <el-button class="query-button" type="primary" @click="onSubmit">查询</el-button>
+          <el-form-item class="query-item">
+            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
         </el-form>
       </div>
@@ -35,7 +35,9 @@
         </el-button-group>
       </div>
       <div class="card-container">
-        <div v-show="!tabFlag" :class="tableData.length ?'':'no-charts'" ref="charts" style="height:400px;width:100%;"></div>
+        <!-- <div v-show="!tabFlag" :class="tableData.length ?'':'no-charts'" ref="charts" style="height:400px;width:100%;"></div> -->
+        <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
+        <div v-show="!tabFlag && tableData.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div>        
         <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
           <el-table-column
             label="使用日期"
@@ -69,7 +71,9 @@
         </el-button-group>
       </div>
       <div class="card-container">
-        <div v-show="!tabFlag2" :class="tableData2.length ?'':'no-charts'" ref="charts2" style="height:400px;width:100%;"></div>
+        <!-- <div v-show="!tabFlag2" :class="tableData2.length ?'':'no-charts'" ref="charts2" style="height:400px;width:100%;"></div> -->
+        <div v-show="!tabFlag2 && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
+        <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts" style="height:400px;width:100%;"></div> 
         <Table class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2">
           <el-table-column
             label="客户名称"
@@ -104,7 +108,7 @@ import { setLineData, renderChart } from '../../common/js/myCharts'
 import echarts from 'echarts'
 import { switchMixin, hotKeyTime } from '../../common/js/mixin'
 import Table from '../../base/Table'
-let chartsArr = []
+import QueryButton from '../../base/QueryButton'
 export default {
   mixins: [switchMixin, hotKeyTime],
   data () {
@@ -118,18 +122,16 @@ export default {
   },
   mounted () {
     this.initFun()
-    window.onresize = function () {
-      for (var i = 0; i < chartsArr.length; i++) {
-        chartsArr[i].resize()
-      }
-    }
   },
   components: {
-    Table
+    Table,
+    QueryButton
   },
   methods: {
+    reset () {
+      this.$refs.querForm.resetFields()
+    },
     onSubmit () {
-      this.chartsArr = []
       this.initFun()
     },
     initFun () {
@@ -157,7 +159,6 @@ export default {
             series[2].data.push(Math.floor(v.downCost * 100) / 100)
           })
           let charts = renderChart(this.$refs.charts, setLineData('总体情况-按日期统计', xAxisData, series))
-          chartsArr.push(charts)
         }
       })
     },
@@ -182,7 +183,6 @@ export default {
             series[2].data.push(Math.floor(v.downCost * 100) / 100)
           })
           let charts = renderChart(this.$refs.charts2, setLineData('总体情况-按客户统计', xAxisData, series))
-          chartsArr.push(charts)
         }
       })
     }

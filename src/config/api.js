@@ -68,9 +68,11 @@ const api = {
     UsageByDate: apiFormat('operator/down/UsageByDate', 'upapi'), // 
     UsageByCustomer: apiFormat('operator/down/UsageByCustomer', 'upapi'),
     businessTypes: apiFormat('operator/businessTypes', 'upapi'), // 获取行业类型
-    customers: apiFormat('operator/businessTypes', 'upapi'), // 获取行业类型
+    customers: apiFormat('operator/customers', 'upapi'), // 所以的客户名称
     services: apiFormat('operator/services', 'upapi'), // 获取接口服务
     hasServices: apiFormat('operator/hasServices', 'upapi'), // 客户拥有的服务
+    companys: apiFormat('operator/supplier/companys', 'upapi'), // g供应商
+    getOutServiceChargeInfoBySupplier: apiFormat('operator/up/getOutServiceChargeInfoBySupplier', 'upapi'), // g供应商
   },
   downApi: {
 

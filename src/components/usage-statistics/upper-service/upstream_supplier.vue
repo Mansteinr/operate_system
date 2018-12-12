@@ -19,37 +19,13 @@
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item label="行业类型：" prop="type">
-            <el-select @change="changeType" v-model="queryParams.type" placeholder="请选择">
+          <el-form-item label="供应商名称：" prop="companyName">
+            <el-select @change="changeType" v-model="queryParams.companyName" placeholder="请选择">
               <el-option
                 v-for="v in businessType"
-                :key="v.typeId"
-                :label="v.typeName"
-                :value="v.typeId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="客户名称：" prop="loginName">
-            <el-select filterable v-model="queryParams.loginName" placeholder="请选择">
-              <el-option
-                v-for="v in loginName"
-                @click.native.stop="changeCustomer(v)"
-                :key="v.customerId"
-                :title="`${v.customerName}(${v.loginName})`"
-                :data-customerid="v.customerId"
-                :label="v.customerName"
-                :value="v.loginName">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="接口类型：" prop="serviceName">
-            <el-select filterable v-model="queryParams.serviceName" placeholder="请选择">
-              <el-option
-                v-for="v in services"
-                :key="v.serviceId"
-                :title="`${v.serviceNameZh}(${v.serviceName})`"
-                :label="v.serviceNameZh"
-                :value="v.serviceName">
+                :key=""
+                :label="v"
+                :value="v">
               </el-option>
             </el-select>
           </el-form-item>
@@ -98,21 +74,19 @@
 </template>
 
 <script>
-import $http from '../../common/js/ajax'
-import { setLineData, renderChart } from '../../common/js/myCharts'
+import $http from '../../../common/js/ajax'
+import { setLineData, renderChart } from '../../../common/js/myCharts'
 import echarts from 'echarts'
-import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
-import Table from '../../base/Table'
-import QueryButton from '../../base/QueryButton'
+import { switchMixin, hotKeyTime, loginName, services } from '../../../common/js/mixin'
+import Table from '../../../base/Table'
+import QueryButton from '../../../base/QueryButton'
 export default {
-  mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
+  mixins: [switchMixin, hotKeyTime, businessType],
   data () {
     return {
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
-        loginName: '',
-        serviceName: '',
-        type: ''
+        companyName: ''
       },
       tableData: []
     }

@@ -1,4 +1,5 @@
 import $http from './ajax'
+import pinyin from 'js-pinyin'
 // 切换table相关方法
 export const switchMixin = {
   data () {
@@ -134,7 +135,7 @@ export const hotKeyTime = {
   }
 }
 
-export const businessType = {
+export const businessType = { // 行业类型
   data () {
     return {
       businessType: []
@@ -148,26 +149,105 @@ export const businessType = {
       $http(this.API.upApi.businessTypes, {}).then((res) => {
         this.businessType = []
         this.businessType = res.resData
+        this.businessType.unshift({
+          typeId: '',
+          typeName: '全部'
+        })
         this.queryParams.type = this.businessType[0].typeId
       })
+    },
+    changeType () {
+      this.loginName = [{
+        customerId: '',
+        loginName: '',
+        customerName: '全部'
+      }]
+      if (this.queryParams.type) {
+        this.loginNameOrigin.map((v) => {
+          if (this.queryParams.type === v.businessId) {
+            this.loginName.push(v)
+          }
+        })
+      } else {
+        this.loginName = this.loginNameOrigin
+      }
+      this.queryParams.loginName = this.loginName[0].loginName
     }
   }
 }
 
-export const customers = {
+export const loginName = { // 客户登陆名称
   data () {
     return {
-      businessType: [],
-      value: ''
+      loginNameOrigin: [],
+      loginName: []
     }
   },
   mounted () {
-    this.businessTypes()
+    this.customers()
   },
   methods: {
-    businessTypes () {
-      $http(this.API.upApi.businessTypes, {}).then((res) => {
-        this.businessType = res.resData
+    customers () {
+      $http(this.API.upApi.customers, {}).then((res) => {
+        this.loginNameOrigin = []
+        this.loginNameOrigin = res.resData
+        this.loginName = [...[{
+          customerId: '',
+          loginName: '',
+          customerName: '全部'
+        }], ...this.loginNameOrigin]
+        this.queryParams.loginName = this.loginName[0].loginName
+      })
+    },
+    changeCustomer (v) {
+      if (v.customerId) {
+        this.getHasService({ customerId: v.customerId })
+      } else {
+        this.getAllServices()
+      }
+    },
+    getHasService (op) {
+      $http(this.API.upApi.hasServices, op).then((res) => {
+        this.services = res.resData
+        this.queryParams.serviceName = this.services[0].serviceName
+      })
+    }
+  }
+}
+export const services = { // 接口类型
+  data () {
+    return {
+      services: [],
+    }
+  },
+  mounted () {
+    this.getAllServices()
+  },
+  methods: {
+    getAllServices () {
+      $http(this.API.upApi.services, {}).then((res) => {
+        this.services = []
+        this.services = res.resData
+        this.queryParams.serviceName = this.services[0].serviceName
+      })
+    }
+  }
+}
+export const company = { // 供应商
+  data () {
+    return {
+      companys: [],
+    }
+  },
+  mounted () {
+    this.getAllCompanys()
+  },
+  methods: {
+    getAllCompanys () {
+      $http(this.API.upApi.companys, {}).then((res) => {
+        this.companys = []
+        this.companys = res.resData
+        this.queryParams.companyName = this.companys[0]
       })
     }
   }

@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import QueryIndex from '../components/query-index'
 import QueryUsage from '../components/usage-statistics/query_usage'
 import SupplierAnalysis from '../components/SupplierAnalysis'
-import SensitiveWord from '../components/SensitiveWord'
+import upstreamSupplier from '../components/usage-statistics/upper-service/upstream_supplier'
 import QueryLog from '../components/QueryLog'
 import Login from '../components/Login'
 import Demo from '../components/demo'
@@ -26,9 +26,9 @@ const router = new Router({
       name: 'query_usage',
       component: QueryUsage
     }, {
-      path: '/SensitiveWord',
-      name: 'SensitiveWord',
-      component: SensitiveWord
+      path: '/upstreamSupplier',
+      name: 'query_upstream_supplier',
+      component: upstreamSupplier
     }, {
       path: '/SupplierAnalysis',
       name: 'SupplierAnalysis',
