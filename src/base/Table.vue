@@ -39,7 +39,8 @@
     },
     methods: {
       getSummaries (param) {
-        const { columns, data } = param
+        const { columns } = param
+        // this.columns = columns
         this.serarchItems = columns
         const sums = []
         columns.forEach((column, index) => {
@@ -47,8 +48,9 @@
             sums[index] = '合计'
             return
           }
-          // column.property 为自己定义的 data为table中的数据
-          const values = data.map(item => Number(item[column.property]))
+          // column.property 为自己定义的 data为table中的数据 即会计算当前页面的总和
+          // const values = data.map(item => Number(item[column.property]))
+          const values = this.tableData.map(item => Number(item[column.property]))
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr)
@@ -77,18 +79,17 @@
           this.pageSize = this.tableData.length
         }
       },
+      formatter (val, param="downCost") {
+        return Math.round(val[param] * 100) / 100
+      },
       filterTable (data) {
         // if (!this.search) {
-        //   console.log(1)
         //   return true
         // } else {
-        //   this.serarchItems.some( v => {
-        //     return String(data[v.property]).toLowerCase().includes(this.search.toLowerCase()) ? true : false
+        //   data.forEach(v => {
+        //     console.log(v.dayTime.toLowerCase().includes(this.search.toLowerCase()) || (v.usedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (v.downChargedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (v.downCost + '').toLowerCase().includes(this.search.toLowerCase()))
+        //     return v.dayTime.toLowerCase().includes(this.search.toLowerCase()) || (v.usedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (v.downChargedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (v.downCost + '').toLowerCase().includes(this.search.toLowerCase())
         //   })
-        //   console.log( this.serarchItems.some( v => {
-        //     return String(data[v.property]).toLowerCase().includes(this.search.toLowerCase()) ? true : false
-        //   }))
-        //   console.log('------------------')
         // }
         return !this.search || data.dayTime.toLowerCase().includes(this.search.toLowerCase()) || (data.usedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (data.downChargedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (data.downCost + '').toLowerCase().includes(this.search.toLowerCase())
       },

@@ -1,5 +1,4 @@
 import $http from './ajax'
-import pinyin from 'js-pinyin'
 // 切换table相关方法
 export const switchMixin = {
   data () {
@@ -17,82 +16,20 @@ export const switchMixin = {
     }
   }
 }
-// table相关方法
-export const tableMixin = {
-  data () {
-    return {
-      currentPage: 1,
-      pageSize: 10,
-      tatalPage: 0,
-      tableData: [],
-      search: ''
-    }
-  },
-  methods: {
-    getSummaries (param) {
-      const { columns, data } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计'
-          return
-        }
-        // column.property 为自己定义的 data为table中的数据
-        const values = data.map(item => Number(item[column.property]))
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr)
-            if (!isNaN(value)) {
-              return prev + curr
-            } else {
-              return prev
-            }
-          }, 0)
-          sums[index]
-        } else {
-          sums[index] = ''
-        }
-      })
-      sums.forEach((v, k) => {
-        if (Number(v)) {
-          sums[k] = Math.round(v * 100) / 100
-        }
-      })
-      return sums
-    },
-    handleSizeChange (val) {
-      if (val) {
-        this.pageSize = val
-      } else {
-        this.pageSize = this.tableData.length
-      }
-    },
-    filterTable (data) {
-      return !this.search || data.dayTime.toLowerCase().includes(this.search.toLowerCase()) || (data.usedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (data.downChargedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (data.downCost + '').toLowerCase().includes(this.search.toLowerCase())
-    },
-    handleCurrentChange (val) {
-      this.currentPage = val
-    },
-    changePage (value) {
-      this[value.split('-')[0]] = value.split('-')[1] / 1
-    }
-  },
-  computed: {
-    tableDataComputed () {
-      if (this.tableData && this.tableData.length) {
-        let start = this.pageSize * (this.currentPage - 1)
-        let end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
-        return this.tableData.slice(start, end)
-      } else {
-        return []
-      }
-    }
-  }
-}
 // 时间快捷键
 export const hotKeyTime = {
   data () {
+    let timeRule = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请选择时间范围'));
+      } else {
+        callback()
+      }
+    }
     return {
+      rules: {
+        time: [{ validator: timeRule, trigger: 'change' },]
+      },
       pickerOptions2: {
         disabledDate (time) {
           return time.getTime() > Date.now() || time.getTime() < new Date('2018-09-30')
@@ -169,7 +106,11 @@ export const businessType = { // 行业类型
           }
         })
       } else {
-        this.loginName = this.loginNameOrigin
+        this.loginName = [...[{
+          customerId: '',
+          loginName: '',
+          customerName: '全部'
+        }], ...this.loginNameOrigin]
       }
       this.queryParams.loginName = this.loginName[0].loginName
     }
@@ -249,6 +190,14 @@ export const company = { // 供应商
         this.companys = res.resData
         this.queryParams.companyName = this.companys[0]
       })
+    }
+  }
+}
+
+export const toFixed = { // 供应商
+  methods: {
+    toFixed (val) {
+      return Math.round(val * Math.pow(10, val)) / Math.pow(10, val)
     }
   }
 }

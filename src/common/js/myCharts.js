@@ -2,13 +2,146 @@ import echarts from 'echarts'
 
 let color = ['rgba(44,181,171, 1)', 'rgba(44,181,171,.3)', 'rgba(145,191,93,1)', 'rgba(145,191,93, .3)', 'rgba(248,168,159,1)', 'rgba(248,168,159,.3)',
   'rgba(138, 43, 226, 1)', 'rgba(220, 20, 60, 1)', 'rgba(0, 0, 139, 1)', 'rgba(255,140,0,1)', 'rgba(121,85,72,1)', 'rgba(124,252,0,1)',
-  'rgba(0,0,128,1)', 'rgba(158,158,158,1)', 'rgba(172,89,163,1)', 'rgba(53,231,255,1)', 'rgba(16,16,16,1)', 'rgba(52,135,158,1)']
+  'rgba(0,0,128,1)', 'rgba(158,158,158,1)', 'rgba(172,89,163,1)', 'rgba(53,231,255,1)', 'rgba(16,16,16,1)', 'rgba(52,135,158,1)'],
+  tooltip = {
+    bordeRadius: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    padding: 0,
+    formatter: function (params) {
+      let color = "#757b90";
+      var a = "<div style='background-color:" + color + ";padding: 5px 10px;border:0;marging-top:1px;text-align:center;color:white;font-size: 14px;'>" + params[0].name + "</div>";
+      a += "<div style='padding:5px;color:#36383c;font-size:14px;'>";
+      params.forEach(function (v) { //保留两位小数    
+        a += "<span style='margin-right:5px;display: inline-block;display: inline-block; height:8px;width: 8px;border: 2px solid " + v.color + ";border-radius: 50%;'/></span>" + v.seriesName + "  :  " + (Number.isInteger(v.value) ? v.value : Math.round(v.value * 100) / 100 || '--') + "<br>";
+      })
+      a += "</div>";
+      return a;
+    },
+    trigger: 'axis',
+    textStyle: {
+      fontSize: 15,
+      color: "#fff"
+    },
+    axisPointer: {
+      lineStyle: {
+        color: '#00c1de'
+      }
+    }
+  },
+  toolbox = {
+    show: true,
+    feature: {
+      mark: {
+        show: true
+      },
+      dataView: {
+        show: false,
+        readOnly: false
+      },
+      magicType: {
+        show: true,
+        type: ['line', 'bar']
+      },
+      saveAsImage: {
+        show: true
+      },
+      restore: {
+        show: true
+      }
+    }
+  },
+  dataBar = [{
+    "show": true,
+    "height": 25,
+    "start": 30,
+    "end": 70,
+    handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+    handleSize: '110%',
+    handleStyle: {
+      color: "#d3dee5",
+    },
+    textStyle: {
+      color: "#6f7479"
+    },
+    borderColor: "#90979c"
+  }, {
+    type: 'inside',
+    realtime: true,
+    start: 20,
+    end: 80
+  }],
+  yAxis = [{
+    type: 'value',
+    min: 0,
+    splitLine: {
+      show: true,
+      lineStyle: {
+        color: '#ececec'
+      }
+    },
+    axisLine: { //坐标轴轴线相关设置。就是数学上的y轴
+      show: false,
+      lineStyle: {
+        color: 'rgba(170,172,178,0.53)'
+      }
+    },
+    axisLabel: {
+      textStyle: {
+        color: '#6f7479',
+      }
+    },
+  }],
+  grid = {
+    orient: 'horizontal',
+    bottom: 70,
+    left: "7%",
+    right: '3%',
+    itemGap: 20,
+    textStyle: {
+      color: '#6f7479',
+      fontSize: 12
+    }
+  },
+  legend = {
+    orient: 'horizontal',
+    bottom: 5,
+    left: "5%",
+    itemGap: 20,
+    textStyle: {
+      color: '#6f7479',
+      fontSize: 12
+    }
+  },
+  xAxis = {
+    type: 'category',
+    boundaryGap: false,
+    axisLine: { //坐标轴轴线相关设置。就是数学上的x轴
+      show: true,
+      lineStyle: {
+        color: '#00c1de',
+        width: 2
+      },
+    },
+    axisTick: {
+      show: false
+    },
+    axisLabel: {
+      align: "right",
+      textStyle: {
+        color: '#6f7479',
+      },
+    },
+  }
 export function setLineData (title, xAxisData, series) {
   var legendData = []
   let seriesOpt = []
-  var arrLength = series.length > 21 ? 20 : series.length
-  for (var i = 0; i < arrLength; i++) {
-    legendData.push(series[i].name)
+  var arrLength = series.length > 15 ? 15 : series.length
+  for (var i = 0; i < series.length; i++) {
+    if (i <= arrLength) {
+      legendData.push(series[i].name)
+    }
     seriesOpt.push({
       "name": series[i].name,
       type: 'line',
@@ -45,262 +178,41 @@ export function setLineData (title, xAxisData, series) {
         color: "#36383c"
       }
     },
-    tooltip: {
-      bordeRadius: 4,
-      borderWidth: 1,
-      borderColor: 'rgba(0,0,0,0.2)',
-      backgroundColor: 'rgba(255,255,255,0.9)',
-      padding: 0,
-      formatter: function (params) {
-        var paramsName = ''
-        params.forEach(function (v) {
-          if (v.name) {
-            paramsName = v.name;
-          }
-        })
-        let color = "#757b90";
-        var a = "<div style='background-color:" + color + ";padding: 5px 10px;border:0;marging-top:1px;text-align:center;color:white;font-size: 14px;'>" + paramsName + "</div>";
-        a += "<div style='padding:5px;color:#36383c;font-size:14px;'>";
-        params.forEach(function (v) {
-          a += "<span style='margin-right:5px;display: inline-block;display: inline-block; height:8px;width: 8px;border: 2px solid " + v.color + ";border-radius: 50%;'/></span>" + v.seriesName + "  :  " + (v.value || '--') + "<br>";
-        })
-        a += "</div>";
-        return a;
-      },
-      trigger: 'axis',
-      textStyle: {
-        fontSize: 15,
-        color: "#fff"
-      },
-      axisPointer: {
-        lineStyle: {
-          color: '#00c1de'
-        }
-      }
-    },
-    legend: {
-      orient: 'horizontal',
-      bottom: 70,
-      left: "4%",
-      itemGap: 20,
-      data: legendData,
-      textStyle: {
-        color: '#6f7479',
-        fontSize: 12
-      }
-    },
-    grid: {
-      show: true,
-      left: "8%",
-      top: 34,
-      right: "3%",
-      x2: 50,
-      borderWidth: 0,
-    },
-    toolbox: {
-      show: true,
-      feature: {
-        mark: {
-          show: true
-        },
-        dataView: {
-          show: false,
-          readOnly: false
-        },
-        magicType: {
-          show: true,
-          type: ['line', 'bar']
-        },
-        saveAsImage: {
-          show: true
-        },
-        restore: {
-          show: true
-        }
-      }
-    },
+    tooltip: tooltip,
+    legend: Object.assign(legend, { data: legendData }),
+    grid: grid,
+    toolbox: toolbox,
     calculable: true,
-    xAxis: [{
-      type: 'category',
-      boundaryGap: false,
-      data: xAxisData,
-      axisLine: { //坐标轴轴线相关设置。就是数学上的x轴
-        show: true,
-        lineStyle: {
-          color: '#00c1de',
-          width: 2
-        },
-      },
-      axisTick: {
-        show: false
-      },
-      axisLabel: {
-        align: "right",
-        textStyle: {
-          color: '#6f7479',
-        },
-      },
-    }],
-    yAxis: [{
-      type: 'value',
-      splitLine: {
-        show: true,
-        lineStyle: {
-          color: '#ececec'
-        }
-      },
-      axisLine: { //坐标轴轴线相关设置。就是数学上的y轴
-        show: false,
-        lineStyle: {
-          color: 'rgba(170,172,178,0.53)'
-        },
-      },
-      axisLabel: {
-        textStyle: {
-          color: '#6f7479'
-        },
-      }
-    }],
+    xAxis: [Object.assign(xAxis, { data: xAxisData })],
+    yAxis: yAxis,
     series: seriesOpt
   }
   if (xAxisData.length > 20) {
-    var dataZoom = []
-    dataZoom.push({
-      "show": true,
-      "height": 30,
-      "bottom": 30,
-      "start": 95,
-      "end": 100,
-      handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-      handleSize: '110%',
-      handleStyle: {
-        color: "#d3dee5",
-      },
-      textStyle: {
-        color: "#6f7479"
-      },
-      borderColor: "#90979c"
-    }, {
-        type: 'inside',
-        realtime: true,
-        start: 20,
-        end: 80
-      })
-    option.dataZoom = dataZoom
-    option.grid.bottom = 120 + Math.ceil(legendData.length / 8) * 20
-    option.legend.bottom = 70
-
+    option.dataZoom = dataBar
+    option.dataZoom[0].bottom = 15 + Math.ceil(legendData.length / 8) * 20
+    option.grid.bottom = 70 + Math.ceil(legendData.length / 8) * 20
   } else {
     option.grid.bottom = 70
-    option.legend.bottom = 5
+  }
+  if (arrLength > 15) {
+    option.legend.bottom = 0
   }
   return option
 }
 
 export function setOtherLineData (xAxisData, series) {
-  var legendData = [];
+  var legendData = []
   var arrLength = series.length > 21 ? 20 : series.length;
   for (var i = 0; i < arrLength; i++) {
     legendData.push(series[i].name)
   }
   var option = {
-    tooltip: {
-      bordeRadius: 4,
-      borderWidth: 1,
-      borderColor: 'rgba(0,0,0,0.2)',
-      backgroundColor: 'rgba(255,255,255,0.9)',
-      padding: 0,
-      formatter: function (params) {
-        var paramsName = ''
-        params.forEach(function (v) {
-          if (v.name) {
-            paramsName = v.name;
-          }
-        })
-        let color = "#757b90";
-        var a = "<div style='background-color:" + color + ";padding: 5px 10px;border:0;marging-top:1px;text-align:center;color:white;font-size: 14px;'>" + paramsName + "</div>";
-        a += "<div style='padding:5px;color:#36383c;font-size:14px;'>";
-        params.forEach(function (v) {
-          a += "<span style='margin-right:5px;display: inline-block;display: inline-block; height:8px;width: 8px;border: 2px solid " + v.color + ";border-radius: 50%;'/></span>" + v.seriesName + "  :  " + (v.value || '--') + "<br>";
-        })
-        a += "</div>";
-        return a;
-      },
-      trigger: 'axis',
-      textStyle: {
-        fontSize: 15,
-        color: "#fff"
-      },
-      axisPointer: {
-        lineStyle: {
-          color: '#00c1de'
-        }
-      }
-    },
-    legend: {
-      orient: 'horizontal',
-      bottom: 70,
-      left: "4%",
-      itemGap: 20,
-      data: legendData,
-      textStyle: {
-        color: '#6f7479',
-        fontSize: 12
-      }
-    },
-    grid: {
-      show: true,
-      left: "5%",
-      top: 34,
-      right: "5%",
-      x2: 50,
-      borderWidth: 0,
-    },
-    toolbox: {
-      show: true,
-      left: 'center',
-      feature: {
-        mark: {
-          show: true
-        },
-        dataView: {
-          show: false,
-          readOnly: false
-        },
-        magicType: {
-          show: true,
-          type: ['line', 'bar']
-        },
-        saveAsImage: {
-          show: true
-        },
-        restore: {
-          show: true
-        }
-      }
-    },
+    tooltip: tooltip,
+    legend: Object.assign(legend, { data: legendData }),
+    grid: grid,
+    toolbox: toolbox,
     calculable: true,
-    xAxis: [{
-      type: 'category',
-      boundaryGap: false,
-      data: xAxisData,
-      axisLine: { //坐标轴轴线相关设置。就是数学上的x轴
-        show: true,
-        lineStyle: {
-          color: '#00c1de',
-          width: 2
-        },
-      },
-      axisTick: {
-        show: false
-      },
-      axisLabel: {
-        align: "right",
-        textStyle: {
-          color: '#6f7479',
-        },
-      },
-    }],
+    xAxis: [Object.assign(xAxis, { data: xAxisData })],
     yAxis: [{
       name: '实时响应分析(ms)',
       type: 'value',
@@ -345,36 +257,131 @@ export function setOtherLineData (xAxisData, series) {
     series: series
   }
   if (xAxisData.length > 20) {
-    var dataZoom = [];
-    dataZoom.push({
-      "show": true,
-      "height": 30,
-      "bottom": 30,
-      "start": 95,
-      "end": 100,
-      handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-      handleSize: '110%',
-      handleStyle: {
-        color: "#d3dee5",
-      },
-      textStyle: {
-        color: "#6f7479"
-      },
-      borderColor: "#90979c"
-    }, {
-        type: 'inside',
-        realtime: true,
-        start: 20,
-        end: 80
-      });
-    option.dataZoom = dataZoom;
+    option.dataZoom = dataBar
+    option.dataZoom[0].bottom = 35
     option.grid.bottom = 120 + Math.ceil(legendData.length / 8) * 20;
   } else {
-    option.grid.bottom = 120;
+    option.grid.bottom = 70;
   }
   return option
 }
 
+export function setColumnData (title, xAxisData, series) {
+
+  var legendData = []
+  var arrLength = series.length > 21 ? 20 : series.length;
+  for (var i = 0; i < arrLength; i++) {
+    legendData.push(series[i].name)
+  }
+  var option = {
+    title: {
+      text: title,
+      left: title.subTitle ? 'center' : '1%',
+      top: title.subTitle ? '10' : '-1%',
+      textStyle: {
+        fontSize: 16,
+        fontWeight: "normal",
+        fontFamily: "微软雅黑",
+        color: "#36383c"
+      },
+      subtextStyle: {
+        color: 'black' // 副标题文字颜色
+      }
+    },
+    legend: Object.assign(legend, { data: legendData }),
+    color: color,
+    tooltip: tooltip,
+    grid: {
+      show: true,
+      left: '7%',
+      top: title.subTitle ? 70 : 34,
+      bottom: 100,
+      right: "3%",
+      borderWidth: 0,
+    },
+    toolbox: toolbox,
+    xAxis: [Object.assign(xAxis, { data: xAxisData })],
+    yAxis: yAxis,
+    series: series
+  };
+  if (xAxisData.length > 20) {
+    option.dataZoom = dataBar
+    option.dataZoom[0].bottom = 35
+    option.grid.bottom = 70 + Math.ceil(legendData.length / 8) * 20;
+  } else {
+    option.grid.bottom = 70;
+  }
+  // console
+  return option;
+}
+
+export function setPieData (title, obj) {
+  var option = {
+    backgroundColor: '#fff',
+    title: {
+      text: title,
+      x: 'center'
+    },
+    tooltip: {
+      trigger: 'item',
+      bordeRadius: 4,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.2)',
+      backgroundColor: 'rgba(255,255,255,0.9)',
+      padding: 0,
+      formatter: function (params) {
+        let color = "#757b90";
+        var a = ''
+        a += "<div style='background-color:" + color + ";padding: 5px 10px;border:0;marging-top:1px;text-align:center;color:white;font-size: 14px;'>" + params.seriesName + "</div>";
+        a += "<div style='padding:5px;color:#36383c;font-size: 14px;'>";
+        a += "<span style='margin-right:5px;display: inline-block;display: inline-block; height:10px;width: 10px;border: 2px solid " + params.color + ";border-radius: 50%;'/></span>" + params.name + "  :  " + (Number.isInteger(params.value) ? params.value : Math.round(params.value * 100) / 100 ) + "(" + params.percent + "%)";
+        a += "</div>";
+        return a;
+      },
+      textStyle: {
+        fontSize: 15,
+        color: "#fff",
+      },
+      axisPointer: {
+        lineStyle: {
+          color: '#00c1de'
+        }
+      }
+    },
+    legend: {
+      orient: 'vertical',
+      x: 'left',
+      y: 48,
+      data: obj.legend,
+    },
+    toolbox: toolbox,
+    series: [{
+      name: obj.name,
+      type: 'pie',
+      radius: '70%',
+      center: ['48%', '50%'],
+      data: obj.data,
+      itemStyle: {
+        emphasis: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        },
+        normal: {
+          label: {
+            show: false,
+            formatter: '{b} : {c} ({d}%)'
+          }
+        },
+        labelLine: {
+          show: true
+        }
+      }
+    }],
+    color: ['rgba(0, 175, 159,.5)', 'rgba(41, 168, 227,.5)', 'rgba(53, 117, 88,.5)', 'rgba(221, 129, 187,.5)', 'rgba(120, 208, 123,.5)', 'rgba(119, 146, 202,.5)', 'rgba(155, 141, 175,.5)', 'rgba(215, 191, 110,.5)', 'rgba(125, 193, 213,.5)', 'rgba(133, 137, 184,.5)']
+  };
+  return option
+}
 export function renderChart (container, option) {
   var myChart = echarts.init(container)
   myChart.clear()

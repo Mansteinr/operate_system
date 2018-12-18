@@ -5,7 +5,7 @@
         查询条件
       </div>
       <div class="card-container">
-        <el-form :inline="true"  ref="querForm" :model="queryParams" class="query-form">
+        <el-form :inline="true" :rules="rules" ref="querForm" :model="queryParams" class="query-form">
           <el-form-item label="选择时间：" prop="time">
             <div class="block">
               <el-date-picker
@@ -127,7 +127,11 @@ export default {
       this.queryParams.serviceName = this.services[0].serviceName
     },
     onSubmit () {
-      this.UsageByDate()
+      this.$refs.querForm.validate((valid) => {
+        if (valid) {
+         this.UsageByDate()
+        }
+      })
     },
     UsageByDate () {
       $http(this.API.upApi.UsageByDate, this.queryParams).then((res) => {
@@ -144,13 +148,13 @@ export default {
           }]
         this.tableData = res.resData
         if (this.tableData.length) {
-          this.tableData.forEach((v, k) => {
+          this.tableData.forEach(v => {
             xAxisData.push(v.dayTime)
             series[0].data.push(v.usedCount)
             series[1].data.push(v.downChargedCount)
             series[2].data.push(Math.floor(v.downCost * 100) / 100)
           })
-          let charts = renderChart(this.$refs.charts, setLineData('总体情况-按日期统计', xAxisData, series))
+          renderChart(this.$refs.charts, setLineData('总体情况-按日期统计', xAxisData, series))
         }
       })
     }

@@ -5,7 +5,7 @@
         查询条件
       </div>
       <div class="card-container">
-        <el-form :inline="true" :model="queryParams" ref="querForm" class="query-form">
+        <el-form :inline="true" :rules="rules" :model="queryParams" ref="querForm" class="query-form">
           <el-form-item label="选择时间：" prop="time">
             <div class="block">
               <el-date-picker
@@ -35,10 +35,9 @@
         </el-button-group>
       </div>
       <div class="card-container">
-        <!-- <div v-show="!tabFlag" :class="tableData.length ?'':'no-charts'" ref="charts" style="height:400px;width:100%;"></div> -->
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag && tableData.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div>        
-        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
+        <div v-show="!tabFlag && tableData.length" class="charts" ref="charts1" style="height:400px;width:100%;"></div>        
+        <Table ref="table" class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
           <el-table-column
             label="使用日期"
             sortable
@@ -57,6 +56,7 @@
           <el-table-column
             label="消费金额"
             sortable
+            :formatter="formatter"
             prop="downCost">
           </el-table-column>
         </Table>
@@ -71,13 +71,11 @@
         </el-button-group>
       </div>
       <div class="card-container">
-        <!-- <div v-show="!tabFlag2" :class="tableData2.length ?'':'no-charts'" ref="charts2" style="height:400px;width:100%;"></div> -->
-        <div v-show="!tabFlag2 && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts" style="height:400px;width:100%;"></div> 
+       <div v-show="!tabFlag2 && !tableData2.length" class="no-charts" style="height:400px;width:100%;"></div>
+        <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div> 
         <Table class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2">
           <el-table-column
             label="客户名称"
-            sortable
             prop="customerName">
           </el-table-column>
           <el-table-column
@@ -93,6 +91,7 @@
           <el-table-column
             label="消费金额"
             sortable
+            :formatter="formatter"
             prop="downCost">
           </el-table-column>
         </Table>
@@ -120,9 +119,6 @@ export default {
       tableData2: []
     }
   },
-  mounted () {
-    this.initFun()
-  },
   components: {
     Table,
     QueryButton
@@ -132,11 +128,18 @@ export default {
       this.$refs.querForm.resetFields()
     },
     onSubmit () {
-      this.initFun()
+      this.$refs.querForm.validate((valid) => {
+        if (valid) {
+          this.initFun()
+        }
+      })
     },
     initFun () {
       this.UsageByDate()
       this.UsageByCustomer()
+    },
+    formatter (val) {
+      return this.$refs.table.formatter(val)
     },
     UsageByDate () {
       $http(this.API.upApi.UsageByDate, this.queryParams).then((res) => {
@@ -152,13 +155,13 @@ export default {
             }]
         this.tableData = res.resData
         if (this.tableData.length) {
-          this.tableData.forEach((v, k) => {
+          this.tableData.forEach(v => {
             xAxisData.push(v.dayTime)
             series[0].data.push(v.usedCount)
             series[1].data.push(v.downChargedCount)
             series[2].data.push(Math.floor(v.downCost * 100) / 100)
           })
-          let charts = renderChart(this.$refs.charts, setLineData('总体情况-按日期统计', xAxisData, series))
+          renderChart(this.$refs.charts1, setLineData('总体情况-按日期统计', xAxisData, series))
         }
       })
     },
@@ -176,13 +179,13 @@ export default {
             }]
         this.tableData2 = res.resData
         if (this.tableData2.length) {
-          this.tableData2.forEach((v, k) => {
+          this.tableData2.forEach(v => {
             xAxisData.push(v.customerName)
             series[0].data.push(v.usedCount)
             series[1].data.push(v.downChargedCount)
-            series[2].data.push(Math.floor(v.downCost * 100) / 100)
+            series[2].data.push(Math.round(v.downCost * 100) / 100)
           })
-          let charts = renderChart(this.$refs.charts2, setLineData('总体情况-按客户统计', xAxisData, series))
+          renderChart(this.$refs.charts2, setLineData('总体情况-按客户统计', xAxisData, series))
         }
       })
     }

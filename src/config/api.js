@@ -73,6 +73,7 @@ const api = {
     hasServices: apiFormat('operator/hasServices', 'upapi'), // 客户拥有的服务
     companys: apiFormat('operator/supplier/companys', 'upapi'), // g供应商
     getOutServiceChargeInfoBySupplier: apiFormat('operator/up/getOutServiceChargeInfoBySupplier', 'upapi'), // g供应商
+    getCustomerChargeInfo: apiFormat('operator/up/getCustomerChargeInfo', 'upapi'), // g供应商
   },
   downApi: {
 

@@ -5,7 +5,7 @@
         查询条件
       </div>
       <div class="card-container">
-        <el-form :inline="true"  ref="querForm" :model="queryParams" class="query-form">
+        <el-form :inline="true"  ref="querForm" :rules="rules" :model="queryParams" class="query-form">
           <el-form-item label="选择时间：" prop="time">
             <div class="block">
               <el-date-picker
@@ -19,11 +19,11 @@
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item label="供应商名称：" prop="companyName">
-            <el-select @change="changeType" v-model="queryParams.companyName" placeholder="请选择">
+          <el-form-item label="供应商：" prop="companyName">
+            <el-select filterable v-model="queryParams.companyName" placeholder="请选择">
               <el-option
-                v-for="v in businessType"
-                :key=""
+                v-for="(v, index) in companys"
+                :key="index"
                 :label="v"
                 :value="v">
               </el-option>
@@ -48,24 +48,27 @@
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
         <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
           <el-table-column
-            label="使用日期"
-            sortable
-            prop="dayTime">
+            label="供应商名称"
+            prop="company">
           </el-table-column>
           <el-table-column
-            label="共计使用量"
+            label="服务名称"
+            prop="usedCount">
+          </el-table-column>
+          <el-table-column
+            label="调用总量（条）"
             sortable
             prop="usedCount">
           </el-table-column>
           <el-table-column
-            label="计费使用量"
+            label="计费调用量（条）"
             sortable
-            prop="downChargedCount">
+            prop="chargeUsedCount">
           </el-table-column>
           <el-table-column
-            label="消费金额"
+            label="不计费调用量（条）"
             sortable
-            prop="downCost">
+            prop="noChargeCount">
           </el-table-column>
         </Table>
       </div>
@@ -76,12 +79,11 @@
 <script>
 import $http from '../../../common/js/ajax'
 import { setLineData, renderChart } from '../../../common/js/myCharts'
-import echarts from 'echarts'
-import { switchMixin, hotKeyTime, loginName, services } from '../../../common/js/mixin'
+import { switchMixin, hotKeyTime, company } from '../../../common/js/mixin'
 import Table from '../../../base/Table'
 import QueryButton from '../../../base/QueryButton'
 export default {
-  mixins: [switchMixin, hotKeyTime, businessType],
+  mixins: [switchMixin, hotKeyTime, company],
   data () {
     return {
       queryParams: {
@@ -98,33 +100,82 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
-      this.queryParams.serviceName = this.services[0].serviceName
+      this.queryParams.companyName = this.companys[0]
     },
     onSubmit () {
-      this.UsageByDate()
+      this.$refs.querForm.validate((valid) => {
+        if (valid) {
+         this.getOutServiceChargeInfoBySupplier()
+        }
+      })
     },
-    UsageByDate () {
-      $http(this.API.upApi.UsageByDate, this.queryParams).then((res) => {
-        let xAxisData = [], 
-          series= [{
-            name: '共计使用量',
-            data:[]
-          },{
-            name: '计费使用量',
-            data:[]
-          },{
-            name: '消费金额',
-            data:[]
-          }]
-        this.tableData = res.resData
-        if (this.tableData.length) {
-          this.tableData.forEach((v, k) => {
-            xAxisData.push(v.dayTime)
-            series[0].data.push(v.usedCount)
-            series[1].data.push(v.downChargedCount)
-            series[2].data.push(Math.floor(v.downCost * 100) / 100)
+    getOutServiceChargeInfoBySupplier () {
+      $http(this.API.upApi.getOutServiceChargeInfoBySupplier, this.queryParams).then((res) => {
+        // table
+        if (res.resData.serviceCompany.length) {
+          res.resData.serviceCompany.forEach(v => {
+            v.noChargeCount = v.usedCount - v.chargeUsedCount
           })
-          let charts = renderChart(this.$refs.charts, setLineData('总体情况-按日期统计', xAxisData, series))
+        }
+        this.tableData = res.resData.serviceCompany
+        // 图标
+        let xFiled = {},  
+            finalArr = {} // 将所有的服务名都存储在该对象中
+        if (res.resData.dayCompany.length) {
+          res.resData.dayCompany.forEach(v => {
+            if (!finalArr[v.serviceName]) { // 检测该服务名是否已经存储在finalArr中 否则存  反之不存
+              finalArr[v.serviceName] = {
+                name: v.serviceNameZh,
+                dataArr: []
+              }
+            }
+            if(xFiled[v.dayTime]) { // 如果日期存在 则将对应的服务名机器对应的使用量生产key value
+              xFiled[v.dayTime][v.serviceName] = v.usedCount
+            } else {
+              xFiled[v.dayTime] = {} // //如果日期不存在  则生成一个空对象 
+              xFiled[v.dayTime][v.serviceName] = v.usedCount // 再将对应的服务名及对应的使用量生成key value
+            }
+          })
+          let nuqinexFild = [] // 去重x轴
+          for (let k in xFiled) { // 循环xFiled中的每一项 
+            nuqinexFild.push(k)
+            for (let k1 in finalArr) { // 循环finalArr中的每一项 
+              if (xFiled[k][k1]) { 
+                finalArr[k1].dataArr.push(xFiled[k][k1])
+              } else {
+                 finalArr[k1].dataArr.push(0)
+              }
+            }
+          }
+          var mycolor = ['#86D560', '#AF89D6', '#59ADF3', '#FF999A', '#FFCC67', '#2cb5ab', '#91bf5d', '#f8a89f', '#00FFFF', '#7FFFAA', '#2E8B57', '#F5F5DC', '#BC8F8F', '	#808080'];
+          var k = 0,
+            lineData = [] 
+          for (let key in finalArr) {
+            lineData.push({
+              name: finalArr[key].name,
+              type: 'line',
+              smooth: true,
+              lineStyle: {
+                normal: {
+                  width: 1,
+                  color: mycolor[k]
+                }
+              },
+              areaStyle: {
+                normal: {
+                  color: mycolor[k]
+                }
+              },
+              itemStyle: {
+                normal: {
+                  color: mycolor[k]
+                }
+              },
+              "data": finalArr[key].dataArr
+            })
+            k += 1
+          }
+          renderChart(this.$refs.charts, setLineData( '供应商服务分析',nuqinexFild, lineData))
         }
       })
     }
