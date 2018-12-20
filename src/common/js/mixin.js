@@ -168,8 +168,13 @@ export const services = { // 接口类型
     getAllServices () {
       $http(this.API.upApi.services, {}).then((res) => {
         this.services = []
-        this.services = res.resData
-        this.queryParams.serviceName = this.services[0].serviceName
+        if (this.allFlag) {
+          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...res.resData]
+          this.queryParams.serviceNames.push(this.services[0].serviceName)
+        } else {
+          this.services = res.resData
+          this.queryParams.serviceName = this.services[0].serviceName
+        }
       })
     }
   }
@@ -190,14 +195,6 @@ export const company = { // 供应商
         this.companys = res.resData
         this.queryParams.companyName = this.companys[0]
       })
-    }
-  }
-}
-
-export const toFixed = { // 供应商
-  methods: {
-    toFixed (val) {
-      return Math.round(val * Math.pow(10, val)) / Math.pow(10, val)
     }
   }
 }

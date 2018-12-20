@@ -74,6 +74,7 @@ const api = {
     companys: apiFormat('operator/supplier/companys', 'upapi'), // g供应商
     getOutServiceChargeInfoBySupplier: apiFormat('operator/up/getOutServiceChargeInfoBySupplier', 'upapi'), // g供应商
     getCustomerChargeInfo: apiFormat('operator/up/getCustomerChargeInfo', 'upapi'), // g供应商
+    getOutServiceChargeInfo: apiFormat('operator/up/getOutServiceChargeInfo', 'upapi')
   },
   downApi: {
 

@@ -211,7 +211,6 @@ export default {
               name: (params.seriesName === '下游总调用次数'?'总调用条数': (params.seriesName === '计费条数'?'计费条数':'上游计费')),
               data: costs
             }
-                 console.log(finalObj)
             let tipTitle = (params.seriesName === '下游总调用次数'?'上游调用次数占比': (params.seriesName === '计费条数'?'下游调用次数占比':'上游调用费用详细信息'))
             renderChart(_this.$refs.charts2, setPieData(sname + tipTitle, finalObj))
        
