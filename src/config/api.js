@@ -74,7 +74,10 @@ const api = {
     companys: apiFormat('operator/supplier/companys', 'upapi'), // g供应商
     getOutServiceChargeInfoBySupplier: apiFormat('operator/up/getOutServiceChargeInfoBySupplier', 'upapi'), // g供应商
     getCustomerChargeInfo: apiFormat('operator/up/getCustomerChargeInfo', 'upapi'), // g供应商
-    getOutServiceChargeInfo: apiFormat('operator/up/getOutServiceChargeInfo', 'upapi')
+    getOutServiceChargeInfo: apiFormat('operator/up/getOutServiceChargeInfo', 'upapi'),
+    getOutServiceChargeInfoByDay: apiFormat('operator/up/getOutServiceChargeInfoByDay', 'upapi'), 
+    getAllOutServiceChargeInfo: apiFormat('operator/up/getAllOutServiceChargeInfo', 'upapi'), /*--获取服务对应上游信息的每天详细统计信息(导出excel表格)*/
+     
   },
   downApi: {
 

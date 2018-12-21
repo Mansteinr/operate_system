@@ -4,7 +4,7 @@ import { Loading } from 'element-ui'
 import { showModal } from '../../utils'
 import moment from 'moment'
 let loading
-export default function $http (url, data, method = 'post') {
+export default function $http (url, data, method = 'post', responseType = 'json') {
   showFullScreenLoading()
   if (data.time) {
     data.start = moment(data.time[0]).format('YYYY-MM-DD')
@@ -15,6 +15,7 @@ export default function $http (url, data, method = 'post') {
       method: method,
       url: url,
       data: data,
+      responseType: responseType,
       headers: {
         'mtk': localStorage.getItem('mtk'),
         'Content-Type': 'application/json;charset=UTF-8'
@@ -22,6 +23,8 @@ export default function $http (url, data, method = 'post') {
     }).then(res => {
       // 成功
       if (res.data.resCode) { // 成功并且返回码为1
+        resolve(res.data)
+      } else if (responseType === 'blob') {
         resolve(res.data)
       } else { // 返回吗 不为1
         if (res.data.resMsg[0].msgCode === '10005') { // 若没有登录 则强制到登录页面

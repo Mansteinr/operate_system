@@ -150,7 +150,12 @@ export const loginName = { // 客户登陆名称
     getHasService (op) {
       $http(this.API.upApi.hasServices, op).then((res) => {
         this.services = res.resData
-        this.queryParams.serviceName = this.services[0].serviceName
+        if (this.isServiceNames) {
+          this.queryParams.serviceNames = []
+          this.queryParams.serviceNames.push(this.services[0].serviceName)
+        } else {
+          this.queryParams.serviceName = this.services[0].serviceName
+        }
       })
     }
   }
