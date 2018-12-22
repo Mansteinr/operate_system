@@ -29,10 +29,11 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="客户名称：" prop="loginName">
+                <el-form-item label="客户名称：" prop="loginName">
             <el-select filterable v-model="queryParams.loginName" placeholder="请选择">
               <el-option
                 v-for="v in loginName"
+                @click.native.stop="changeCustomer(v)"
                 :key="v.customerId"
                 :title="`${v.customerName}(${v.loginName})`"
                 :data-customerid="v.customerId"
@@ -58,35 +59,29 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
+        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
           <el-table-column
             label="服务名称"
-            prop="outServiceName">
+            prop="serviceName">
           </el-table-column>
           <el-table-column
-            label="服务名称（中文）"
+            label="服务名称(中文)"
             prop="serviceNameZh">
           </el-table-column>
           <el-table-column
-            label="总调用条数"
+            label="计费调用量（条）"
+            sortable
+            prop="downChargedCount">
+          </el-table-column>
+          <el-table-column
+            label="调用总量（条）"
             sortable
             prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="计费调用量"
-            sortable
-            prop="chargeUsedCount">
-          </el-table-column>
-          <el-table-column
-            label="下游计费"
-            sortable
-            :formatter="formatter"
-            prop="downCost">
           </el-table-column>
         </Table>
       </div>
     </div>
-    <div class="card-wrapper card-content"  v-show="tableData2.length">
+        <div class="card-wrapper card-content">
       <div class="card-title">
         查询结果
         <el-button-group>
@@ -95,25 +90,19 @@
         </el-button-group>
       </div>
       <div class="card-container">
-       <div v-show="!tabFlag2 && !tableData2.length" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div> 
-        <Table class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2">
+        <div v-show="!tabFlag2 && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
+        <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div>
+        <Table ref="table" class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2">
           <el-table-column
-            label="上游公司名称"
-            prop="company">
+            label="服务名称"
+            prop="serviceName">
           </el-table-column>
           <el-table-column
-            label="上游总调用条数"
-            sortable
-            prop="usedCount">
+            label="服务名称(中文)"
+            prop="serviceNameZh">
           </el-table-column>
           <el-table-column
-            label="计费条数"
-            sortable
-            prop="chargeUsedCount">
-          </el-table-column>
-          <el-table-column
-            label="上游计费"
+            label="调用金额"
             sortable
             :formatter="formatter"
             prop="downCost">
@@ -126,20 +115,21 @@
 
 <script>
 import $http from '../../../common/js/ajax'
-import { setColumnData, renderChart, setPieData } from '../../../common/js/myCharts'
-import { switchMixin, hotKeyTime, loginName, businessType } from '../../../common/js/mixin'
+import { setRadiiData, renderChart } from '../../../common/js/myCharts'
+import { switchMixin, hotKeyTime, loginName,businessType } from '../../../common/js/mixin'
 import Table from '../../../base/Table'
 import QueryButton from '../../../base/QueryButton'
 export default {
-  mixins: [switchMixin, hotKeyTime, loginName, businessType],
+  mixins: [switchMixin, hotKeyTime, businessType, loginName],
   data () {
     return {
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
-        loginName: ''
+        loginName: '',
+        type: ''
       },
       tableData: [],
-      tableData2: []
+      tableData2: [],
     }
   },
   components: {
@@ -149,74 +139,45 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
-      this.queryParams.companyName = this.companys[0]
+      this.queryParams.loginName = this.loginName[0]
     },
     onSubmit () {
       this.$refs.querForm.validate((valid) => {
         if (valid) {
           this.resetTabFlag()
-          this.getCustomerChargeInfo()
+          this.UsageByName()
         }
       })
     },
     formatter(val) {
       return this.$refs.table.formatter(val)
     },
-    getCustomerChargeInfo () {
-      $http(this.API.upApi.getCustomerChargeInfo, this.queryParams).then((res) => {
-        // 图表
-        let xAxisData = [],
-        series= [{
-          name: '下游计费',
-          type: 'bar',
-          data:[]
-        },{
-          name: '下游总调用次数',
-          type: 'bar',
-          data:[]
-        },{
-          name: '计费条数',
-          type: 'bar',
-          data:[]
-        }]
-        this.tableData = res.resData.outServiceList
-        if (this.tableData.length) {
-          this.tableData.forEach(v => {
-            xAxisData.push(v.outServiceName)
-            series[0].data.push(v.downCost)
-            series[1].data.push(v.usedCount)
-            series[2].data.push(v.chargeUsedCount)
-          })
-        }
-        let chart = renderChart(this.$refs.charts, setColumnData('下游客户调用次数和费用', xAxisData, series))
-        let _this = this
-        chart.on('click', function(params) {
-            let index = params.dataIndex
-            let sname = res.resData.outServiceList[index].outServiceName
-            let list = res.resData.outServiceList[index].companyList
-            let costs = [],legend = []
-            _this.tableData2 = list
-            let paramKey = (params.seriesName === '下游总调用次数'?'usedCount': (params.seriesName === '计费条数'?'chargeUsedCount':'cost'))
-          // if (params.seriesName === '下游计费') {
-            list.forEach(v => {
-              let obj = {}
-              for (let k in v) {
-                obj.name = v['company']
-                obj.value = v[paramKey]
-              }
-              legend.push(v.company)
-              costs.push(obj)
-            })
-            let finalObj = {
-              legend: legend,
-              name: (params.seriesName === '下游总调用次数'?'总调用条数': (params.seriesName === '计费条数'?'计费条数':'上游计费')),
-              data: costs
-            }
-            let tipTitle = (params.seriesName === '下游总调用次数'?'上游调用次数占比': (params.seriesName === '计费条数'?'下游调用次数占比':'上游调用费用详细信息'))
-            renderChart(_this.$refs.charts2, setPieData(sname + tipTitle, finalObj))
-       
-          // }
+    UsageByName () {
+      $http(this.API.downApi.UsageByName, this.queryParams).then((res) => {
+        this.tableData = res.resData
+        this.tableData2 = res.resData
+        let pieCount = {}, pieCharge ={}
+        this.tableData.sort((a, b) => {
+          return -(a.downChargedCount - b.downChargedCount)
         })
+        this.tableData.forEach((v, k) => { //取前10名
+          if (k <= 10) {
+            pieCount[v.serviceNameZh] = v.downChargedCount
+          }
+        })
+
+        this.tableData2.sort((a, b) => {
+          return -(a.downCost - b.downCost)
+        })
+
+        this.tableData2.forEach((v, k) => {
+          if (k <= 10 ){
+            pieCharge[v.serviceNameZh] = v.downCost
+          }
+        })
+
+        renderChart(this.$refs.charts, setRadiiData( 'Top10各服务计费调用数量占比','计费调用数量', pieCount))
+        renderChart(this.$refs.charts2, setRadiiData( 'Top10各服务调用金额占比','计费调用数量', pieCharge))
       })
     }
   }

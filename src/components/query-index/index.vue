@@ -130,6 +130,7 @@ export default {
     onSubmit () {
       this.$refs.querForm.validate((valid) => {
         if (valid) {
+          this.resetTabFlag()
           this.initFun()
         }
       })
@@ -142,7 +143,7 @@ export default {
       return this.$refs.table.formatter(val)
     },
     UsageByDate () {
-      $http(this.API.upApi.UsageByDate, this.queryParams).then((res) => {
+      $http(this.API.downApi.UsageByDate, this.queryParams).then((res) => {
         let xAxisData = [], series= [{
               name: '共计使用量',
               data:[]
@@ -166,7 +167,7 @@ export default {
       })
     },
     UsageByCustomer () {
-      $http(this.API.upApi.UsageByCustomer, this.queryParams).then((res) => {
+      $http(this.API.downApi.UsageByCustomer, this.queryParams).then((res) => {
         let xAxisData = [], series= [{
               name: '共计使用量',
               data:[]

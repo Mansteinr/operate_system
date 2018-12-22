@@ -65,8 +65,6 @@ const api = {
   },
   upApi: {
     /*！能力域api*/
-    UsageByDate: apiFormat('operator/down/UsageByDate', 'upapi'), // 
-    UsageByCustomer: apiFormat('operator/down/UsageByCustomer', 'upapi'),
     businessTypes: apiFormat('operator/businessTypes', 'upapi'), // 获取行业类型
     customers: apiFormat('operator/customers', 'upapi'), // 所以的客户名称
     services: apiFormat('operator/services', 'upapi'), // 获取接口服务
@@ -75,12 +73,14 @@ const api = {
     getOutServiceChargeInfoBySupplier: apiFormat('operator/up/getOutServiceChargeInfoBySupplier', 'upapi'), // g供应商
     getCustomerChargeInfo: apiFormat('operator/up/getCustomerChargeInfo', 'upapi'), // g供应商
     getOutServiceChargeInfo: apiFormat('operator/up/getOutServiceChargeInfo', 'upapi'),
-    getOutServiceChargeInfoByDay: apiFormat('operator/up/getOutServiceChargeInfoByDay', 'upapi'), 
+    getOutServiceChargeInfoByDay: apiFormat('operator/up/getOutServiceChargeInfoByDay', 'upapi'),
     getAllOutServiceChargeInfo: apiFormat('operator/up/getAllOutServiceChargeInfo', 'upapi'), /*--获取服务对应上游信息的每天详细统计信息(导出excel表格)*/
-     
+
   },
   downApi: {
-
+    UsageByName: apiFormat('operator/down/UsageByName', 'upapi'),
+    UsageByDate: apiFormat('operator/down/UsageByDate', 'upapi'), // 
+    UsageByCustomer: apiFormat('operator/down/UsageByCustomer', 'upapi'),
   },
   secureApi: { // 安全中心
 

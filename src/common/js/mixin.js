@@ -8,6 +8,10 @@ export const switchMixin = {
     }
   },
   methods: {
+    resetTabFlag () {
+      this.tabFlag = false
+      this.tabFlag2 = false
+    },
     switchTab (value) {
       this.tabFlag = value
     },

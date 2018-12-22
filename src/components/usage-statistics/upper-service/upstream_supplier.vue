@@ -105,7 +105,8 @@ export default {
     onSubmit () {
       this.$refs.querForm.validate((valid) => {
         if (valid) {
-         this.getOutServiceChargeInfoBySupplier()
+          this.resetTabFlag()
+          this.getOutServiceChargeInfoBySupplier()
         }
       })
     },
