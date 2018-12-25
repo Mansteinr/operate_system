@@ -7,3 +7,7 @@ export function showModal (text = '操作成功', type = 'success') {
     center: true
   })
 }
+
+export function toFixed (val, len = 2) {
+  return Math.round(val * Math.pow(10, len)) / Math.pow(10, len)
+}

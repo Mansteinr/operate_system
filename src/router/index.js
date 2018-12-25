@@ -8,6 +8,7 @@ import upstreamCustomer from '../components/usage-statistics/upper-service/upstr
 import upstreamService from '../components/usage-statistics/upper-service/upstream_service'
 import upstreamServiceByData from '../components/usage-statistics/upper-service/upstream_serviceByData'
 import downstreamCustomer from '../components/usage-statistics/down-service/downstream_customer'
+import downstreamService from '../components/usage-statistics/down-service/downstream_service'
 import QueryLog from '../components/QueryLog'
 import Login from '../components/Login'
 import Demo from '../components/demo'
@@ -49,6 +50,10 @@ const router = new Router({
       path: '/downstreamCustomer',
       name: 'query_downstream_customer',
       component: downstreamCustomer
+    }, {
+      path: '/downstreamService',
+      name: 'query_downstream_service',
+      component: downstreamService
     }, {
       path: '/SupplierAnalysis',
       name: 'SupplierAnalysis',
