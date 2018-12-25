@@ -66,6 +66,7 @@ const api = {
   upApi: {
     /*！能力域api*/
     businessTypes: apiFormat('operator/businessTypes', 'upapi'), // 获取行业类型
+    logs: apiFormat('operator/logs', 'upapi'), // 获取行业类型
     customers: apiFormat('operator/customers', 'upapi'), // 所以的客户名称
     services: apiFormat('operator/services', 'upapi'), // 获取接口服务
     hasServices: apiFormat('operator/hasServices', 'upapi'), // 客户拥有的服务
@@ -87,6 +88,9 @@ const api = {
   },
   qualityanalyApi: { // 平台质量分析
 
+  },
+  paramsApi: {
+    queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName', 'upapi')
   }
 }
 export default api
