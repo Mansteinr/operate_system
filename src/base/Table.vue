@@ -4,7 +4,7 @@
     <el-table
       class="table"
       :data="tableDataComputed.filter(data => filterTable(data))"
-      :show-summary=true
+      :show-summary="showSummary"
       :summary-method="getSummaries"
       style="width: 100%">
         <slot></slot>
@@ -32,6 +32,10 @@
       tableData: {
         type: Array,
         default: () => []
+      },
+      showSummary: {
+        type: Boolean,
+        default: true
       }
     },
     components: {
