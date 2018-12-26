@@ -82,6 +82,7 @@ const api = {
     UsageByName: apiFormat('operator/down/UsageByName', 'upapi'),
     UsageByDate: apiFormat('operator/down/UsageByDate', 'upapi'), // 
     UsageByCustomer: apiFormat('operator/down/UsageByCustomer', 'upapi'),
+    UsageByResultNew: apiFormat('operator/down/UsageByResultNew', 'upapi'),
   },
   secureApi: { // 安全中心
 
