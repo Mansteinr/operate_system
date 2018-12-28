@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 import ElementUI from 'element-ui'
-// import moment from 'moment'
 import VueI18n from 'vue-i18n'
 import API from './config/api'
 import store from './store'

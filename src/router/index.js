@@ -11,6 +11,7 @@ import downstreamCustomer from '../components/usage-statistics/down-service/down
 import downstreamService from '../components/usage-statistics/down-service/downstream_service'
 import QueryLog from '../components/operation-tools/query-logs'
 import queryQuality from '../components/operation-tools/query_quality'
+import queryGuid from '../components/operation-tools/query-guid'
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import QualityAnalysis from '../components/QualityAnalysis'
@@ -63,6 +64,10 @@ const router = new Router({
       path: '/queryQuality',
       name: 'query_quality',
       component: queryQuality
+    },{
+      path: '/queryGuid',
+      name: 'query_guid',
+      component: queryGuid
     }, {
       path: '/SupplierAnalysis',
       name: 'SupplierAnalysis',
