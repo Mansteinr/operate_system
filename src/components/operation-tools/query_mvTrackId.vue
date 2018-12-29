@@ -1,0 +1,94 @@
+<template>
+  <div class="template-wrapper">
+    <div class="card-wrapper">
+      <div class="card-title">
+        查询条件
+      </div>
+      <div class="card-container">
+        <el-form :inline="true" :rules="rules" ref="querForm" :model="queryParams" class="query-form">
+          <el-form-item label="mvTrackId：" prop="mvTrackId">
+            <el-input v-model="queryParams.guid" placeholder="请输入mvTrackId"></el-input>
+          </el-form-item>
+          <el-form-item class="query-item">
+           <query-button @reset="reset" @submit="onSubmit"></query-button>
+          </el-form-item>
+          <el-form-item label="客户名称：" prop="loginName">
+            <el-select filterable v-model="queryParams.loginName" placeholder="请选择">
+              <el-option
+                v-for="v in loginName"
+                @click.native.stop="changeCustomer(v)"
+                :key="v.customerId"
+                :title="`${v.customerName}(${v.loginName})`"
+                :data-customerid="v.customerId"
+                :label="v.customerName"
+                :value="v.loginName">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+    <div class="card-wrapper card-content">
+      <div class="card-title">
+        查询结果
+      </div>
+      <div class="card-container">
+        <JsonEditor ref="JsonEditor"></JsonEditor>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import $http from '../../common/js/ajax'
+import JsonEditor from '../../base/JsonEditor'
+import QueryButton from '../../base/QueryButton'
+import { loginName } from '../../common/js/mixin'
+export default {
+  mixins: [ loginName ],
+  data () {
+    let guidRule = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('guid不能为空'));
+      } else {
+        callback()
+      }
+    }
+    return {
+      rules: {
+        guid: [{ validator: guidRule, trigger: 'change' },]
+      },
+      queryParams: {
+        guid: ''
+      },
+      json: {}
+    }
+  },
+  components: {
+    JsonEditor,
+    QueryButton
+  },
+  methods: {
+    reset () {
+      this.$refs.querForm.resetFields()
+    },
+    onSubmit () {
+      this.$refs.querForm.validate((valid) => {
+        if (valid) {
+         this.logDetail()
+        }
+      })
+    },
+    logDetail () {
+      $http(this.API.upApi.logDetail, this.queryParams).then((res) => {
+        this.$refs.JsonEditor.renderJson(res.resData)
+      })
+    }
+  }
+}
+</script>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="stylus" rel="stylesheet/stylus">
+  .el-form-item__label
+    paddint-right 0 !important
+</style>
