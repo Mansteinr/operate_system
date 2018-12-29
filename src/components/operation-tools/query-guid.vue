@@ -6,7 +6,7 @@
       </div>
       <div class="card-container">
         <el-form :inline="true" :rules="rules" ref="querForm" :model="queryParams" class="query-form">
-          <el-form-item label="guid：" prop="guid">
+          <el-form-item label="guid：" prop="guid" style="width: 45%;">
             <el-input v-model="queryParams.guid" placeholder="请输入guid"></el-input>
           </el-form-item>
           <el-form-item class="query-item">
@@ -20,7 +20,7 @@
         查询结果
       </div>
       <div class="card-container">
-        <JsonEditor :json="json"></JsonEditor>
+        <JsonEditor ref="JsonEditor"></JsonEditor>
       </div>
     </div>
   </div>
@@ -66,13 +66,12 @@ export default {
     },
     logDetail () {
       $http(this.API.upApi.logDetail, this.queryParams).then((res) => {
-        this.json = res.resData
+        this.$refs.JsonEditor.renderJson(res.resData)
       })
     }
   }
 }
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus" rel="stylesheet/stylus">
 </style>

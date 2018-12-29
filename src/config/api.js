@@ -61,7 +61,8 @@ const api = {
     querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi'),
     projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb'),
     loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb'),
-    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi')
+    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi'),
+    imageapi: baseConfig.prod.imageapi
   },
   upApi: {
     /*！能力域api*/

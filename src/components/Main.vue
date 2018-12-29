@@ -144,11 +144,14 @@ export default {
       background url('../common/images/logo.png') no-repeat 16px center
 
   .m-body 
+    .el-main
+      overflow-y scroll
     .aside 
       height 100%
       min-width 190px
       background none repeat scroll 0 0 rgba(0, 0, 0, 0.1)
       overflow auto
+      overflow-y scroll
       .el-menu 
         background-color rgba(0, 0, 0, 0.1)
         .el-menu-item 
