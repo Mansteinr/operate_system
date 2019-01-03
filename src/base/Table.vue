@@ -15,6 +15,7 @@
 
 <script>
   import Pagination from './Pagination'
+  import moment from 'moment'
   export default {
     data () {
       return {
@@ -85,6 +86,9 @@
       },
       formatter (val, param="downCost") {
         return Math.round(val[param] * 100) / 100
+      },
+      formatterTime (val) {
+        return moment(val).format('YYYY-MM-DD HH:mm:ss')
       },
       filterTable (data) {
         // if (!this.search) {

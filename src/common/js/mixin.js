@@ -136,15 +136,22 @@ export const loginName = { // 客户登陆名称
       $http(this.API.upApi.customers, {}).then((res) => {
         this.loginNameOrigin = []
         this.loginNameOrigin = res.resData
-        this.loginName = [...[{
-          customerId: '',
-          loginName: '',
-          customerName: '全部'
-        }], ...this.loginNameOrigin]
+        if(this.noAllLogin) {
+          this.loginName = this.loginNameOrigin
+        } else {
+          this.loginName = [...[{
+            customerId: '',
+            loginName: '',
+            customerName: '全部'
+          }], ...this.loginNameOrigin]
+        }
         this.queryParams.loginName = this.loginName[0].loginName
       })
     },
     changeCustomer (v) {
+      if (this.noAllLogin) {
+        return
+      }
       if (v.customerId) {
         this.getHasService({ customerId: v.customerId })
       } else {

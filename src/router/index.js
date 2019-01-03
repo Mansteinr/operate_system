@@ -13,6 +13,8 @@ import QueryLog from '../components/operation-tools/query_logs'
 import queryQuality from '../components/operation-tools/query_quality'
 import queryGuid from '../components/operation-tools/query_guid'
 import queryMvTrackId from '../components/operation-tools/query_mvTrackId'
+import operationCache from '../components/data-persistence/operation-cache'
+import dataReset from '../components/data-persistence/data-reset'
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import QualityAnalysis from '../components/QualityAnalysis'
@@ -65,14 +67,22 @@ const router = new Router({
       path: '/queryQuality',
       name: 'query_quality',
       component: queryQuality
-    },{
+    }, {
       path: '/queryGuid',
       name: 'query_guid',
       component: queryGuid
-    },{
+    }, {
       path: '/queryMvTrackId',
       name: 'query_mvTrackId',
       component: queryMvTrackId
+    }, {
+      path: '/operationCache',
+      name: 'opreat_cache',
+      component: operationCache
+    }, {
+      path: '/dataReset',
+      name: 'query_dataReset',
+      component: dataReset
     }, {
       path: '/SupplierAnalysis',
       name: 'SupplierAnalysis',

@@ -176,7 +176,7 @@ export default {
     }
     return {
       rules: {
-         time: [{ validator: timeRule, trigger: 'change' },]
+         time: [{ validator: timeRule, trigger: 'change' }]
       },
       queryParams: {
         loginName: '',

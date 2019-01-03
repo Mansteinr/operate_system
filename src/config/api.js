@@ -72,6 +72,7 @@ const api = {
     services: apiFormat('operator/services', 'upapi'), // 获取接口服务
     hasServices: apiFormat('operator/hasServices', 'upapi'), // 客户拥有的服务
     logDetail: apiFormat('operator/logDetail', 'upapi'), // g供应商
+    logByMvTrackId: apiFormat('operator/customer/logByMvTrackId', 'upapi'),
     companys: apiFormat('operator/supplier/companys', 'upapi'), // g供应商
     getOutServiceChargeInfoBySupplier: apiFormat('operator/up/getOutServiceChargeInfoBySupplier', 'upapi'), // g供应商
     getCustomerChargeInfo: apiFormat('operator/up/getCustomerChargeInfo', 'upapi'), // g供应商
@@ -91,6 +92,13 @@ const api = {
   },
   qualityanalyApi: { // 平台质量分析
 
+  },
+  redisApi: {
+    query:  apiFormat('operator/redis/query', 'upapi')
+  },
+  persistApi: {
+    persistInfos: apiFormat('operator/persist/persistInfos', 'upapi'),
+    persistQuery: apiFormat('operator/persist/query', 'upapi'),
   },
   paramsApi: {
     queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName', 'upapi')
