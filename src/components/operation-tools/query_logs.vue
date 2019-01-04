@@ -310,7 +310,6 @@ export default {
         return 
       }
       let day = moment(this.queryParams.date).format('YYYY-MM-DD')
-      // return
       options.start = day + ' ' + moment(this.queryParams.start1).format('HH:mm:ss')
       options.end = day + ' ' + moment(this.queryParams.end1).format('HH:mm:ss')
       options.serviceName = this.queryParams.serviceName
@@ -322,7 +321,9 @@ export default {
   }
 }
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus" rel="stylesheet/stylus">
 </style>
+
+
+          

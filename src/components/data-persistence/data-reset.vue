@@ -30,6 +30,7 @@
           </div>
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
+           <el-button v-show="isShowDelFlag" class="query-button" type="danger" @click="deleteFun">删除</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -39,32 +40,69 @@
         查询结果
       </div>
       <div class="card-container">
-        <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
+        <div v-show="!tableData.length && !resTableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <Table ref="table" class="table" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
           <el-table-column
-            label="结果"
-            width="80"
-            prop="rsp.MESSAGE">
+            label="序号"
+            type="index"
+            width="50">
           </el-table-column>
           <el-table-column
-            label="状态"
-            width="100"
-            prop="rsp.RESULT">
-          </el-table-column>
-          <el-table-column
-            label="数据源"
-            sortable
-            prop="tail.dataSource">
-          </el-table-column>
-          <el-table-column
-            label="缓存时间"
-            width="200"
-            :formatter="formatter"
-            prop="tail.cacheTime">
+            v-for="(v, k) in paramsKey"
+            :key="k"
+            :width="v === 'name' ? '80' : '180'"
+            :label="formatterLabel(v)"
+            prop="params">
+             <template slot-scope="scope">{{scope.row.params[v]}}</template>
           </el-table-column>
           <el-table-column
             label="guid"
-            prop="tail.guid">
+            width="260"
+            prop="guid">
+          </el-table-column>
+          <el-table-column
+            label="数据源"
+            title="dataSource"
+            prop="dataSource">
+          </el-table-column>
+          <el-table-column
+            label="缓存时间"
+            width="160"
+            :formatter="formatter"
+            prop="cacheTime">
+          </el-table-column>
+          <el-table-column
+            label="查询结果"
+            width="100"
+            prop="result">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="scope.row.result !== 'T' ? 'danger' : 'success'"
+                  disable-transitions>{{scope.row.result | formatterResult}}</el-tag>
+              </template>
+          </el-table-column>
+        </Table>
+        <Table class="table" :showSummary="false" :tableData="resTableData" :tatalPage="resTableData.length" v-show="resTableData.length">
+          <el-table-column
+            label="序号"
+            type="index"
+            width="50">
+          </el-table-column>
+          <el-table-column
+            v-for="(v, k) in paramsKey"
+            :key="k"
+            :label="formatterLabel(v)"
+            prop="params">
+             <template slot-scope="scope">{{scope.row[v]}}</template>
+          </el-table-column>
+          <el-table-column
+            label="操作结果"
+            prop="responeMessage">
+              <template slot-scope="scope">
+                <el-tag
+                  :type="scope.row.responeMessage !== '成功' ? 'danger' : 'success'"
+                  disable-transitions>{{scope.row.responeMessage}}</el-tag>
+              </template>
           </el-table-column>
         </Table>
       </div>
@@ -84,9 +122,12 @@ export default {
         persistId: ''
       },
       tableData: [],
+      resTableData: [],
       paramsArr: [], 
       paramsKey: [],
-      persistArr: []
+      persistArr: [],
+      columnArr: [],
+      isShowDelFlag: false
     }
   },
   components: {
@@ -122,11 +163,50 @@ export default {
       }
     })
   },
+  filters: {
+    formatterResult(val) {
+      let label = ''
+      switch (val) {
+        case 'D':
+          label = '未查询到'
+          break;
+        case 'T':
+          label = '一致'
+          break;
+        case 'F':
+          label = '不一致'
+          break;
+        case '-1':
+          label = '参数错误'
+          break;
+        default:
+          label = val
+          break;
+      }
+      return label
+    }
+  },
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
     },
+    deleteFun () {
+      let tableArr = []
+      tableArr = [...tableArr, ...this.tableData]
+      tableArr.forEach(v => {
+        let op = {
+          persistId: v.persistId,
+          params: v.params
+        }
+        $http(this.API.persistApi.persistDel, op).then((res)=>{
+          this.tableData = []
+          this.isShowDelFlag = false
+          this.resTableData.push(Object.assign(v.params,{responeMessage: res.resMsg[0].msgText}))
+        })
+      })
+    },
     onSubmit () {
+      this.tableData = []
       let arr = [], isNullFlag = false
       Array.from(document.querySelectorAll('.param-wrapper-box')).forEach(v => {
         let options = {
@@ -134,20 +214,23 @@ export default {
         }
         options.params = {}
         Array.from(v.getElementsByTagName('input')).forEach(v1 => {
-          if (!v1.value) {
+          if (!v1.value || v1.classList.contains('m-error')) {
             isNullFlag = true
           } else {
             options.params[v1.name] = v1.value
           }
         })
         arr.push(options)
-        // this.persistQuery(options)
       })
 
       if (arr.length && isNullFlag) {
-        showModal('参数有空的，请检查','error')
+        showModal('参数有空或者错误，请检查','error')
+        return
       }
-      
+      this.resTableData = []
+      arr.forEach(v => {
+        this.persistQuery(v)
+      })
     },
     selectService(val) {
       this.paramsArr = []
@@ -162,7 +245,34 @@ export default {
       e.target.parentNode.remove(true)
     },
     formatter (val) {
-      return this.$refs.table.formatterTime(val.tail.cacheTime)
+      return this.$refs.table.formatterTime(val.cacheTime)
+    },
+    formatterLabel (val) {
+      let label = ''
+      switch (val) {
+        case 'accountNo':
+          label = '银行卡号'
+          break;
+        case 'idCard':
+          label = '身份证号'
+          break;
+        case 'mobile':
+          label = '手机号码'
+          break;
+        case 'name':
+          label = '姓名'
+          break;
+        case 'plateNumber':
+          label = '车牌号'
+          break;
+        case 'plateType':
+          label = '号牌种类'
+          break;
+        default:
+          label = val
+          break;
+      }
+     return label
     },
     persistInfos () {
       $http(this.API.persistApi.persistInfos, {}).then((res)=>{
@@ -171,8 +281,13 @@ export default {
     },
     persistQuery (op) {
       $http(this.API.persistApi.persistQuery, op).then((res) => {
-        console.log(res)
-        // this.tableData.push(res.resData)
+        let obj =JSON.parse(res.resData).tail? JSON.parse(JSON.parse(res.resData).tail) : JSON.parse(res.resData)
+        obj.result = JSON.parse(res.resData).result
+        if (obj.result === 'T') {
+          this.isShowDelFlag = true
+        }
+        Object.assign(obj, op)
+        this.tableData.push(obj)
       })
     }
   }

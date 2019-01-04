@@ -99,6 +99,7 @@ const api = {
   persistApi: {
     persistInfos: apiFormat('operator/persist/persistInfos', 'upapi'),
     persistQuery: apiFormat('operator/persist/query', 'upapi'),
+    persistDel: apiFormat('operator/persist/del', 'upapi'),
   },
   paramsApi: {
     queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName', 'upapi')
