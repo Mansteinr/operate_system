@@ -188,7 +188,10 @@ export default {
   },
   methods: {
     reset () {
-      this.$refs.querForm.resetFields()
+      this.tableData = []
+      this.resTableData = []
+      this.paramsArr = []
+      this.paramsKey = []
     },
     deleteFun () {
       let tableArr = []

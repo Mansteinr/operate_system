@@ -94,7 +94,10 @@ const api = {
 
   },
   redisApi: {
-    query:  apiFormat('operator/redis/query', 'upapi')
+    query: apiFormat('operator/redis/query', 'upapi')
+  },
+  financeApi: {
+    upStreamCount: apiFormat('operator/finance/upStreamCount', 'upapi')
   },
   persistApi: {
     persistInfos: apiFormat('operator/persist/persistInfos', 'upapi'),
