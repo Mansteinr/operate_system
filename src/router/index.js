@@ -16,6 +16,8 @@ import queryMvTrackId from '../components/operation-tools/query_mvTrackId'
 import operationCache from '../components/data-persistence/operation-cache'
 import dataReset from '../components/data-persistence/data-reset'
 import upStreamCount from '../components/data-output/query_upStreamCount'
+import mobileOperator from '../components/data-output/query_mobileOperator'
+import qualityAnalysis from '../components/quality-analysis/supplier_quality_analysis'
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import QualityAnalysis from '../components/QualityAnalysis'
@@ -88,6 +90,14 @@ const router = new Router({
       path: '/upStreamCount',
       name: 'query_upStreamCount',
       component: upStreamCount
+    }, {
+      path: '/mobileOperator',
+      name: 'query_mobileOperator',
+      component: mobileOperator
+    }, {
+      path: '/qualityAnalysis',
+      name: 'supplier_quality_analysis',
+      component: qualityAnalysis
     }, {
       path: '/SupplierAnalysis',
       name: 'SupplierAnalysis',

@@ -97,7 +97,14 @@ const api = {
     query: apiFormat('operator/redis/query', 'upapi')
   },
   financeApi: {
-    upStreamCount: apiFormat('operator/finance/upStreamCount', 'upapi')
+    upStreamCount: apiFormat('operator/finance/upStreamCount', 'upapi'),
+    mobileOperator: apiFormat('operator/finance/mobileOperator', 'upapi')
+  },
+  // boss提供的接口
+  supplierApi: {
+    querySupInfoList: apiFormat('operator/supplier/querySupInfoList', 'upapi'),
+    queryPipeList: apiFormat('operator/supplier/queryPipeList', 'upapi'),
+    querySupServiceList: apiFormat('operator/supplier/querySupServiceList', 'upapi')
   },
   persistApi: {
     persistInfos: apiFormat('operator/persist/persistInfos', 'upapi'),
