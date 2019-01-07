@@ -109,7 +109,7 @@
 
 <script>
 /* eslint-disable */
-import $http from '../common/js/ajax'
+import {$http} from '../common/js/ajax'
 import moment from 'moment'
 import Pagination from '../base/Pagination'
 export default {

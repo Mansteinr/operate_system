@@ -91,13 +91,15 @@ const api = {
 
   },
   qualityanalyApi: { // 平台质量分析
-
+    supplierRealTime: apiFormat('qualityanalyze/supplier/realTime', 'upapi'),
+    supplierHistory: apiFormat('qualityanalyze/supplier/history', 'upapi'),
   },
   redisApi: {
     query: apiFormat('operator/redis/query', 'upapi')
   },
   financeApi: {
     upStreamCount: apiFormat('operator/finance/upStreamCount', 'upapi'),
+    trackDetail: apiFormat('operator/finance/trackDetail', 'upapi'),
     mobileOperator: apiFormat('operator/finance/mobileOperator', 'upapi')
   },
   // boss提供的接口

@@ -43,8 +43,20 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
+          <div class="demo-wrapper">
+            <el-form-item :label="`${v.label}${k+1}：`" prop="serviceName" class="demo-input-suffix" v-for="(v, k) in tableHeader">
+              <el-input
+                :placeholder="`${v.placeholder1}`"
+              >
+              </el-input>
+              :
+              <el-input :placeholder="`${v.placeholder2}`">
+              </el-input>
+            </el-form-item>
+          </div>
+          <el-form-item class="query-item"> 
+            <query-button @reset="reset" @submit="onSubmit"></query-button>
+            <el-button class="query-button" @click="addHeader"  type="primary" plain>新增</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -55,38 +67,16 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
-          <el-table-column
-            label="日期"
-            sortable
-            prop="date">
-          </el-table-column>
-          <el-table-column
-            label="电信"
-            sortable
-            prop="电信">
-          </el-table-column>
-          <el-table-column
-            label="联通"
-            sortable
-            prop="联通">
-          </el-table-column>
-          <el-table-column
-            label="移动"
-            sortable
-            prop="移动">
-          </el-table-column>
-        </Table>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {$http} from '../../common/js/ajax'
+import {$downFile} from '../../common/js/ajax'
 import { hotKeyTime, loginName, services } from '../../common/js/mixin'
-import Table from '../../base/Table'
 import QueryButton from '../../base/QueryButton'
+import { trim } from '../../utils'
 export default {
   mixins: [hotKeyTime,loginName, services],
   data () {
@@ -95,47 +85,41 @@ export default {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
         loginName: '',
         serviceName: '',
-        type: ''
+        options: {}
       },
       noAllLogin: true,
-      tableData: []
+      tableData: [],
+      tableHeader: []
     }
   },
   components: {
-    Table,
     QueryButton
   },
   methods: {
     reset () {
-      this.$refs.querForm.resetFields()
-      this.queryParams.serviceName = this.services[0].serviceName
+
     },
     onSubmit () {
-      this.$refs.querForm.validate((valid) => {
-        if (valid) {
-         this.mobileOperator()
-        }
+      let divs = Array.from(document.getElementsByClassName('demo-input-suffix'))
+      if (divs.length) {
+        Array.from(document.getElementsByClassName('demo-input-suffix')).forEach(v => {
+          let params = v.getElementsByTagName('input')
+          if (trim(params[0].value) && trim(params[1].value)) {
+            this.queryParams.options[params[0].value] = params[1].value
+          }
+        })
+      }
+      this.trackDetail(this.queryParams)
+    },
+    addHeader () {
+      this.tableHeader.push({
+        label: '表头',
+        placeholder1: '请输入名称',
+        placeholder2: '请输入对应字段'
       })
     },
-    mobileOperator () {
-      $http(this.API.financeApi.mobileOperator, this.queryParams).then((res) => {
-        let responseObj = {}
-        res.resData.forEach(v => {
-          v.dateUsages.forEach(v1 => {
-            if (!responseObj[v1.date]) {
-              responseObj[v1.date] = {
-                [v.isp] :v1.num,
-                "date": v1.date
-              }
-            } else {
-              responseObj[v1.date][v.isp] = v1.num
-            }
-          })
-        })
-        for (let k in responseObj) {
-          this.tableData.push(responseObj[k])
-        }
-      })
+    trackDetail (op) {
+      $downFile(this.API.financeApi.trackDetail, op)
     }
   }
 }
@@ -143,4 +127,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus" rel="stylesheet/stylus">
+.demo-input-suffix
+  .el-form-item__content
+    display flex
+    .el-input
+      width calc(50% - 6px)
 </style>

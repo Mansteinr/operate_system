@@ -1,4 +1,4 @@
-import $http from './ajax'
+import { $http } from './ajax'
 // 切换table相关方法
 export const switchMixin = {
   data () {
@@ -195,6 +195,7 @@ export const services = { // 接口类型
     }
   }
 }
+
 export const company = { // 供应商
   data () {
     return {
@@ -211,6 +212,95 @@ export const company = { // 供应商
         this.companys = res.resData
         this.queryParams.companyName = this.companys[0]
       })
+    }
+  }
+}
+
+// boss提供的接口
+export const querySupInfo = {
+   // 供应商名称
+  data () {
+    return {
+      querySupInfoList: []
+    }
+  },
+  mounted () {
+    this.querySupInfo()
+  },
+  methods: {
+    querySupInfo () {
+      $http(this.API.supplierApi.querySupInfoList, {}).then((res) => {
+        this.querySupInfoList = []
+        this.querySupInfoList = res.resData.supInfos
+        this.supId = this.querySupInfoList[0].supId
+        this.changeSupInfo()
+      })
+    },
+    changeSupInfo () {
+      this.querySupService({supId: this.supId})
+    }
+  }
+}
+export const querySupService = {
+   // 供应商对应服务
+  data () {
+    return {
+      querySupServiceList: []
+    }
+  },
+  methods: {
+    querySupService (op) {
+      $http(this.API.supplierApi.querySupServiceList, op).then((res) => {
+        this.querySupServiceList = []
+        this.querySupServiceList = res.resData.supServiceInfos
+        this.supServiceId = this.querySupServiceList[0].supServiceId
+        this.changeSupService()
+      })
+    },
+    changeSupService () {
+      this.queryPipe()
+    }
+  }
+}
+export const queryPipe = {
+   // 通道名称
+  data () {
+    return {
+      queryPipeList: [],
+      queryPipeOriList: []
+    }
+  },
+  methods: {
+    queryPipe () {
+      $http(this.API.supplierApi.queryPipeList, {supServiceId: this.supServiceId}).then((res) => {
+        this.queryPipeList = []
+        this.queryPipeOriList = res.resData.simplePipeInfos
+        this.queryPipeList = [...[{
+          pipeId: '432423',
+          pipeName: '全部'
+        }], ...res.resData.simplePipeInfos]
+        this.queryParams.classNames = []
+        this.queryParams.classNames.push(this.queryPipeList[0].pipeName)
+        this.selectPipe(this.queryPipeList[0])
+      })
+    },
+    selectPipe (v) {
+      if (v.pipeName === '全部') {
+        this.queryParams.classNames = []
+        this.queryParams.classNames.push('全部')
+        this.classNames = []
+        this.queryPipeOriList.forEach(v => {
+          this.classNames.push(v.pipeName)
+        })
+      } else {
+        let index = this.queryParams.classNames.findIndex((value, index, arr) => {
+          return value ==='全部'
+        })
+        if (index > -1) {
+          this.queryParams.classNames.splice(index,1)
+        }
+        this.classNames = this.queryParams.classNames
+      }
     }
   }
 }

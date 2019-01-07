@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import $http from '../../common/js/ajax'
+import { $http } from '../../common/js/ajax'
 import { setLineData, renderChart } from '../../common/js/myCharts'
 import echarts from 'echarts'
 import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'

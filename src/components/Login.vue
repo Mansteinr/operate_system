@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import $http from '../common/js/ajax'
+import { $http } from '../common/js/ajax'
 import { showModal } from '../utils'
 import { mapMutations } from 'vuex' // 引入mapMutations函数
 import md5 from 'js-md5'

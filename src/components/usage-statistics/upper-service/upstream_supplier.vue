@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import $http from '../../../common/js/ajax'
+import { $http } from '../../../common/js/ajax'
 import { setLineData, renderChart } from '../../../common/js/myCharts'
 import { switchMixin, hotKeyTime, company } from '../../../common/js/mixin'
 import Table from '../../../base/Table'

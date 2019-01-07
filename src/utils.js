@@ -1,5 +1,7 @@
 
 import { Message } from 'element-ui'
+import moment from 'moment'
+// 弹框
 export function showModal (text = '操作成功', type = 'success') {
   Message({
     message: text,
@@ -7,11 +9,12 @@ export function showModal (text = '操作成功', type = 'success') {
     center: true
   })
 }
-
+// 保留两位小数
 export function toFixed (val, len = 2) {
   return Math.round(val * Math.pow(10, len)) / Math.pow(10, len)
 }
 
+// 身份证检验
 export function checkIdCard (card) {
   if (card === '') { //是否为空  
 	return ('身份证号不能为空');
@@ -31,7 +34,7 @@ export function checkIdCard (card) {
   return ('身份证校正通过');
   return true;
 }
-
+// 手机号码检测
 export function checkMoble (val) {
   var reg = /^1[0-9]\d{9}$/;
   if (reg.test(val)) {
@@ -40,16 +43,16 @@ export function checkMoble (val) {
 	 return false;
   }
 }
-
+// 是否是数字
 export function checkNumber (val) {
-var reg = /^[1-9]+[0-9]*]*$/
+  var reg = /^[1-9]+[0-9]*]*$/
   if (reg.test(val)) {
 	return true;
   } else {
 	return false;
   }
 }
-
+// 是否为空
 export function checkNull (val) {
    if (!val || val == "" || val == '--') {
 	return false;
@@ -60,6 +63,19 @@ export function checkNull (val) {
 	return false;
   }
   return true;
+}
+// 去除字符串两端空格
+export function trim(val) {
+  return val? val.replace(/^\s\s*/, '').replace(/\s\s*$/, '') : ''
+}
+
+export function mockTime() {
+  let startTime = + new Date() - 1 * 24 * 3600 * 1000;
+  let arr = [];
+  for (let i = 0; i <= 1440; i++) {
+    arr.push(moment(startTime + (i * 60 * 1000)).format('YYYYMMDDHHmm'))
+  }
+  return arr
 }
 
   /*身份证号码规则验证*/

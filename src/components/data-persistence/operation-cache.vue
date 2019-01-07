@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import $http from '../../common/js/ajax'
+import { $http } from '../../common/js/ajax'
 import { services } from '../../common/js/mixin'
 import Table from '../../base/Table'
 import QueryButton from '../../base/QueryButton'

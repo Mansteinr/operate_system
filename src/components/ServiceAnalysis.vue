@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import $http from '../common/js/ajax'
+import {$http} from '../common/js/ajax'
 import moment from 'moment'
 import { setOtherLineData } from '../common/js/myCharts'
 import echarts from 'echarts'

@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import $http from '../../common/js/ajax'
+import { $http } from '../../common/js/ajax'
 import Table from '../../base/Table'
 import QueryButton from '../../base/QueryButton'
 import { checkIdCard, checkMoble, checkNumber, showModal } from '../../utils'

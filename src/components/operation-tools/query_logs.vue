@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import $http from '../../common/js/ajax'
+import { $http } from '../../common/js/ajax'
 import { setRadiiData, renderChart } from '../../common/js/myCharts'
 import { switchMixin, businessType, loginName,services } from '../../common/js/mixin'
 import Table from '../../base/Table'

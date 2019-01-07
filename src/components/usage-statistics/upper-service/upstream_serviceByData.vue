@@ -71,8 +71,8 @@
 </template>
 
 <script>
-import $http from '../../../common/js/ajax'
-import {hotKeyTime, services, loginName } from '../../../common/js/mixin'
+import { $http } from '../../../common/js/ajax'
+import { hotKeyTime, services, loginName } from '../../../common/js/mixin'
 import Table from '../../../base/Table'
 import QueryButton from '../../../base/QueryButton'
 import moment from 'moment'

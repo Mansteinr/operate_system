@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import $http from '../../common/js/ajax'
+import { $http } from '../../common/js/ajax'
 import JsonEditor from '../../base/JsonEditor'
 import QueryButton from '../../base/QueryButton'
 export default {

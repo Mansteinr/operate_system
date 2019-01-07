@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import $http from '../common/js/ajax'
+import {$http} from '../common/js/ajax'
 import { showModal } from '../utils'
 export default {
   data () {

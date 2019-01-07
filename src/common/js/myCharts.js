@@ -259,15 +259,15 @@ export function setOtherLineData (xAxisData, series) {
   if (xAxisData.length > 20) {
     option.dataZoom = dataBar
     option.dataZoom[0].bottom = 35
-    option.grid.bottom = 120 + Math.ceil(legendData.length / 8) * 20;
+    option.grid.bottom = 100
   } else {
-    option.grid.bottom = 70;
+    option.grid.bottom = 30
   }
   return option
 }
 
-export function setColumnData (title, xAxisData, series) {
-
+export function setColumnData (title, xAxisData, series,subTitle) {
+  console.log(subTitle)
   var legendData = []
   var arrLength = series.length > 21 ? 20 : series.length;
   for (var i = 0; i < arrLength; i++) {
@@ -276,8 +276,9 @@ export function setColumnData (title, xAxisData, series) {
   var option = {
     title: {
       text: title,
-      left: title.subTitle ? 'center' : '1%',
-      top: title.subTitle ? '10' : '-1%',
+      subtext: subTitle,
+      left: subTitle ? 'center' : '1%',
+      top: subTitle ? '10' : '-1%',
       textStyle: {
         fontSize: 16,
         fontWeight: "normal",
@@ -294,7 +295,7 @@ export function setColumnData (title, xAxisData, series) {
     grid: {
       show: true,
       left: '7%',
-      top: title.subTitle ? 70 : 34,
+      top: subTitle ? 70 : 34,
       bottom: 100,
       right: "3%",
       borderWidth: 0,
@@ -309,9 +310,8 @@ export function setColumnData (title, xAxisData, series) {
     option.dataZoom[0].bottom = 35
     option.grid.bottom = 70 + Math.ceil(legendData.length / 8) * 20;
   } else {
-    option.grid.bottom = 70;
+    option.grid.bottom = 100;
   }
-  // console
   return option;
 }
 
@@ -459,11 +459,12 @@ export function setRadiiData (title, tipTitle, obj) {
   return option;
 }
 export function renderChart (container, option) {
-  var myChart = echarts.init(container)
+  var myChart = echarts.init(container),
+      DOMs = document.getElementsByClassName('card-container')
   myChart.clear()
   myChart.setOption(option)
   myChart.resize({
-    width: document.getElementsByClassName('no-charts')[0].clientWidth > 0 ? document.getElementsByClassName('no-charts')[0].clientWidth : document.getElementsByClassName('charts')[0].clientWidth
+    width: DOMs[0].clientWidth > 0 ? DOMs[0].clientWidth : document.getElementsByClassName('charts')[0].clientWidth
   })
   return myChart
 }

@@ -101,8 +101,7 @@
 </template>
 
 <script>
-import moment from 'moment'
-import $http from '../../common/js/ajax'
+import { $http } from '../../common/js/ajax'
 import { setLineData, renderChart } from '../../common/js/myCharts'
 import echarts from 'echarts'
 import { switchMixin, hotKeyTime } from '../../common/js/mixin'
