@@ -77,7 +77,6 @@
           <el-table-column
             label="数据源"
             width="80"
-            title="datasourcename"
             prop="datasourcename">
           </el-table-column>
           <el-table-column
@@ -217,14 +216,15 @@ export default {
         return
       }
       let options = {
-        orderId: this.vin,
-        loginName: this.loginName,
+        vin: this.vin,
+        loginName: this.queryParams.loginName,
         startTime: moment(this.startTime).format('YYYY-MM-DD HH:mm:ss'),
         endTime: moment(this.endTime).format('YYYY-MM-DD HH:mm:ss'),
       }
       $http(this.API.callbackServiceApi.getOrderInfoByVin, options).then((res) => {
         this.tableData = []
         this.tableData.push(res.resData)
+        console.log(this.tableData)
       })
     },
     changeDialog (val) {
