@@ -6,34 +6,25 @@
       </div>
       <div class="card-container clearfix">
         <el-form :inline="true"  ref="querForm" :model="queryParams" class="query-form">
-          <el-form-item label="供应商：">
-            <el-select v-model="supId"  filterable @change="changeSupInfo" placeholder="请选择">
-              <el-option
-                v-for="v in querySupInfoList"
-                :key="v.supId"
-                :label="v.supName"
-                :value="v.supId">
-              </el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item label="服务名称：">
-            <el-select v-model="supServiceId"  filterable @change="changeSupService" placeholder="请选择">
+            <el-select v-model="queryParams.serviceName"  filterable  placeholder="请选择">
               <el-option
-                v-for="v in querySupServiceList"
-                :key="v.supServiceId"
-                :label="v.supServiceNameEn"
-                :value="v.supServiceId">
+                v-for="v in services"
+                @click.native="changeServiceName(v)"
+                :key="v.serviceId"
+                :label="v.serviceNameZh"
+                :value="v.serviceName">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="通道名称：">
-            <el-select v-model="queryParams.classNames" filterable multiple collapse-tags placeholder="请选择">
+          <el-form-item label="客户名称：">
+            <el-select  v-model="queryParams.loginNames" multiple collapse-tags filterable  placeholder="请选择">
               <el-option
-                v-for="v in queryPipeList"
-                :key="v.pipeId"
-                @click.native="selectPipe(v)"
-                :label="v.pipeName"
-                :value="v.pipeName">
+                v-for="v in customerArr"
+                :key="v.customerId"
+                @click.native="selectLoginName(v)"
+                :label="v.customerName"
+                :value="v.loginName">
               </el-option>
             </el-select>
           </el-form-item>
@@ -110,23 +101,28 @@ import { $http } from '../../common/js/ajax'
 import { mockTime } from '../../utils'
 import moment from 'moment'
 import { setOtherLineData, renderChart, setColumnData } from '../../common/js/myCharts'
-import {switchMixin, querySupInfo, querySupService, queryPipe, hotKeyTime } from '../../common/js/mixin'
+import {switchMixin, services, hotKeyTime } from '../../common/js/mixin'
 import QueryButton from '../../base/QueryButton'
 import Table from '../../base/Table'
 import echarts from 'echarts'
 export default {
-  mixins: [switchMixin, querySupInfo, querySupService, queryPipe, hotKeyTime ],
+  mixins: [switchMixin, services, hotKeyTime ],
   data () {
     return {
       queryParams: {
-        classNames: []
+        serviceName: '',
+        loginNames: []
       },
       tableData: [],
+      customerArr: [],
+      customerOriArr: [],
       supId: '',
       supServiceId: '',
       realTimeFlag: false,
       count: 0,
       tiemId: null,
+      serviceNames: [],
+      loginNames: [],
       keys: {
         item0: '0-0.05s',
         item1: '0.05-0.1s',
@@ -157,16 +153,54 @@ export default {
   beforeDestroy() {
     clearInterval(this.timeId)
   },
+  mounted() {
+    setTimeout(() => {
+      this.changeServiceName(this.queryParams)
+    },1000)
+  },
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
     },
     onSubmit () {
-      this.supplierHistory()
+      this.customerHistory()
       this.setIntervalFun()
     },
     substrTime (params) {
       return params.substr(params.length - 4).substr(0, 2) + ':' + params.substr(params.length - 4).substr(2, 4)
+    },
+    selectLoginName (v) {
+      if (v.customerName === '全部') {
+        this.queryParams.loginNames = []
+        this.queryParams.loginNames.push('全部')
+        this.loginNames = []
+        this.customerOriArr.forEach(v => {
+          this.loginNames.push(v.loginName)
+        })
+      } else {
+        let index = this.queryParams.loginNames.findIndex((value, index ,arr) => {
+          return value = '全部'
+        })
+        if (index > -1) {
+          this.queryParams.loginNames.splice(index,1)
+        }
+        this.loginNames = this.queryParams.loginNames
+      }
+    },
+    changeServiceName (op) {
+      let options = {}
+      options.serviceNames = [op.serviceName]
+      this.queryParams.loginNames = []
+      $http(this.API.upApi.getCustomersByWebServiceNames, options).then((res) => {
+        this.customerOriArr = res.resData
+        this.customerArr = [...[{
+          customerName: '全部',
+          loginName: '全部',
+          customerId: 'lkjk54478787'
+        }], ...res.resData]
+        this.queryParams.loginNames.push(this.customerArr[0].loginName)
+        this.selectLoginName(this.customerArr[0])
+      })
     },
     playerInterVal () {
       this.count++
@@ -174,33 +208,39 @@ export default {
         this.count = 0
         this.setIntervalFun()
       } else {
-        this.realTime()
+        this.customerRealTime()
       }
     },
     setIntervalFun () {
       if (this.timeId) {
         clearInterval(this.timeId) /* 每次调用定时器 先清除定时器 */
       }
-      this.realTime() /* 第一次调用 */
+      this.customerRealTime() /* 第一次调用 */
       this.timeId = setInterval(this.playerInterVal, 1000 * 60)
     },
-    realTime () {
+    customerRealTime () {
+      if (!this.loginNames.length) {
+        this.selectLoginName(this.customerArr[0])
+      }
       let options = {
         date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-        classNames: this.classNames
+        loginNames: this.loginNames,
+        serviceNames: [this.queryParams.serviceName]
       }
       let _this = this
-      $http(this.API.qualityanalyApi.supplierRealTime, options).then((res) => {
+      $http(this.API.qualityanalyApi.customerRealTime, options).then((res) => {
         // 提取后台传送的key
         let dataArr = Object.keys(res.resData.avgCallTime)
         if (dataArr && dataArr.length > 0) {
           this.realTimeFlag = true
 
-          let data = res.resData.avgCallTime
-          let dataCall = res.resData.callNum, 
-            xFiled = [], 
-            yFiled = [], 
-            yCallFiled = [], 
+          let data = res.resData.avgCallTime, //实时响应时间
+            dataCall = res.resData.callNum, //调用量
+            dataNeed = res.resData.needChargeCallNum, //计费调用量
+            xFiled = [], /* x轴数据 */
+            yFiled = [], /* 实时响应y轴数据 */
+            yCallFiled = [],  /* 实时条用量y轴数据 */
+            yNeedFiled = [], /* 实时计费调用量y轴数据 */
             handleObj = {}
           mockTime().forEach(v => {
             if (data[v]) { /* 检测某个点是否存在 则不动 反之 补一个空  这样写的好处 就是不会改变时间点的顺序 */
@@ -217,10 +257,16 @@ export default {
             } else {
               yCallFiled.push('')
             }
+            if (dataNeed[k]) {
+              yNeedFiled.push(dataNeed[k])
+            } else {
+              yNeedFiled.push('')
+            }
           }
 
-           let lineData = [{
-            "name": "实时响应分析(ms)",
+
+          let lineData = [{
+            "name": "实时响应分析（ms）",
             type: 'line',
             smooth: true, //是否平滑曲线显示
             lineStyle: { //线条样式 
@@ -242,9 +288,9 @@ export default {
             },
             "data": yFiled
           }, {
-            "name": "实时调用量(条)",
-            yAxisIndex: 1,
+            "name": "实时调用量（条）",
             type: 'line',
+            yAxisIndex: 1,
             smooth: true, //是否平滑曲线显示
             lineStyle: { //线条样式 
               normal: {
@@ -255,7 +301,7 @@ export default {
             areaStyle: { //区域填充样式
               normal: {
                 //线性渐变，前4个参数分别是x0,y0,x2,y2(范围0~1);相当于图形包围盒中的百分比。如果最后一个参数是‘true’，则该四个值是绝对像素位置。
-                color: 'rgb(248,168,159,0.3)'
+                color: 'rgb(248,168,159,.3)'
               }
             },
             itemStyle: { //折现拐点标志的样式
@@ -264,21 +310,44 @@ export default {
               }
             },
             "data": yCallFiled
+          }, {
+            "name": "实时计费调用量（条）",
+            type: 'line',
+            yAxisIndex: 1,
+            smooth: true, //是否平滑曲线显示
+            lineStyle: { //线条样式 
+              normal: {
+                width: 1,
+                color: 'rgba(145,191,93,1)'
+              }
+            },
+            areaStyle: { //区域填充样式
+              normal: {
+                //线性渐变，前4个参数分别是x0,y0,x2,y2(范围0~1);相当于图形包围盒中的百分比。如果最后一个参数是‘true’，则该四个值是绝对像素位置。
+                color: 'rgba(145,191,93,.3)'
+              }
+            },
+            itemStyle: { //折现拐点标志的样式
+              normal: {
+                color: 'rgba(145,191,93,1)'
+              }
+            },
+            "data": yNeedFiled
           }]
           renderChart(_this.$refs.charts, setOtherLineData(xFiled, lineData))
         }
       })
     },
-    supplierHistory () {
+    customerHistory () {
       let options = {
         endTime: moment(this.time[1]).format('YYYY-MM-DD') + ' 23:59:59',
         startTime: moment(this.time[0]).format('YYYY-MM-DD') + ' 00:00:00',
-        classNames: this.classNames
+        serviceNames: [this.queryParams.serviceName],
+        loginNames: this.loginNames
       }, _this = this
-      $http(this.API.qualityanalyApi.supplierHistory, options).then((res) => {
-        let data = res.resData, optionsObj = {},series = [], seriesObj = {}, xFiled = [], flagTime = true
+      $http(this.API.qualityanalyApi.customerHistory, options).then((res) => {
+        let data = res.resData, series = [], seriesObj = {}, xFiled = [], flagTime = true
 
-        optionsObj.data = []
         this.tableData = data
         if (data && data.length) {
           Object.keys(this.keys).forEach((k) => {

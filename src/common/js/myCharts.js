@@ -267,7 +267,6 @@ export function setOtherLineData (xAxisData, series) {
 }
 
 export function setColumnData (title, xAxisData, series,subTitle) {
-  console.log(subTitle)
   var legendData = []
   var arrLength = series.length > 21 ? 20 : series.length;
   for (var i = 0; i < arrLength; i++) {

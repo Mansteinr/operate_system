@@ -18,7 +18,8 @@ import dataReset from '../components/data-persistence/data-reset'
 import upStreamCount from '../components/data-output/query_upStreamCount'
 import mobileOperator from '../components/data-output/query_mobileOperator'
 import queryTrackDetail from '../components/data-output/query_trackDetail'
-import qualityAnalysis from '../components/quality-analysis/supplier_quality_analysis'
+import supplierAnalysis from '../components/quality-analysis/supplier_quality_analysis'
+import customerAnalysis from '../components/quality-analysis/customer_quality_analysis'
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import QualityAnalysis from '../components/QualityAnalysis'
@@ -100,9 +101,13 @@ const router = new Router({
       name: 'query_trackDetail',
       component: queryTrackDetail
     }, {
-      path: '/qualityAnalysis',
+      path: '/supplierAnalysis',
       name: 'supplier_quality_analysis',
-      component: qualityAnalysis
+      component: supplierAnalysis
+    }, {
+      path: '/customerAnalysis',
+      name: 'customer_quality_analysis',
+      component: customerAnalysis
     }, {
       path: '/SupplierAnalysis',
       name: 'SupplierAnalysis',
