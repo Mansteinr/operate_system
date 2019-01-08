@@ -104,7 +104,6 @@ import { setOtherLineData, renderChart, setColumnData } from '../../common/js/my
 import {switchMixin, services, hotKeyTime } from '../../common/js/mixin'
 import QueryButton from '../../base/QueryButton'
 import Table from '../../base/Table'
-import echarts from 'echarts'
 export default {
   mixins: [switchMixin, services, hotKeyTime ],
   data () {
@@ -178,7 +177,8 @@ export default {
           this.loginNames.push(v.loginName)
         })
       } else {
-        let index = this.queryParams.loginNames.findIndex((value, index ,arr) => {
+        let index = this.queryParams.loginNames.findIndex((value) => {
+          console.log(value)
           return value = '全部'
         })
         if (index > -1) {
@@ -351,7 +351,7 @@ export default {
         this.tableData = data
         if (data && data.length) {
           Object.keys(this.keys).forEach((k) => {
-            data.forEach((v1, k1) => {
+            data.forEach(v1 => {
               if(flagTime) {
                 xFiled.push(v1.dateTime)
               }

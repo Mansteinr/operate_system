@@ -20,6 +20,7 @@ import mobileOperator from '../components/data-output/query_mobileOperator'
 import queryTrackDetail from '../components/data-output/query_trackDetail'
 import supplierAnalysis from '../components/quality-analysis/supplier_quality_analysis'
 import customerAnalysis from '../components/quality-analysis/customer_quality_analysis'
+import queryOrder from '../components/async-service/query_order'
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import QualityAnalysis from '../components/QualityAnalysis'
@@ -109,9 +110,9 @@ const router = new Router({
       name: 'customer_quality_analysis',
       component: customerAnalysis
     }, {
-      path: '/SupplierAnalysis',
-      name: 'SupplierAnalysis',
-      component: SupplierAnalysis  
+      path: '/queryOrder',
+      name: 'query_order',
+      component: queryOrder  
     }, {
       path: '/QualityAnalysis',
       name: 'QualityAnalysis',

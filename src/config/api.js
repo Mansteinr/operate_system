@@ -118,6 +118,11 @@ const api = {
   },
   paramsApi: {
     queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName', 'upapi')
+  },
+  callbackServiceApi: {
+    getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById', 'upapi'),
+    getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin', 'upapi'),
+    getDecryptData: apiFormat('callbackService/operator/getDecryptData', 'upapi')
   }
 }
 export default api

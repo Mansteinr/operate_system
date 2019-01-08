@@ -20,7 +20,8 @@
         查询结果
       </div>
       <div class="card-container">
-        <JsonEditor ref="JsonEditor"></JsonEditor>
+        <div v-show="!showFlag" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
+        <JsonEditor v-show="showFlag" :data="json"></JsonEditor>
       </div>
     </div>
   </div>
@@ -43,6 +44,7 @@ export default {
       rules: {
         guid: [{ validator: guidRule, trigger: 'change' },]
       },
+      showFlag: false,
       queryParams: {
         guid: ''
       },
@@ -66,7 +68,8 @@ export default {
     },
     logDetail () {
       $http(this.API.upApi.logDetail, this.queryParams).then((res) => {
-        this.$refs.JsonEditor.renderJson(res.resData)
+        this.showFlag = true
+        this.json = res.resData || {}
       })
     }
   }

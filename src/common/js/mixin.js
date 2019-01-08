@@ -149,6 +149,7 @@ export const loginName = { // 客户登陆名称
       })
     },
     changeCustomer (v) {
+      console.log(v)
       if (this.noAllLogin) {
         return
       }

@@ -9,7 +9,7 @@
       style="width: 100%">
         <slot></slot>
     </el-table>
-    <Pagination @changePage="changePage" :tatalPage="tatalPage"></Pagination>
+    <Pagination @changePage="changePage" :tatalPage="tatalPage" v-show="tatalPage>1"></Pagination>
   </div>
 </template>
 

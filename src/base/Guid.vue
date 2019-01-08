@@ -1,18 +1,16 @@
 <template>
-  <div style="background:white;">
+  <el-dialog
+    title="guid"
+    custom-class="guid-dialog"
+    :visible.sync="dialogVisible"
+    :before-close="handleClose">
     <div id="jsoneditor"></div>
-  </div>
+  </el-dialog>
 </template>
 
-<style scoped lang="stylus" rel="stylesheet/stylus">
-
-
-</style>
-
 <script>
-
-  import JSONEditor from 'jsoneditor'
-  import 'jsoneditor/dist/jsoneditor.css'
+import JSONEditor from 'jsoneditor'
+import 'jsoneditor/dist/jsoneditor.css'
   export default {
     props: {
       mode: {
@@ -23,14 +21,23 @@
         type: Boolean,
         default: false
       },
-      data: {}
+      data: {},
+      dialogVisible: {
+        type: Boolean,
+        default: false
+      }
     },
     watch: {
       data () {
-        this.renderJson()
+        this.$nextTick(() => {
+          this.renderJson()
+        }, 1000)
       }
     },
     methods: {
+      handleClose() {
+        this.$emit('changeDialog', false)
+      },
       renderJson (val) {
         var container = document.getElementById("jsoneditor")
         container.innerHTML = ''
@@ -50,4 +57,5 @@
       }
     }
   }
+
 </script>

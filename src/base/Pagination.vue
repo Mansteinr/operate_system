@@ -37,7 +37,7 @@
       handleCurrentChange (val) {
         this.currentPage = val
         this.$emit('changePage', 'currentPage' + '-' + this.currentPage)
-      },
+      }
     }
   }
 </script>

@@ -113,7 +113,6 @@ import { setOtherLineData, renderChart, setColumnData } from '../../common/js/my
 import {switchMixin, querySupInfo, querySupService, queryPipe, hotKeyTime } from '../../common/js/mixin'
 import QueryButton from '../../base/QueryButton'
 import Table from '../../base/Table'
-import echarts from 'echarts'
 export default {
   mixins: [switchMixin, querySupInfo, querySupService, queryPipe, hotKeyTime ],
   data () {
@@ -282,7 +281,7 @@ export default {
         this.tableData = data
         if (data && data.length) {
           Object.keys(this.keys).forEach((k) => {
-            data.forEach((v1, k1) => {
+            data.forEach(v1 => {
               if(flagTime) {
                 xFiled.push(v1.dateTime)
               }
