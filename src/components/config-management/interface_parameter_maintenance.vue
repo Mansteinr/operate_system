@@ -7,27 +7,28 @@
       <div class="card-container">
         <el-button type="primary" icon="el-icon-plus" size="small" @click.native="addItem">新增</el-button>
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
+        <Table ref="table" class="table" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
           <el-table-column
-            label="使用日期"
-            sortable
-            prop="dayTime">
+            label="服务名"
+            prop="serviceName">
           </el-table-column>
           <el-table-column
-            label="共计使用量"
-            sortable
-            prop="usedCount">
+            label="服务名(中文)"
+            prop="serviceNameCh">
           </el-table-column>
           <el-table-column
-            label="计费使用量"
-            sortable
-            prop="downChargedCount">
+            label="参数"
+            prop="paramNameBeans">
+            <template slot-scope="scope">
+              <div v-html="formatterParams(scope.row.paramNameBeans)"></div>
+            </template>
           </el-table-column>
           <el-table-column
-            label="消费金额"
-            sortable
-            :formatter="formatter"
-            prop="downCost">
+            label="操作"
+            width="100">
+            <template slot-scope="scope">
+              <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
+            </template>
           </el-table-column>
         </Table>
       </div>
@@ -86,6 +87,9 @@ export default {
     Table,
     Dialog
   },
+  mounted() {
+    this.getAll()
+  },
   methods: {
     initFun () {
       this.addServiceNameAndParams()
@@ -96,8 +100,23 @@ export default {
     formatter (val) {
       return this.$refs.table.formatter(val)
     },
+    formatterParams (val) { // 参数展示
+      var html = ''
+      if (!val.length) return
+      val.forEach( v=> {
+        html += `<span class="param-item" title="${v.paramName}">${v.paramNameCh} : ${v.paramName} </span>`
+      })
+      return html
+    },
     addItem () {
       this.dialogVisible = true
+    },
+    handleDelete(row) {
+      let options = {}
+      Object.assign(options, row)
+      $http(this.API.paramsApi.deleteByServiceNameAndParamName, options).then((res) => {
+        showModal(res.resMsg[0].msgText)
+      })
     },
     determine (val) {
       if (!this.queryParams.paramNameBeans.length) {
@@ -130,10 +149,13 @@ export default {
       Object.assign(options, this.options)
       options.paramNameBeans = []
       options.paramNameBeans = [...options.paramNameBeans, ...this.paramNameBeans]
-      console.log(options)
-      return
       $http(this.API.paramsApi.addServiceNameAndParams, options).then((res) => {
-        console.log(res)
+        showModal(res.resMsg[0].msgText)
+      })
+    },
+    getAll () {
+      $http(this.API.paramsApi.getAll, {}).then((res) => {
+        this.tableData = res.resData
       })
     }
   }

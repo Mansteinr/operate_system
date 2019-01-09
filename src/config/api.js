@@ -120,6 +120,7 @@ const api = {
     queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName', 'upapi'),
     getParam: apiFormat('operator/ServiceNameParams/getParam', 'upapi'),
     getAll: apiFormat('operator/ServiceNameParams/getAll', 'upapi'),
+    deleteByServiceNameAndParamName: apiFormat('operator/ServiceNameParams/deleteByServiceNameAndParamName', 'upapi'),
     addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams', 'upapi')
   },
   callbackServiceApi: {
