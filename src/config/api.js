@@ -117,7 +117,10 @@ const api = {
     persistDel: apiFormat('operator/persist/del', 'upapi'),
   },
   paramsApi: {
-    queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName', 'upapi')
+    queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName', 'upapi'),
+    getParam: apiFormat('operator/ServiceNameParams/getParam', 'upapi'),
+    getAll: apiFormat('operator/ServiceNameParams/getAll', 'upapi'),
+    addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams', 'upapi')
   },
   callbackServiceApi: {
     getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById', 'upapi'),

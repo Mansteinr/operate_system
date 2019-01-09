@@ -47,9 +47,9 @@ export function checkMoble (val) {
 export function checkNumber (val) {
   var reg = /^[1-9]+[0-9]*]*$/
   if (reg.test(val)) {
-	return true
+    return true
   } else {
-	return false
+    return false
   }
 }
 // 是否为空
@@ -57,10 +57,10 @@ export function checkNull (val) {
    if (!val || val == "" || val == '--') {
 	return false
   } else if (typeof val === "object") {
-	for (var prop in val) {
-	  return true
-	}
-	return false
+    for (var prop in val) {
+      return true
+    }
+    return false
   }
   return true
 }
@@ -123,7 +123,7 @@ export function mockTime() {
       return false
     }
     return true
-  };
+  }
   //取身份证前两位,校验省份  
   function checkProvince (card) {
     var province = card.substr(0, 2)
@@ -131,10 +131,10 @@ export function mockTime() {
       return false
     }
     return true
-  };
+  }
   //检查生日是否正确  
   function checkBirthday (card) {
-    var len = card.length;
+    var len = card.length
     //身份证15位时，次序为省（3位）市（3位）年（2位）月（2位）日（2位）校验位（3位），皆为数字  
     if (len == '15') {
       var re_fifteen = /^(\d{6})(\d{2})(\d{2})(\d{2})(\d{3})$/,
@@ -155,11 +155,11 @@ export function mockTime() {
       var birthday = new Date(year + '/' + month + '/' + day)
       return verifyBirthday(year, month, day, birthday)
     }
-    return false;
-  };
+    return false
+  }
   //校验日期  
   function verifyBirthday (year, month, day, birthday) {
-    var now = new Date();
+    var now = new Date()
     var now_year = now.getFullYear()
     //年月日是否合理  
     if (birthday.getFullYear() == year && (birthday.getMonth() + 1) == month && birthday.getDate() == day) {
@@ -171,35 +171,35 @@ export function mockTime() {
       return false
     }
     return false
-  };
+  }
   //校验位的检测  
   function checkParity  (card) {
     //15位转18位  
-    card = changeFivteenToEighteen(card);
-    var len = card.length;
+    card = changeFivteenToEighteen(card)
+    var len = card.length
     if (len == '18') {
       var arrInt = new Array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2)
       var arrCh = new Array('1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2')
       var cardTemp = 0,
         i, valnum
       for (i = 0; i < 17; i++) {
-        cardTemp += card.substr(i, 1) * arrInt[i];
+        cardTemp += card.substr(i, 1) * arrInt[i]
       }
-      valnum = arrCh[cardTemp % 11];
+      valnum = arrCh[cardTemp % 11]
       if (valnum == card.substr(17, 1)) {
         return true
       }
       return false
     }
     return false
-  };
+  }
   //15位转18位身份证号  
   function changeFivteenToEighteen  (card) {
     if (card.length == '15') {
       var arrInt = new Array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2)
       var arrCh = new Array('1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2')
       var cardTemp = 0,
-        i;
+        i
       card = card.substr(0, 6) + '19' + card.substr(6, card.length - 6)
       for (i = 0; i < 17; i++) {
         cardTemp += card.substr(i, 1) * arrInt[i]

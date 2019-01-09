@@ -128,7 +128,9 @@
         </Table>
       </div>
     </div>
-    <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid>
+    <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog">
+    
+    </Guid>
   </div>
 </template>
 
@@ -224,7 +226,6 @@ export default {
       $http(this.API.callbackServiceApi.getOrderInfoByVin, options).then((res) => {
         this.tableData = []
         this.tableData.push(res.resData)
-        console.log(this.tableData)
       })
     },
     changeDialog (val) {

@@ -304,3 +304,20 @@ export const queryPipe = {
     }
   }
 }
+export const getParam = {
+  data () {
+    return {
+      allParams: []
+    }
+  },
+  mounted () {
+    this.getParam()
+  },
+  methods: {
+    getParam () {
+      $http(this.API.paramsApi.getParam, {}, 'get').then((res) => {
+        this.allParams = res.resData.paramInfos
+      })
+    }
+  }
+}

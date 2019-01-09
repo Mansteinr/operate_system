@@ -21,9 +21,9 @@ import queryTrackDetail from '../components/data-output/query_trackDetail'
 import supplierAnalysis from '../components/quality-analysis/supplier_quality_analysis'
 import customerAnalysis from '../components/quality-analysis/customer_quality_analysis'
 import queryOrder from '../components/async-service/query_order'
+import parameterMaintenance from '../components/config-management/interface_parameter_maintenance'
 import Login from '../components/Login'
 import Demo from '../components/demo'
-import QualityAnalysis from '../components/QualityAnalysis'
 import Main from '../components/Main'
 
 Vue.use(Router)
@@ -114,9 +114,9 @@ const router = new Router({
       name: 'query_order',
       component: queryOrder  
     }, {
-      path: '/QualityAnalysis',
-      name: 'QualityAnalysis',
-      component: QualityAnalysis
+      path: '/parameterMaintenance',
+      name: 'interface_parameter_maintenance',
+      component: parameterMaintenance
     }, {
       path: '/Demo',
       name: 'Demo',

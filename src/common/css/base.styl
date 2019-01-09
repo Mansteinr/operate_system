@@ -131,7 +131,19 @@ div.jsoneditor-tree div.jsoneditor-tree-inner
 .m-error
   border-color: #f56c6c
   
-.guid-dialog
+.guid-dialog, .customize-dialog
   .el-dialog__body
     padding: 10px 20px 20px 20px
-  
+    .dialog-button-group
+      display flex
+      align-items center
+      justify-content center
+
+.customize-dialog
+  .el-form-item
+    width 100%
+    .el-form-item__content
+      width calc(100% - 82px)
+      float right
+      >div
+        width 100%
