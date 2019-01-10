@@ -1,4 +1,4 @@
-
+/* eslint-disable */  //不需要eslint语法检测
 import { Message } from 'element-ui'
 import moment from 'moment'
 // 弹框

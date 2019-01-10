@@ -53,7 +53,7 @@ const baseConfig = {
 }
 /*设置api转换*/
 // let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
-let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.prod[hostkey] + api
+let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.test[hostkey] + api
 const api = {
   base: {
     login: apiFormat('login/doLogin', 'rbacapi'),
@@ -89,7 +89,10 @@ const api = {
     UsageByResultNew: apiFormat('operator/down/UsageByResultNew', 'upapi'),
   },
   secureApi: { // 安全中心
-
+    allWords: apiFormat('secure/web/word/allWords', 'safaCenterapi'),
+    wordInsert: apiFormat('secure/web/word/insert', 'safaCenterapi'),
+    wordDelete: apiFormat('secure/web/word/delete', 'safaCenterapi'),
+    wordUpdate: apiFormat('secure/web/word/update', 'safaCenterapi'),
   },
   qualityanalyApi: { // 平台质量分析
     supplierRealTime: apiFormat('qualityanalyze/supplier/realTime', 'upapi'),

@@ -116,11 +116,13 @@ export default {
       Object.assign(options, row)
       $http(this.API.paramsApi.deleteByServiceNameAndParamName, options).then((res) => {
         showModal(res.resMsg[0].msgText)
+        this.getAll()
       })
     },
-    determine (val) {
+    determine () {
       if (!this.queryParams.paramNameBeans.length) {
         showModal('请选择参数', 'warning')
+        return
       }
       this.paramNameBeans = []
       this.queryParams.paramNameBeans.forEach(v => {
@@ -128,7 +130,7 @@ export default {
           if (v === v1.paramNameEn) {
             this.paramNameBeans.push({
               paramNameCh: v1.paramNameCn,
-              paramNameEn: v1.paramNameEn
+              paramName: v1.paramNameEn
             })
           }
         })
@@ -149,6 +151,10 @@ export default {
       Object.assign(options, this.options)
       options.paramNameBeans = []
       options.paramNameBeans = [...options.paramNameBeans, ...this.paramNameBeans]
+      if (!options.paramNameBeans.length) {
+        showModal('请选择参数', 'warning')
+        return
+      }
       $http(this.API.paramsApi.addServiceNameAndParams, options).then((res) => {
         showModal(res.resMsg[0].msgText)
       })

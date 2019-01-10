@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import QueryIndex from '../components/query-index'
 import QueryUsage from '../components/usage-statistics/query_usage'
-import SupplierAnalysis from '../components/SupplierAnalysis'
 import upstreamSupplier from '../components/usage-statistics/upper-service/upstream_supplier'
 import upstreamCustomer from '../components/usage-statistics/upper-service/upstream_customer'
 import upstreamService from '../components/usage-statistics/upper-service/upstream_service'
@@ -22,6 +21,7 @@ import supplierAnalysis from '../components/quality-analysis/supplier_quality_an
 import customerAnalysis from '../components/quality-analysis/customer_quality_analysis'
 import queryOrder from '../components/async-service/query_order'
 import parameterMaintenance from '../components/config-management/interface_parameter_maintenance'
+import sensitiveWord from '../components/security-center/sensitive_word'
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import Main from '../components/Main'
@@ -117,6 +117,10 @@ const router = new Router({
       path: '/parameterMaintenance',
       name: 'interface_parameter_maintenance',
       component: parameterMaintenance
+    }, {
+      path: '/sensitiveWord',
+      name: 'sensitive_word',
+      component: sensitiveWord
     }, {
       path: '/Demo',
       name: 'Demo',

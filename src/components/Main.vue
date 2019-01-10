@@ -25,25 +25,25 @@
     <el-container class="m-body">
       <el-col class="aside" :span="3">
         <el-menu class="el-menu-vertical-demo" :unique-opened="true" :default-active="menuActive">
-          <template v-for="(v, k) in menu">
-            <el-menu-item :index="v.id+''" v-if="v.childResource.length==0" @click="selectItem(v)">
+          <template v-for="v in menu">
+            <el-menu-item :index="v.id+''" :key="v.id" v-if="v.childResource.length==0" @click="selectItem(v)">
               <i :class="v.icon"></i>
               {{v.name}}
             </el-menu-item>
-            <el-submenu v-else :index="v.id+''">
+            <el-submenu v-else :index="v.id+''" :key="v.id">
               <template slot="title">
                 <i :class="v.icon"></i>
                 {{v.name}}
                 <!-- <span>导航一</span> -->
               </template>
-              <template v-for="(v1, k1) in v.childResource">
-                <el-menu-item v-if="v1.childResource.length==0"  :index="v.id+'-'+v1.id" @click="selectItem(v1)">
+              <template v-for="v1 in v.childResource">
+                <el-menu-item v-if="v1.childResource.length==0" :key="v1.id" :index="v.id+'-'+v1.id" @click="selectItem(v1)">
                   <i :class="v1.icon"></i>
                   <span slot="title">{{v1.name}}</span>
                 </el-menu-item>
-                <el-submenu :index="v.id+'-'+v1.id" v-else>
+                <el-submenu :index="v.id+'-'+v1.id" :key="v1.id"  v-else>
                   <template slot="title" :class="v1.icon">{{v1.name}}</template>
-                  <el-menu-item v-for="(v2, k2) in v1.childResource" :index="v.id+'-'+v1.id+'-'+v2.id" @click="selectItem(v2)"><span slot="title">{{v2.name}}</span></el-menu-item>
+                  <el-menu-item v-for="v2 in v1.childResource" :index="v.id+'-'+v1.id+'-'+v2.id" :key="v2.id" @click="selectItem(v2)"><span slot="title">{{v2.name}}</span></el-menu-item>
                 </el-submenu>
               </template>
             </el-submenu>
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import $http from '../common/js/ajax'
+// import $http from '../common/js/ajax'
 export default {
   data () {
     return {
@@ -73,7 +73,7 @@ export default {
       let paramArr = value.resourceUrl.split('/')
       this.$router.push({name: paramArr[paramArr.length - 1].split('.')[0]})
       this.menuActive = value.id+'' // 需要传入字符串 传入number会报错
-      console.log(this.menuActive)
+      console.log(paramArr[paramArr.length - 1].split('.')[0])
     },
     selectLang (value) {
       console.log(value)
