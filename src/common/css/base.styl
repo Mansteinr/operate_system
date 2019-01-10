@@ -72,7 +72,7 @@
       margin 0 0 5px 0
       font-size 12px
       border-radius 3px
-      background-color #67C23A
+      background-color #F2F6FC
       height 16px
       line-height 16px
       white-space nowrap
@@ -80,7 +80,7 @@
       overflow hidden
       word-wrap break-word
       word-break break-all
-      color white
+      // color white
     tr
       .cell
         white-space nowrap !important
@@ -88,6 +88,11 @@
         overflow hidden !important
         word-wrap break-word !important
         word-break break-all !important
+        max-height 115px
+        overflow auto !important
+        .oprator
+          span
+            font-family '微软雅黑'
     td 
       padding 8px 0 !important
 
@@ -162,3 +167,9 @@ div.jsoneditor-tree div.jsoneditor-tree-inner
 .has-norequire
   label
     margin-left 12px
+.link
+  color #409EFF
+  cursor pointer
+.no-link
+  color #909399
+  cursor no-drop

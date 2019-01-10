@@ -3,6 +3,10 @@
     <div class="card-wrapper">
       <div class="card-title">
         查询结果
+        <el-button-group>
+          <el-button :type="tabFlag?'':'primary'" :class="tabFlag?'':'active'" @click="switchTab(false)">服务</el-button>
+          <el-button :type="tabFlag?'primary':''" :class="tabFlag?'active':''"  @click="switchTab(true)">规则</el-button>
+        </el-button-group>
       </div>
       <div class="card-container">
         <el-button type="primary" icon="el-icon-plus" size="small" @click.native="addItem">新增</el-button>
@@ -12,7 +16,7 @@
             label="敏感词"
             width="160"
             prop="wordKey">
-            <template slot-scope="scope">
+           <template slot-scope="scope">
               <span :class="scope.row.serviceParams.length > 4 ? 'link':''">{{scope.row.wordKey}}</span>
             </template>
           </el-table-column>
@@ -37,8 +41,8 @@
             label="操作"
             width="100">
             <template slot-scope="scope">
-              <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
-              <el-button @click="handleEditor(scope.row)" type="text" size="small">更新</el-button>
+              <el-button @click="handleDelete(scope.row)" class="oprator" type="text" size="small">删除</el-button>
+              <el-button @click="handleEditor(scope.row)" class="oprator" type="text" size="small">更新</el-button>
             </template>
           </el-table-column>
         </Table>
@@ -90,10 +94,10 @@
 import { $http } from '../../common/js/ajax'
 import Table from '../../base/Table'
 import Dialog from '../../base/Dialog'
-import { services } from '../../common/js/mixin'
+import { services, switchMixin } from '../../common/js/mixin'
 import { showModal } from '../../utils'
 export default {
-  mixins: [ services ],
+  mixins: [ services, switchMixin ],
   data () {
     return {
       rules: {

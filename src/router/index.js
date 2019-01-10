@@ -22,6 +22,7 @@ import customerAnalysis from '../components/quality-analysis/customer_quality_an
 import queryOrder from '../components/async-service/query_order'
 import parameterMaintenance from '../components/config-management/interface_parameter_maintenance'
 import sensitiveWord from '../components/security-center/sensitive_word'
+import serviceRegular from '../components/security-center/service_regular'
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import Main from '../components/Main'
@@ -121,6 +122,10 @@ const router = new Router({
       path: '/sensitiveWord',
       name: 'sensitive_word',
       component: sensitiveWord
+    }, {
+      path: '/serviceRegular',
+      name: 'service_regular',
+      component: serviceRegular
     }, {
       path: '/Demo',
       name: 'Demo',

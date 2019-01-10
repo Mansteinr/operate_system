@@ -1,6 +1,6 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper card-content">
+    <div class="card-wrapper">
       <div class="card-title">
         查询结果
       </div>
@@ -11,6 +11,9 @@
           <el-table-column
             label="服务名"
             prop="serviceName">
+            <template slot-scope="scope">
+              <span :class="scope.row.paramNameBeans.length > 4 ? 'link':''">{{scope.row.serviceNameCh}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             label="服务名(中文)"
@@ -27,7 +30,7 @@
             label="操作"
             width="100">
             <template slot-scope="scope">
-              <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
+              <el-button @click="handleDelete(scope.row)" type="text" size="small" class="oprator">删除</el-button>
             </template>
           </el-table-column>
         </Table>
