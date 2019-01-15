@@ -80,19 +80,18 @@
       overflow hidden
       word-wrap break-word
       word-break break-all
-      // color white
     tr
       .cell
-        white-space nowrap !important
-        text-overflow ellipsis !important
-        overflow hidden !important
-        word-wrap break-word !important
-        word-break break-all !important
         max-height 115px
         overflow auto !important
-        .oprator
+        font-family 'Microsoft Yahei' !important
+        font-size 13px !important
+        button
           span
-            font-family '微软雅黑'
+            font-family 'Microsoft Yahei' !important
+            font-size 13px !important
+        div
+          text-align center
     td 
       padding 8px 0 !important
 
@@ -139,6 +138,14 @@ div.jsoneditor-tree div.jsoneditor-tree-inner
 .guid-dialog, .customize-dialog
   .el-dialog__body
     padding: 10px 20px 20px 20px
+    .is-disabled
+      .el-radio__input.is-checked+.el-radio__label
+        color rgba(64, 158, 255, 0.45) !important
+        cursor no-drop
+      .el-radio__input.is-checked .el-radio__inner
+        border-color rgba(64, 158, 255, 0.45)
+        background rgba(64, 158, 255, 0.45)
+        cursor no-drop
     .dialog-button-group
       display flex
       align-items center
@@ -171,5 +178,13 @@ div.jsoneditor-tree div.jsoneditor-tree-inner
   color #409EFF
   cursor pointer
 .no-link
-  color #909399
+  color gray 
   cursor no-drop
+.mv-danger
+  color #F56C6C
+  cursor no-drop
+
+.el-form-item__error
+  z-index 101
+.el-table__body-wrapper
+  overflow auto

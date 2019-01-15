@@ -89,23 +89,36 @@ const api = {
     UsageByResultNew: apiFormat('operator/down/UsageByResultNew', 'upapi'),
   },
   secureApi: { // 安全中心
-    allWords: apiFormat('secure/web/word/allWords', 'safaCenterapi'),
-    wordInsert: apiFormat('secure/web/word/insert', 'safaCenterapi'),
-    wordDelete: apiFormat('secure/web/word/delete', 'safaCenterapi'),
-    wordUpdate: apiFormat('secure/web/word/update', 'safaCenterapi'),
+    allWords: apiFormat('secure/web/word/allWords', 'safaCenterapi'), /*查询所有的敏感词*/
+    wordInsert: apiFormat('secure/web/word/insert', 'safaCenterapi'), /*新增敏感词*/
+    wordDelete: apiFormat('secure/web/word/delete', 'safaCenterapi'),  /*删除敏感词*/
+    wordUpdate: apiFormat('secure/web/word/update', 'safaCenterapi'), /*新增敏感词*/
+    paramRecord: apiFormat('secure/web/record/paramRecord', 'safaCenterapi'), /* 参数拦截例 */
+    recoverUseful: apiFormat('secure/web/record/recoverUseful', 'safaCenterapi'), /* 告警恢复 */
+    allService: apiFormat('secure/web/service/allService', 'safaCenterapi'), /*获取所有的服务*/
+    allRegulars: apiFormat('secure/web/service/allRegulars', 'safaCenterapi'), /*获取所有规则*/
+    directService: apiFormat('secure/web/service/directService', 'safaCenterapi'), /*获取所有子服务*/
+    deleteService: apiFormat('secure/web/service/delete', 'safaCenterapi'), /*删除服务*/
+    insertService: apiFormat('secure/web/service/insert', 'safaCenterapi'), /*新增服务*/
+    subService: apiFormat('secure/web/service/subService', 'safaCenterapi'), /*服务直接子服务*/
+    updateService: apiFormat('secure/web/service/update', 'safaCenterapi'), /*更新服务*/
+    allRegulars: apiFormat('secure/web/regular/allRegulars', 'safaCenterapi'), /*所有的规则*/
+    insertRegulars: apiFormat('secure/web/regular/insert', 'safaCenterapi'), /*新增规则*/
+    deleteRegulars: apiFormat('secure/web/regular/delete', 'safaCenterapi'), /*删除规则*/
+    updateRegulars: apiFormat('secure/web/regular/update', 'safaCenterapi'), /*更新规则*/
   },
   qualityanalyApi: { // 平台质量分析
-    supplierRealTime: apiFormat('qualityanalyze/supplier/realTime', 'upapi'),
-    customerRealTime: apiFormat('qualityanalyze/customer/realTime', 'upapi'),
-    supplierHistory: apiFormat('qualityanalyze/supplier/history', 'upapi'),
-    customerHistory: apiFormat('qualityanalyze/customer/history', 'upapi'),
+    supplierRealTime: apiFormat('qualityanalyze/supplier/realTime', 'upapi'),  /* 供应商（上游）质量分析  实时数据 */
+    customerRealTime: apiFormat('qualityanalyze/customer/realTime', 'upapi'),  /* 客户(下游)质量分析 实时数据 */
+    supplierHistory: apiFormat('qualityanalyze/supplier/history', 'upapi'), /* 供应商（上游）质量分析 历史数据 */
+    customerHistory: apiFormat('qualityanalyze/customer/history', 'upapi'), /* 客户（上游）质量分析 历史数据 */
   },
   redisApi: {
     query: apiFormat('operator/redis/query', 'upapi')
   },
   financeApi: {
-    upStreamCount: apiFormat('operator/finance/upStreamCount', 'upapi'),
-    trackDetail: apiFormat('operator/finance/trackDetail', 'upapi'),
+    upStreamCount: apiFormat('operator/finance/upStreamCount', 'upapi'),  /* 供应商（上游）质量分析  实时数据 */
+    trackDetail: apiFormat('operator/finance/trackDetail', 'upapi'), 
     mobileOperator: apiFormat('operator/finance/mobileOperator', 'upapi')
   },
   // boss提供的接口
@@ -120,16 +133,16 @@ const api = {
     persistDel: apiFormat('operator/persist/del', 'upapi'),
   },
   paramsApi: {
-    queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName', 'upapi'),
-    getParam: apiFormat('operator/ServiceNameParams/getParam', 'upapi'),
-    getAll: apiFormat('operator/ServiceNameParams/getAll', 'upapi'),
-    deleteByServiceNameAndParamName: apiFormat('operator/ServiceNameParams/deleteByServiceNameAndParamName', 'upapi'),
-    addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams', 'upapi')
+    queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName', 'upapi'), /*根据服务名查询参数*/
+    getParam: apiFormat('operator/ServiceNameParams/getParam', 'upapi'), /*配置管理获取所有的参数*/
+    getAll: apiFormat('operator/ServiceNameParams/getAll', 'upapi'), /*配置管理获取所有的服务名*/
+    deleteByServiceNameAndParamName: apiFormat('operator/ServiceNameParams/deleteByServiceNameAndParamName', 'upapi'), /*配置管理删除的服务名*/
+    addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams', 'upapi') /*配置管理新增的服务名*/
   },
   callbackServiceApi: {
-    getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById', 'upapi'),
-    getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin', 'upapi'),
-    getDecryptData: apiFormat('callbackService/operator/getDecryptData', 'upapi')
+    getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById', 'upapi'),  /* 订单号查看订单状态 */
+    getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin', 'upapi'),  /* vin查询符合条件的订单信息 */
+    getDecryptData: apiFormat('callbackService/operator/getDecryptData', 'upapi') /* 订单号查询车保报告 */
   }
 }
 export default api

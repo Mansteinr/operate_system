@@ -23,6 +23,7 @@ import queryOrder from '../components/async-service/query_order'
 import parameterMaintenance from '../components/config-management/interface_parameter_maintenance'
 import sensitiveWord from '../components/security-center/sensitive_word'
 import serviceRegular from '../components/security-center/service_regular'
+import paramRecord from '../components/security-center/param_record'
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import Main from '../components/Main'
@@ -126,6 +127,10 @@ const router = new Router({
       path: '/serviceRegular',
       name: 'service_regular',
       component: serviceRegular
+    }, {
+      path: '/paramRecord',
+      name: 'param_record',
+      component: paramRecord
     }, {
       path: '/Demo',
       name: 'Demo',

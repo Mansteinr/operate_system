@@ -1,4 +1,5 @@
 const state = {
-  ntk: ''
+  ntk: '',
+  reVcode: ''
 }
 export default state

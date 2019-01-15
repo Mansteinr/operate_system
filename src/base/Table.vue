@@ -1,9 +1,8 @@
 <template>
   <div>
-    <el-input v-model="search" size="mini" class="serarch-input" placeholder="请输入关键字"/>
+    <el-input v-model="search" v-show="showSearch" size="mini" class="serarch-input" placeholder="请输入关键字"/>
     <el-table
-      class="table"
-      :data="tableDataComputed.filter(data => filterTable(data))"
+      :data="sidePagination === 'customer' ? tableDataComputed.filter(data => filterTable(data)): tableData"
       :show-summary="showSummary"
       :summary-method="getSummaries"
       style="width: 100%">
@@ -37,6 +36,14 @@
       showSummary: {
         type: Boolean,
         default: true
+      },
+      showSearch: {
+        type: Boolean,
+        default: true
+      },
+      sidePagination: {
+        type: String,
+        default: 'customer'
       }
     },
     components: {
@@ -101,10 +108,8 @@
         // }
         return !this.search || data.dayTime.toLowerCase().includes(this.search.toLowerCase()) || (data.usedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (data.downChargedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (data.downCost + '').toLowerCase().includes(this.search.toLowerCase())
       },
-      handleCurrentChange (val) {
-        this.currentPage = val
-      },
       changePage (value) {
+        this.$emit('changePage', value)
         this[value.split('-')[0]] = value.split('-')[1] / 1
       }
     },

@@ -160,12 +160,14 @@ export const loginName = { // 客户登陆名称
     },
     getHasService (op) {
       $http(this.API.upApi.hasServices, op).then((res) => {
+        this.services = []
         this.services = res.resData
         if (this.isServiceNames) {
           this.queryParams.serviceNames = []
-          this.queryParams.serviceNames.push(this.services[0].serviceName)
+          let pushData = this.services.length ? this.services[0].serviceName : null
+          this.queryParams.serviceNames.push(pushData)
         } else {
-          this.queryParams.serviceName = this.services[0].serviceName
+          this.queryParams.serviceName = this.services.length ? this.services[0].serviceName : null
         }
       })
     }
@@ -187,6 +189,9 @@ export const services = { // 接口类型
         if (this.allFlag) {
           this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...res.resData]
           this.queryParams.serviceNames.push(this.services[0].serviceName)
+        } else if (this.allServiceNameFlag) {
+          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...res.resData]
+          this.queryParams.serviceName = this.services[0].serviceName
         } else {
           this.services = res.resData
           this.queryParams.serviceName = this.services[0].serviceName

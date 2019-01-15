@@ -2,6 +2,7 @@
 import axios from 'axios'
 import { Loading } from 'element-ui'
 import { showModal } from '../../utils'
+import { mapMutations } from 'vuex' // 引入mapMutations函数
 import moment from 'moment'
 let loading
 export function $http (url, data, method = 'post', responseType = 'json') {
@@ -29,8 +30,10 @@ export function $http (url, data, method = 'post', responseType = 'json') {
       } else { // 返回吗 不为1
         if (res.data.resMsg[0].msgCode === '10005') { // 若没有登录 则强制到登录页面
           window.location.href = window.location.origin + '/#/Login' // 跳转页面
+        } else if (res.data.resMsg[0].msgCode === '40001005') {
+          showModal(res.data.resMsg[0].msgText, 'warning')
         } else {
-          showModal(res.data.resMsg[0].msgText, 'error')
+          showModal(res.data.resMsg[0].msgText, 'warning')
         }
       }
       tryHideFullScreenLoading()
@@ -52,7 +55,7 @@ export function $downFile (url, op) {
   xhr.responseType = "blob"; //这里是关键，它指明返回的数据的类型是二进制  
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.setRequestHeader('mtk', localStorage.getItem('mtk') || '909090');
-  xhr.onreadystatechange = function (e) {
+  xhr.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       var response = this.response;
       var a = document.createElement('a');

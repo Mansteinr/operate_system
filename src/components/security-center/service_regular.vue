@@ -10,80 +10,132 @@
       </div>
       <div class="card-container">
         <el-button type="primary" icon="el-icon-plus" size="small" @click.native="addItem">新增</el-button>
-        <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
+        <div v-show="!tableData.length && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
+        <Table v-show="!tabFlag && tableData.length" class="table" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length">
           <el-table-column
-            label="敏感词"
-            width="160"
-            prop="wordKey">
-           <template slot-scope="scope">
-              <span :class="scope.row.serviceParams.length > 4 ? 'link':''">{{scope.row.wordKey}}</span>
+            label="服务名"
+            prop="serviceName">
+          </el-table-column>
+          <el-table-column
+            label="服务名（中）"
+            prop="serviceNameZh">
+             <template slot-scope="scope">
+               <div @click="handleLook(scope.row)" :class="{'link':scope.row.combine, '': !scope.row.combine}">{{scope.row.serviceNameZh}}</div>
             </template>
           </el-table-column>
           <el-table-column
-            label="描述信息"
-            width="200"
-            prop="wordDes">
+            label="创建时间"
+            prop="insertTime">
           </el-table-column>
           <el-table-column
             label="更新时间"
-            width="160"
             prop="updateTime">
           </el-table-column>
           <el-table-column
-            label="参数"
-            prop="serviceParams">
+            label="组合服务"
+            width="80"
+            prop="combine">
             <template slot-scope="scope">
-              <div v-html="formatterParams(scope.row.serviceParams)"></div>
+               <div :class="{'link':scope.row.combine, 'mv-danger': !scope.row.combine}">{{scope.row.combine?'是':'否'}}</div>
             </template>
           </el-table-column>
           <el-table-column
-            label="操作"
-            width="100">
+            width="90"
+            label="操作">
             <template slot-scope="scope">
-              <el-button @click="handleDelete(scope.row)" class="oprator" type="text" size="small">删除</el-button>
-              <el-button @click="handleEditor(scope.row)" class="oprator" type="text" size="small">更新</el-button>
+              <el-button @click="handleServiceDelete(scope.row)" type="text" size="small">删除</el-button>
+              <el-button @click="handleServiceUpdate(scope.row)" type="text" size="small" :disabled="!scope.row.combine">更新</el-button>
+            </template>
+          </el-table-column>
+        </Table>
+        <Table v-show="tabFlag && tableData2.length" class="table" :showSummary="false" :tableData="tableData2" :tatalPage="tableData2.length">
+          <el-table-column
+            label="规则名称"
+            width="150"
+            prop="regularName">
+          </el-table-column>
+          <el-table-column
+            label="规则代码"
+            width="80"
+            prop="regularCode">
+          </el-table-column>
+          <el-table-column
+            label="告警描述"
+            prop="alarmMsg">
+          </el-table-column>
+          <el-table-column
+            label="告警码"
+            width="130" 
+            prop="alarmCode">
+          </el-table-column>
+          <el-table-column
+            label="生成时间"
+            width="150"
+            prop="insertTime">
+          </el-table-column>
+          <el-table-column
+            label="更新时间"
+            width="150"
+            prop="updateTime">
+          </el-table-column>
+          <el-table-column
+            width="90"
+            label="操作">
+            <template slot-scope="scope">
+              <el-button @click="handleRegularDelete(scope.row)" type="text" size="small">删除</el-button>
+              <el-button @click="handleRegularUpdate(scope.row)" type="text" size="small">更新</el-button>
             </template>
           </el-table-column>
         </Table>
       </div>
     </div>
     <Dialog :dialogVisible="dialogVisible" @closeDialog="closeDialog" @determine="determine" :isClickModal="false">
-      <el-form :rules="rules" :model="queryParams" ref="ruleForm">
-        <el-form-item label="敏感词：" prop="wordKey">
-          <el-input v-model="queryParams.wordKey"></el-input>
+      <el-form v-show="tabFlag" :rules="rules" :model="queryParams" ref="ruleForm">
+        <el-form-item label="规则名称：" prop="regularName">
+          <el-input v-model.trim="queryParams.regularName" placeholder="请输入规则名称"></el-input>
         </el-form-item>
-        <el-form-item label="敏感词描述：" prop="wordDes">
-          <el-input v-model="queryParams.wordDes"></el-input>
+        <el-form-item label="告警码：" prop="alarmCode">
+          <el-input v-model.trim="queryParams.alarmCode" placeholder="请输入告警码"></el-input>
         </el-form-item>
-        <el-form-item label="接口类型：" class="has-norequire">
-          <el-select  filterable placeholder="请选择" v-model="queryParams.serviceName" prop="serviceName">
+        <el-form-item label="告警描述：" prop="alarmMsg">
+          <el-input v-model.trim="queryParams.alarmMsg" placeholder="请输入告警描述"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-form v-show="!tabFlag" :model="queryParamsAdd" ref="ruleFormAdd">
+        <el-form-item label="组合服务：" prop="combine" class="is-required">
+          <el-radio-group v-model="queryParamsAdd.combine" :disabled="isServiceUpdate">
+            <el-radio :label="false">否</el-radio>
+            <el-radio :label="true">是</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="接口类型：" class="is-required" v-show="!queryParamsAdd.combine">
+          <el-select filterable placeholder="请选择" v-model="queryParamsAdd.serviceId" prop="serviceId">
             <el-option
               v-for="(v, index) in services"
               :key="index"
               @click.native="selecteService(v)"
               :title="`${v.serviceNameZh}(${v.serviceName})`"
               :label="v.serviceNameZh"
-              :value="v.serviceName">
+              :value="v.serviceId">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="关联参数：" class="has-norequire">
-          <el-select  filterable collapse-tags placeholder="请选择" @change="changeParam" v-model="queryParams.serviceParam" prop="serviceParam">
+        <el-form-item label="服务名称：" class="is-required" v-show="queryParamsAdd.combine">
+          <el-input v-model.trim="queryParamsAdd.serviceName" :disabled="isServiceUpdate"></el-input>
+        </el-form-item>
+        <el-form-item label="中文名称：" class="is-required" v-show="queryParamsAdd.combine">
+          <el-input v-model.trim="queryParamsAdd.serviceNameZh" :disabled="isServiceUpdate"></el-input>
+        </el-form-item>
+        <el-form-item label="子服务：" class="is-required" v-show="queryParamsAdd.combine">
+          <el-select filterable placeholder="请选择" multiple v-model="queryParamsAdd.subService" prop="subService">
             <el-option
-              v-for="(v, index) in serviceParams"
+              v-for="(v, index) in directServices"
               :key="index"
-              :title="`${v.paramName}(${v.paramNameCh})`"
-              :label="v.paramNameCh"
-              :value="v.paramName">
+              :title="`${v.serviceNameZh}(${v.serviceName})`"
+              :label="v.serviceNameZh"
+              :value="v.serviceId">
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="参数："  class="dialog-param has-norequire">
-          <div v-for="(v, k) in selectedObj" :key="k" @click="deletParam(v,k)" class="dialog-param-item">
-            {{k}} : {{v}}
-            <i class="el-icon-delete"></i>
-          </div>
         </el-form-item>
       </el-form>
     </Dialog>
@@ -101,28 +153,36 @@ export default {
   data () {
     return {
       rules: {
-        wordKey: [
-          { required: true, message: '请输入敏感词', trigger: 'blur' }
+        regularName: [
+          { required: true, message: '请输入规则名称', trigger: 'blur' }
         ],
-        wordDes: [
-          { required: true, message: '请输入敏感词描述', trigger: 'blur' }
+        alarmCode: [
+          { required: true, message: '请输入告警码', trigger: 'blur' }
         ],
-        serviceName: [
-          { required: true, message: '请输入敏感词描述', trigger: 'blur' }
+        alarmMsg: [
+          { required: true, message: '请输入告警描述', trigger: 'blur' }
         ],
       },
       queryParams: {
-        serviceName: '',
-        wordDes: '',
-        wordKey: '',
-        serviceParam: ''
+        regularName: '',
+        alarmCode: '',
+        alarmMsg: ''
+      },
+      queryParamsAdd: {
+        combine: false,
+        serviceId: '',
+        subService: [],
+        serviceNameZh: '',
+        serviceName: ''
       },
       dialogVisible: false,
       tableData: [],
-      serviceParams: [],
+      tableData2: [],
       selectedObj: {},
-      isAddFlg: true,
-      wordId: ''
+      directServices: [],
+      isServiceFlag: true,
+      isServiceUpdate: false,
+      isRegularUpdate: false,
     }
   },
   components: {
@@ -130,7 +190,9 @@ export default {
     Dialog
   },
   mounted() {
-    this.allWords()
+    this.allService()
+    this.directService()
+    this.allRegulars()
   },
   methods: {
     resetTable() {
@@ -148,126 +210,172 @@ export default {
       return html
     },
     addItem () {
+      this.queryParamsAdd.serviceId = this.services[0].serviceId
       this.dialogVisible = true
-      this.isAddFlg = true
+      this.isServiceUpdate = false
+      this.isRegularUpdate = false
     },
-    // 删除敏感词
-    handleDelete(row) {
+    // 预览自服务
+    handleLook (row) {
+      if (!row.combine) return
+      this.dialogVisible = true
+    },
+    // 删除服务
+    handleServiceDelete(row) {
       let options = {
-        wordId: row.wordId
+        serviceId: row.serviceId
       }
-      this.$confirm('确定删除改敏感词?', '提示', {
+      this.$confirm('确定删除该服务?', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
         type: 'warning',
         center: true
       }).then(() => {
-        $http(this.API.secureApi.wordDelete, options).then((res) => {
+        $http(this.API.secureApi.deleteService, options).then((res) => {
           showModal(res.resMsg[0].msgText)
-          this.allWords()
+          this.allService()
         })
       })
     },
-    handleEditor (row) {
+    // 更新服务
+    handleServiceUpdate (row) {
       this.dialogVisible = true
-      this.isAddFlg = false
-      this.queryParams.wordKey = row.wordKey
-      this.queryParams.wordDes = row.wordDes
-      this.wordId = row.wordId
-      this.selectedObj = {}
-      if (row.serviceParams.length) {
-        row.serviceParams.forEach(v => {
-          this.selectedObj[v.serviceName] = v.paramName
-        })
-      }
-      this.$forceUpdate()
+      this.isServiceUpdate = true
+      this.queryParamsAdd.combine = row.combine
+      this.queryParamsAdd.serviceName = row.serviceName
+      this.queryParamsAdd.serviceNameZh = row.serviceNameZh
+      this.queryParamsAdd.serviceId = row.serviceId
+      this.subService({serviceId: row.serviceId})
     },
     // 确定
     determine (val) {
-      if (!Object.getOwnPropertyNames(this.selectedObj).length) {
-        showModal('请选择参数', 'warning')
-        return
-      }
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          if (this.isAddFlg) {
-            this.insertWord(val)
+      if (!this.tabFlag) { // 服务
+        this.$refs.ruleFormAdd.validate((valid) => {
+          if (valid) {
+              if (this.isServiceUpdate) {
+                this.updateService(val) //  跟新
+              } else {
+                this.insertService(val) //  新增
+              }
           } else {
-            this.updatetWord(val)
+            return false
           }
-        } else {
-          return false
-        }
-      })
-    },
-    selecteService (v) {
-      $http(this.API.paramsApi.queryParamsByServiceName, v).then((res) => {
-        this.serviceParams = []
-        this.serviceParams = res.resData.paramNameBeans
-        console.log(this.serviceParams)
-      })
-    },
-    updatetWord (val) {
-      this.insertWord(val)
-    },
-    // 新增
-    insertWord (val) {
-      let options = {}, serviceParams = []
-
-      options.wordDes = this.queryParams.wordDes
-      options.wordKey = this.queryParams.wordKey
-
-      for (let k in this.selectedObj) {
-        serviceParams.push({
-          serviceName: k,
-          paramName: this.selectedObj[k]
+        })
+      } else { // 规则
+        this.$refs.ruleForm.validate((valid) => { 
+          if (valid) {
+            if (this.isRegularUpdate) {
+              this.updateRegulars(val)
+            } else {
+              this.insertRegulars(val)
+            }
+          } else {
+            return false
+          }
         })
       }
-      if (!serviceParams.length) {
-        showModal('请选择参数', 'warning')
-        return
+      
+    },
+    selecteService (v) {
+      this.selectedObj = {
+        serviceName: v.serviceName,
+        serviceNameZh: v.serviceNameZh
       }
-
-      options.serviceParams = serviceParams
-      let address = ''
-      if ( this.isAddFlg ) {
-        address = 'wordInsert'
+    },
+    // 新增服务
+    insertService (val) {
+      let options = {}
+        options.combine = this.queryParamsAdd.combine
+      if (!this.queryParamsAdd.combine) {
+        options.serviceId = this.queryParamsAdd.serviceId
+        options.serviceName = this.selectedObj.serviceName || this.services[0].serviceName
+        options.serviceNameZh = this.selectedObj.serviceNameZh || this.services[0].serviceNameZh
       } else {
-        address = 'wordUpdate'
-        options.wordId = this.wordId
+        options.serviceName = this.queryParamsAdd.serviceName || this.services[0].serviceName
+        options.serviceNameZh = this.queryParamsAdd.serviceNameZh || this.services[0].serviceNameZh
+        options.subService = this.queryParamsAdd.subService
       }
-      $http(this.API.secureApi[address], options).then((res) => {
+      $http(this.API.secureApi.insertService, options).then((res) => {
         showModal(res.resMsg[0].msgText)
-        this.allWords()
         this.dialogVisible = val
-        this.serviceParams = []
-        this.selectedObj = {}
+        this.allService()
       })
     },
-    // 获取所有的敏感词
-    allWords () {
-      $http(this.API.secureApi.allWords, {}).then((res) => {
+    // 更新服务
+    updateService (val) {
+      $http(this.API.secureApi.updateService, this.queryParamsAdd).then((res) => {
+        showModal(res.resMsg[0].msgText)
+        this.dialogVisible = val
+        this.allService()
+      })
+    },
+    /*获取所有的服务*/
+    allService () {
+      $http(this.API.secureApi.allService, {}).then((res) => {
         this.tableData = res.resData
       })
     },
-    // 参数该边时
-    changeParam () {
-      if (this.selectedObj.hasOwnProperty(this.queryParams.serviceName)) {
-        showModal('该服务已经添加过了')
-        return
-      } else {
-        if (this.selectedObj[this.queryParams.serviceName]) {
-          showModal('给服务参数已经添加过了')
-        } else {
-          this.selectedObj[this.queryParams.serviceName] = this.queryParams.serviceParam
+    // 所有的子服务
+    directService () {
+      $http(this.API.secureApi.directService, {}).then((res) => {
+        this.directServices = res.resData
+        this.queryParamsAdd.subService.push(this.directServices[0].serviceId)
+      })
+    },
+    // 服务直接子服务
+    subService (op) {
+      $http(this.API.secureApi.subService, op).then((res) => {
+        this.queryParamsAdd.subService = []
+        if (res.resData.length) {
+          res.resData.forEach(v => {
+            this.queryParamsAdd.subService.push(v.serviceId)
+          })
         }
+      })
+    },
+    // 所有的规则
+    allRegulars (op) {
+      $http(this.API.secureApi.allRegulars, {}).then((res) => {
+        this.tableData2 = res.resData
+      })
+    },
+    // 新增规则
+    insertRegulars (val) {
+      $http(this.API.secureApi.insertRegulars, this.queryParams).then((res) => {
+        showModal(res.resMsg[0].msgText)
+        this.dialogVisible = val
+        this.allRegulars()
+      })
+    },
+    // 删除规则
+    handleRegularDelete (row) {
+      this.$confirm('确定删除该规则?', '提示', {
+        cancelButtonText: '取消',
+        confirmButtonText: '确定',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        $http(this.API.secureApi.deleteRegulars, {regularId: row.regularId}).then((res) => {
+          showModal(res.resMsg[0].msgText)
+          this.allRegulars()
+        })
+      })
+    },
+    handleRegularUpdate (row) {
+      this.dialogVisible = true
+      this.isRegularUpdate = true
+      this.queryParams.regularId = row.regularId
+      for (let k in this.queryParams) {
+        this.queryParams[k] = row[k]
       }
     },
-    // 删除已选的服务和参数
-    deletParam (item, key) {
-      delete this.selectedObj[key]
-      // 强制刷新
-      this.$forceUpdate()
+    updateRegulars (val) {
+      $http(this.API.secureApi.updateRegulars, this.queryParams).then((res) => {
+        showModal(res.resMsg[0].msgText)
+        this.allRegulars()
+        this.dialogVisible = val
+        delete this.queryParams.regularId
+      })
     }
   }
 }

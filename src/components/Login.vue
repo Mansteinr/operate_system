@@ -39,6 +39,7 @@ export default {
   methods: {
     getVerifyCode () {
       $http(this.API.base.getVerifyCode, {}, 'get').then((res) => {
+        console.log(res)
         this.uuid = res.resData.uuid
         this.imgSrc = 'data:image/png;base64,' + res.resData.vcode
       })
