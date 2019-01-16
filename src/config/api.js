@@ -96,16 +96,19 @@ const api = {
     paramRecord: apiFormat('secure/web/record/paramRecord', 'safaCenterapi'), /* 参数拦截例 */
     recoverUseful: apiFormat('secure/web/record/recoverUseful', 'safaCenterapi'), /* 告警恢复 */
     allService: apiFormat('secure/web/service/allService', 'safaCenterapi'), /*获取所有的服务*/
-    allRegulars: apiFormat('secure/web/service/allRegulars', 'safaCenterapi'), /*获取所有规则*/
+    allRegulars: apiFormat('secure/web/regular/allRegulars', 'safaCenterapi'), /*获取所有规则*/
     directService: apiFormat('secure/web/service/directService', 'safaCenterapi'), /*获取所有子服务*/
     deleteService: apiFormat('secure/web/service/delete', 'safaCenterapi'), /*删除服务*/
     insertService: apiFormat('secure/web/service/insert', 'safaCenterapi'), /*新增服务*/
     subService: apiFormat('secure/web/service/subService', 'safaCenterapi'), /*服务直接子服务*/
     updateService: apiFormat('secure/web/service/update', 'safaCenterapi'), /*更新服务*/
-    allRegulars: apiFormat('secure/web/regular/allRegulars', 'safaCenterapi'), /*所有的规则*/
     insertRegulars: apiFormat('secure/web/regular/insert', 'safaCenterapi'), /*新增规则*/
     deleteRegulars: apiFormat('secure/web/regular/delete', 'safaCenterapi'), /*删除规则*/
     updateRegulars: apiFormat('secure/web/regular/update', 'safaCenterapi'), /*更新规则*/
+    allRegIns: apiFormat('secure/web/regIns/allRegIns', 'safaCenterapi'), /*所有的规则实列*/
+    insertRegIns: apiFormat('secure/web/regIns/insert', 'safaCenterapi'), /*新增规则实列*/
+    deleteRegIns: apiFormat('secure/web/regIns/delete', 'safaCenterapi'), /*删除规则实列*/
+    updateRegIns: apiFormat('secure/web/regIns/update', 'safaCenterapi'), /*更新规则实列*/
   },
   qualityanalyApi: { // 平台质量分析
     supplierRealTime: apiFormat('qualityanalyze/supplier/realTime', 'upapi'),  /* 供应商（上游）质量分析  实时数据 */

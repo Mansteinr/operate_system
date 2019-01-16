@@ -97,6 +97,57 @@
       formatterTime (val) {
         return moment(val).format('YYYY-MM-DD HH:mm:ss')
       },
+      formatterParams (val) { // 参数展示
+      // debugger
+        var html = '';
+        for (var key in val) {
+          var label = key
+          switch (key) {
+            case 'accountNo':
+              label = '银行卡号'
+              break;
+            case 'idCard':
+              label = '身份证号'
+              break;
+            case 'mobile':
+              label = '手机号码'
+              break;
+            case 'name':
+              label = '姓名'
+              break;
+            case 'plateNumber':
+              label = '车牌号'
+              break;
+            case 'plateType':
+              label = '号牌种类'
+              break;
+            default:
+              label = key
+              break;
+          }
+          // 只展示下面几个参数 其他不需要展示
+          if (key == 'accountNo' || key == 'idCard' || key == 'mobile' || key == 'name' || key == 'plateNumber' || key == 'plateType') {
+            html += '<span class="param-item" title="' + label + ': ' + val[key] + '">' + label + ': ' + val[key] + '</span>'
+          }
+        }
+        return html
+      },
+      formatterParamsArrobj (val) { // 参数展示
+        var html = ''
+        if (!val.length) return
+        val.forEach( v=> {
+          html += `<span class="param-item" title="${v.paramName}">${v.paramNameCh} : ${v.paramName} </span>`
+        })
+        return html
+      },
+      formatterParamsArr (val) { // 参数展示
+        var html = ''
+        if (!val.length) return
+        val.forEach( v=> {
+          html += `<span class="param-item" title="${v}">${v} </span>`
+        })
+        return html
+      },
       filterTable (data) {
         // if (!this.search) {
         //   return true

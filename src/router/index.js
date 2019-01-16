@@ -24,6 +24,7 @@ import parameterMaintenance from '../components/config-management/interface_para
 import sensitiveWord from '../components/security-center/sensitive_word'
 import serviceRegular from '../components/security-center/service_regular'
 import paramRecord from '../components/security-center/param_record'
+import ruleInstance from '../components/security-center/rule_instance'
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import Main from '../components/Main'
@@ -132,9 +133,13 @@ const router = new Router({
       name: 'param_record',
       component: paramRecord
     }, {
+      path: '/ruleInstance',
+      name: 'rule_instance',
+      component: ruleInstance
+    }, {
       path: '/Demo',
       name: 'Demo',
-      component: Demo
+      component: Demo  
     }]
   }, {
     path: '/Login',
@@ -142,5 +147,4 @@ const router = new Router({
     component: Login
   }]
 })
-
 export default router

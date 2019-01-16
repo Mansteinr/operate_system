@@ -200,7 +200,6 @@ export default {
       $http(this.API.paramsApi.queryParamsByServiceName, v).then((res) => {
         this.serviceParams = []
         this.serviceParams = res.resData.paramNameBeans
-        console.log(this.serviceParams)
       })
     },
     updatetWord (val) {

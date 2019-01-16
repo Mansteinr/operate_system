@@ -23,7 +23,7 @@
             label="参数"
             prop="paramNameBeans">
             <template slot-scope="scope">
-              <div v-html="formatterParams(scope.row.paramNameBeans)"></div>
+              <div v-html="formatterParamsArrobj(scope.row.paramNameBeans)"></div>
             </template>
           </el-table-column>
           <el-table-column
@@ -103,20 +103,14 @@ export default {
     formatter (val) {
       return this.$refs.table.formatter(val)
     },
-    formatterParams (val) { // 参数展示
-      var html = ''
-      if (!val.length) return
-      val.forEach( v=> {
-        html += `<span class="param-item" title="${v.paramName}">${v.paramNameCh} : ${v.paramName} </span>`
-      })
-      return html
+    formatterParamsArrobj (val) { // 参数展示
+      return this.$refs.table.formatterParamsArrobj(val)
     },
     addItem () {
       this.dialogVisible = true
     },
     handleDelete(row) {
       let options = {}
-      Object.assign(options, row)
       $http(this.API.paramsApi.deleteByServiceNameAndParamName, options).then((res) => {
         showModal(res.resMsg[0].msgText)
         this.getAll()

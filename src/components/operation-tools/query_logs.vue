@@ -91,7 +91,7 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData" :showSummary="false" :tatalPage="tableData.length" v-show="tableData.length">
+        <Table class="table" ref="table" :tableData="tableData" :showSummary="false" :tatalPage="tableData.length" v-show="tableData.length">
           <el-table-column
             label="用户名"
             prop="loginName">
@@ -111,7 +111,6 @@
           <el-table-column
             label="请求参数"
             width="200"
-            :formatter="formatterParams"
             prop="param">
             <template slot-scope="scope">
               <div v-html="formatterParams(scope.row.param)"></div>
@@ -158,7 +157,6 @@
 
 <script>
 import { $http } from '../../common/js/ajax'
-import { setRadiiData, renderChart } from '../../common/js/myCharts'
 import { switchMixin, businessType, loginName,services } from '../../common/js/mixin'
 import Table from '../../base/Table'
 import QueryButton from '../../base/QueryButton'
@@ -217,38 +215,8 @@ export default {
       return val.readCacheHit ? '是' : '否'
     },
     formatterParams (val) { // 参数展示
-      var html = '';
-      for (var key in val) {
-        var label = key
-        switch (key) {
-          case 'accountNo':
-            label = '银行卡号'
-            break;
-          case 'idCard':
-            label = '身份证号'
-            break;
-          case 'mobile':
-            label = '手机号码'
-            break;
-          case 'name':
-            label = '姓名'
-            break;
-          case 'plateNumber':
-            label = '车牌号'
-            break;
-          case 'plateType':
-            label = '号牌种类'
-            break;
-          default:
-            label = key
-            break;
-        }
-        // 只展示下面几个参数 其他不需要展示
-        if (key == 'accountNo' || key == 'idCard' || key == 'mobile' || key == 'name' || key == 'plateNumber' || key == 'plateType') {
-          html += '<span class="param-item" title="' + label + ': ' + val[key] + '">' + label + ': ' + val[key] + '</span>'
-        }
-      }
-      return html
+    console.log(val, 'val')
+      return this.$refs.table.formatterParams(val)
     },
     formatterSrc (val) { // 渠道展示
       if (val && val.length) {
