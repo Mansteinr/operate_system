@@ -1,14 +1,15 @@
 <template>
   <div>
-    <el-input v-model="search" v-show="showSearch" size="mini" class="serarch-input" placeholder="请输入关键字"/>
+    <el-input v-model.trim="search" v-show="showSearch" size="mini" class="serarch-input" placeholder="请输入关键字"/>
     <el-table
-      :data="sidePagination === 'customer' ? tableDataComputed.filter(data => filterTable(data)): tableData"
+      :data="sidePagination === 'customer' ? tableDataComputed.slice(start, end) : tableData"
       :show-summary="showSummary"
       :summary-method="getSummaries"
+      :stripe="true"
       style="width: 100%">
         <slot></slot>
     </el-table>
-    <Pagination @changePage="changePage" :tatalPage="tatalPage" v-show="tatalPage>1"></Pagination>
+    <Pagination @changePage="changePage" :tatalPage="sidePagination === 'customer' ? total : tatalPage" v-show="tatalPage>1"></Pagination>
   </div>
 </template>
 
@@ -21,6 +22,8 @@
         currentPage: 1,
         pageSize: 10,
         search: '',
+        start:0,
+        end: 10,
         serarchItems: []
       }
     },
@@ -51,8 +54,7 @@
     },
     methods: {
       getSummaries (param) {
-        const { columns } = param
-        // this.columns = columns
+        const { columns, data } = param
         this.serarchItems = columns
         const sums = []
         columns.forEach((column, index) => {
@@ -62,7 +64,7 @@
           }
           // column.property 为自己定义的 data为table中的数据 即会计算当前页面的总和
           // const values = data.map(item => Number(item[column.property]))
-          const values = this.tableData.map(item => Number(item[column.property]))
+          const values = this.tableDataComputed.map(item => Number(item[column.property]))
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr)
@@ -84,13 +86,6 @@
         })
         return sums
       },
-      handleSizeChange (val) {
-        if (val) {
-          this.pageSize = val
-        } else {
-          this.pageSize = this.tableData.length
-        }
-      },
       formatter (val, param="downCost") {
         return Math.round(val[param] * 100) / 100
       },
@@ -98,7 +93,6 @@
         return moment(val).format('YYYY-MM-DD HH:mm:ss')
       },
       formatterParams (val) { // 参数展示
-      // debugger
         var html = '';
         for (var key in val) {
           var label = key
@@ -148,31 +142,27 @@
         })
         return html
       },
-      filterTable (data) {
-        // if (!this.search) {
-        //   return true
-        // } else {
-        //   data.forEach(v => {
-        //     console.log(v.dayTime.toLowerCase().includes(this.search.toLowerCase()) || (v.usedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (v.downChargedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (v.downCost + '').toLowerCase().includes(this.search.toLowerCase()))
-        //     return v.dayTime.toLowerCase().includes(this.search.toLowerCase()) || (v.usedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (v.downChargedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (v.downCost + '').toLowerCase().includes(this.search.toLowerCase())
-        //   })
-        // }
-        return !this.search || data.dayTime.toLowerCase().includes(this.search.toLowerCase()) || (data.usedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (data.downChargedCount + '').toLowerCase().includes(this.search.toLowerCase()) || (data.downCost + '').toLowerCase().includes(this.search.toLowerCase())
-      },
       changePage (value) {
         this.$emit('changePage', value)
         this[value.split('-')[0]] = value.split('-')[1] / 1
+        this.start = this.pageSize * (this.currentPage - 1)
+        this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
       }
     },
     computed: {
       tableDataComputed () {
-        if (this.tableData && this.tableData.length) {
-          let start = this.pageSize * (this.currentPage - 1)
-          let end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
-          return this.tableData.slice(start, end)
-        } else {
-          return []
+        const search = this.search
+        if (search) {
+         return this.tableData.filter(v => {
+            return Object.keys(v).some(key => {
+              return String(v[key]).toLowerCase().indexOf(search) > -1
+            })
+          })
         }
+        return this.tableData
+      },
+      total () {
+         return this.tableDataComputed.length
       }
     }
   }

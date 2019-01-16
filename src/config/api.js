@@ -53,7 +53,7 @@ const baseConfig = {
 }
 /*设置api转换*/
 // let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
-let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.test[hostkey] + api
+let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.prod[hostkey] + api
 const api = {
   base: {
     login: apiFormat('login/doLogin', 'rbacapi'),

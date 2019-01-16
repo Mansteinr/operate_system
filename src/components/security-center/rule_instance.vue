@@ -321,7 +321,6 @@ export default {
       })
     },
     updateRegIns () { //更新实列
-    console.log(this.queryParams)
       $http(this.API.secureApi.updateRegIns, this.queryParams).then((res) => {
         showModal(res.resMsg[0].msgText)
         delete this.queryParams.regInsId
@@ -343,7 +342,6 @@ export default {
       })
     },
     handleEditor (row) { // 更新
-    console.log(row)
       this.selectedService(this.allServiceArr[0])
       this.dialogVisible = true
       this.isAddFlg = false
