@@ -13,6 +13,7 @@
     "axios": "^0.18.0",
     "echarts": "^4.2.0-rc.2",
     "element-ui": "^2.4.9",
+    "file-saver": "^2.0.0",
     "js-md5": "^0.7.3",
     "js-pinyin": "^0.1.9",
     "jsoneditor": "^5.26.3",
@@ -26,6 +27,7 @@
     "vue-json-editor": "^1.2.3",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
+    "xlsx": "^0.14.1",
     "yarn": "^1.12.3"
   },
   "devDependencies": {

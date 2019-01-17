@@ -1,7 +1,24 @@
 <template>
   <div>
-    <el-input v-model.trim="search" v-show="showSearch" size="mini" class="serarch-input" placeholder="请输入关键字"/>
+    <el-row :gutter="5" v-show="showSearch">
+      <el-col :span="4" :offset="19"><el-input v-model.trim="search" size="mini" placeholder="请输入关键字"/></el-col>
+      <el-col :span="1">
+        <el-dropdown>
+          <el-button type="primary" size="mini">
+            <i class="el-icon-download"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="exportExcel('excel')">excel</el-dropdown-item>
+            <el-dropdown-item @click.native="exportExcel('xml')">xml</el-dropdown-item>
+            <el-dropdown-item @click.native="exportExcel('csv')">csv</el-dropdown-item>
+            <el-dropdown-item @click.native="exportExcel('txt')">txt</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-col>
+    </el-row>
+    
     <el-table
+      id="out-table"
       :data="sidePagination === 'customer' ? tableDataComputed.slice(start, end) : tableData"
       :show-summary="showSummary"
       :summary-method="getSummaries"
@@ -16,6 +33,9 @@
 <script>
   import Pagination from './Pagination'
   import moment from 'moment'
+  import FileSaver from 'file-saver'
+  import XLSX from 'xlsx'
+  import { Loading } from 'element-ui'
   export default {
     data () {
       return {
@@ -47,6 +67,10 @@
       sidePagination: {
         type: String,
         default: 'customer'
+      },
+      selector: {
+        type: String,
+        default: 'table1'
       }
     },
     components: {
@@ -147,6 +171,39 @@
         this[value.split('-')[0]] = value.split('-')[1] / 1
         this.start = this.pageSize * (this.currentPage - 1)
         this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
+      },
+      exportExcel (kind) { // 导出excel
+        const loading = Loading.service({
+          lock: true,
+          text: '下载中…',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+        if (this.tableData.length > 10) {
+          let parentDOm = document.getElementsByClassName(this.selector)[0]
+          let ul = parentDOm.getElementsByClassName('el-select-dropdown__list')[0]
+          let lis = ul.getElementsByTagName('li')
+          lis[lis.length -1].click()
+          this.$nextTick(() => {
+            setTimeout(()=> {
+                var wb = XLSX.utils.table_to_book(document.querySelector('.' + this.selector))
+                var wbout = XLSX.write(wb, { bookType: kind, bookSST: true, type: 'array' })
+                try {
+                    FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'download.' + kind)
+                } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+                loading.close()
+                lis[0].click()
+                return wbout
+            }, 1000)
+          })
+        } else {
+          var wb = XLSX.utils.table_to_book(document.querySelector('.' + this.selector))
+          var wbout = XLSX.write(wb, { bookType: kind, bookSST: true, type: 'array' })
+          try {
+              FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'download.' + kind)
+          } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+          loading.close()
+          return wbout
+        }
       }
     },
     computed: {

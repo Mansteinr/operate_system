@@ -37,7 +37,7 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts1" style="height:400px;width:100%;"></div>        
-        <Table ref="table" class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
+        <Table ref="table" class="table table1" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
           <el-table-column
             label="使用日期"
             sortable
@@ -73,7 +73,7 @@
       <div class="card-container">
        <div v-show="!tabFlag2 && !tableData2.length" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div> 
-        <Table class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2">
+        <Table class="table table2" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2" :selector="'table2'">
           <el-table-column
             label="客户名称"
             prop="customerName">
@@ -103,7 +103,6 @@
 <script>
 import { $http } from '../../common/js/ajax'
 import { setLineData, renderChart } from '../../common/js/myCharts'
-import echarts from 'echarts'
 import { switchMixin, hotKeyTime } from '../../common/js/mixin'
 import Table from '../../base/Table'
 import QueryButton from '../../base/QueryButton'

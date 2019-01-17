@@ -91,7 +91,7 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table" ref="table" :tableData="tableData" :showSummary="false" :tatalPage="tableData.length" v-show="tableData.length">
+        <Table class="table table1" ref="table" :tableData="tableData" :showSummary="false" :tatalPage="tableData.length" v-show="tableData.length">
           <el-table-column
             label="用户名"
             prop="loginName">
@@ -215,7 +215,6 @@ export default {
       return val.readCacheHit ? '是' : '否'
     },
     formatterParams (val) { // 参数展示
-    console.log(val, 'val')
       return this.$refs.table.formatterParams(val)
     },
     formatterSrc (val) { // 渠道展示
