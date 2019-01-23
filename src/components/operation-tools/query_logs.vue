@@ -144,7 +144,7 @@
           <el-table-column
             label="渠道"
             width="180"
-            prop="srcQueryReturnList">
+            prop="srcQueryReturnList?className.split('.')[2]&invokeCostTime">
               <template slot-scope="scope">
                 <div v-html="formatterSrc(scope.row.srcQueryReturnList)"></div>
               </template>

@@ -100,7 +100,6 @@
 <script>
 import { $http } from '../../common/js/ajax'
 import { setLineData, renderChart } from '../../common/js/myCharts'
-import echarts from 'echarts'
 import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
 import Table from '../../base/Table'
 import QueryButton from '../../base/QueryButton'
@@ -134,7 +133,7 @@ export default {
       })
     },
     UsageByDate () {
-      $http(this.API.upApi.UsageByDate, this.queryParams).then((res) => {
+      $http(this.API.downApi.UsageByDate, this.queryParams).then((res) => {
         let xAxisData = [], 
           series= [{
             name: '共计使用量',

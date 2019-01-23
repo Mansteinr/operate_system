@@ -36,6 +36,7 @@
   import FileSaver from 'file-saver'
   import XLSX from 'xlsx'
   import { Loading } from 'element-ui'
+  let timer
   export default {
     data () {
       return {
@@ -43,8 +44,7 @@
         pageSize: 10,
         search: '',
         start:0,
-        end: 10,
-        serarchItems: []
+        end: 10
       }
     },
     props: {
@@ -78,8 +78,7 @@
     },
     methods: {
       getSummaries (param) {
-        const { columns, data } = param
-        this.serarchItems = columns
+        const { columns } = param
         const sums = []
         columns.forEach((column, index) => {
           if (index === 0) {
@@ -172,6 +171,32 @@
         this.start = this.pageSize * (this.currentPage - 1)
         this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
       },
+      searchFun (search, searchKeys) {
+        return this.tableData.filter(v => {
+          return searchKeys.some(key => {
+            // 非对象
+            if (typeof v[key] !== 'object') {
+              // if (key === 'beginTime') debugger
+              return String(v[key]).toLowerCase().indexOf(search) > -1
+            } else { 
+              // 数组
+              if (Array.isArray(v[key])) {
+                return v[key].includes(search)
+              } else {
+                if (key.indexOf('?') === -1) {
+                  Object.keys(v[key]).some(objKey => {
+                    return String(v[key][objKey]).toLowerCase().indexOf(search) > -1
+                  })
+                } else {
+                  key.split('?')[1].split('&').some(arrKey => {
+                    return String(v[key][arrKey]).toLowerCase().indexOf(search) > -1
+                  })
+                }
+              }
+            }
+          })
+        })
+      },
       exportExcel (kind) { // 导出excel
         const loading = Loading.service({
           lock: true,
@@ -207,15 +232,52 @@
       }
     },
     computed: {
-      tableDataComputed () {
-        const search = this.search
-        if (search) {
-         return this.tableData.filter(v => {
-            return Object.keys(v).some(key => {
-              return String(v[key]).toLowerCase().indexOf(search) > -1
+      tableDataComputed (param) {
+        const { $children } = param, searchKeys = [], search = this.search
+        $children.map(v => {
+          if (v.$el.className.indexOf('el-table') > -1) {
+            // console.log(v.columns)
+            v.columns.map(v1 => {
+              searchKeys.push(v1.property)
             })
-          })
+          }
+        })
+        if (search) {
+          if (timer) {
+            clearTimeout(timer)
+          }
+          timer = setTimeout(() => {
+            console.log(90)
+            return this.tableData.filter(v => {
+              return searchKeys.some(key => {
+                // 非对象
+                if (typeof v[key] !== 'object') {
+                  if (Number.isInteger(v[key]/1) && (v[key]/1 > +new Date())) { // 可能时间戳
+                    return moment(v[key]).format('YYYYMMDD HH:mm:ss').indexOf(search) > -1 || moment(v[key]).format('YYYY/MM/DD HH:mm:ss').indexOf(search) > -1 || moment(v[key]).format('YYYY-MM-DD HH:mm:ss').indexOf(search) > -1 
+                  } else {
+                    return String(v[key]).toLowerCase().indexOf(search) > -1
+                  }
+                } else { 
+                  // 数组
+                  if (Array.isArray(v[key])) {
+                    return v[key].includes(search)
+                  } else {
+                    if (key.indexOf('?') === -1) {
+                      Object.keys(v[key]).some(objKey => {
+                        return String(v[key][objKey]).toLowerCase().indexOf(search) > -1
+                      })
+                    } else {
+                      key.split('?')[1].split('&').some(arrKey => {
+                        return String(v[key][arrKey]).toLowerCase().indexOf(search) > -1
+                      })
+                    }
+                  }
+                }
+              })
+            })
+          }, 500)
         }
+        console.log(this.tableData)
         return this.tableData
       },
       total () {
