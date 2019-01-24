@@ -39,7 +39,7 @@
     <Dialog :dialogVisible="dialogVisible" @closeDialog="closeDialog" @determine="determine" :isClickModal="false">
       <el-form  :model="queryParams">
         <el-form-item label="接口类型：" >
-          <el-select  filterable placeholder="请选择" v-model="queryParams.serviceName">
+          <el-select  filterable placeholder="请选择" :filter-method="filterServiceName" v-model="queryParams.serviceName">
             <el-option
               v-for="(v, index) in services"
               :key="index"

@@ -30,7 +30,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="客户名称：" prop="loginName">
-            <el-select filterable v-model="queryParams.loginName" placeholder="请选择">
+            <el-select filterable v-model="queryParams.loginName" :filter-method="filterLoginName" placeholder="请选择">
               <el-option
                 v-for="v in loginName"
                 @click.native.stop="changeCustomer(v)"
@@ -43,7 +43,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="接口类型：" prop="serviceName">
-            <el-select filterable v-model="queryParams.serviceName" placeholder="请选择">
+            <el-select filterable v-model="queryParams.serviceName" :filter-method="filterServiceName" placeholder="请选择">
               <el-option
                 v-for="v in services"
                 :key="v.serviceId"

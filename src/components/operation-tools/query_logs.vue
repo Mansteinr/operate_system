@@ -43,7 +43,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="客户名称：" prop="loginName">
-              <el-select filterable v-model="queryParams.loginName" placeholder="请选择">
+              <el-select filterable v-model="queryParams.loginName" :filter-method="filterLoginName" placeholder="请选择">
                 <el-option
                   v-for="v in loginName"
                   @click.native.stop="changeCustomer(v)"
@@ -56,7 +56,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="接口类型：" prop="serviceName">
-              <el-select filterable v-model="queryParams.serviceName" placeholder="请选择">
+              <el-select filterable v-model="queryParams.serviceName" :filter-method="filterServiceName" placeholder="请选择">
                 <el-option
                   v-for="v in services"
                   :key="v.serviceId"
@@ -98,7 +98,7 @@
           </el-table-column>
           <el-table-column
             label="guid"
-            width="280"
+            width="260"
             prop="guid">
           </el-table-column>
           <el-table-column
@@ -118,6 +118,7 @@
           </el-table-column>
           <el-table-column
             label="耗时(ms)"
+            width="120"
             sortable
             prop="costTime_all">
           </el-table-column>
@@ -129,11 +130,12 @@
           <el-table-column
             label="RESULT"
             sortable
+            width="100"
             prop="rsp.RESULT">
           </el-table-column>
           <el-table-column
             label="resultCode"
-            sortable
+            width="100"
             prop="rsp.resultCode">
           </el-table-column>
           <el-table-column

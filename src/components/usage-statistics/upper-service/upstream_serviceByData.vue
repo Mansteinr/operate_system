@@ -20,7 +20,7 @@
             </div>
           </el-form-item>
           <el-form-item label="客户名称：" prop="loginName">
-            <el-select v-model="queryParams.loginName" filterable placeholder="请选择">
+            <el-select v-model="queryParams.loginName" filterable  :filter-method="filterLoginName" placeholder="请选择">
               <el-option
                 v-for="(v, index) in loginName"
                 :key="index"
@@ -32,7 +32,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="接口类型：" prop="serviceName" :title="titleTips">
-            <el-select v-model="queryParams.serviceNames" filterable multiple collapse-tags placeholder="请选择">
+            <el-select v-model="queryParams.serviceNames" :filter-method="filterServiceName" filterable multiple collapse-tags placeholder="请选择">
               <el-option
                 v-for="(v, index) in services"
                 :key="index"

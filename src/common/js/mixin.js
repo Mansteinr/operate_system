@@ -1,4 +1,5 @@
 import { $http } from './ajax'
+let pinyin = require('js-pinyin')
 // 切换table相关方法
 export const switchMixin = {
   data () {
@@ -136,7 +137,7 @@ export const loginName = { // 客户登陆名称
       $http(this.API.upApi.customers, {}).then((res) => {
         this.loginNameOrigin = []
         this.loginNameOrigin = res.resData
-        if(this.noAllLogin) {
+        if(this.noAllLogin) { // 有的页面需要带上‘全部’ 有点不需要故作此标记
           this.loginName = this.loginNameOrigin
         } else {
           this.loginName = [...[{
@@ -170,6 +171,28 @@ export const loginName = { // 客户登陆名称
           this.queryParams.serviceName = this.services.length ? this.services[0].serviceName : null
         }
       })
+    },
+    filterLoginName (params) {
+      this.loginName = []
+      if (params) {
+        let translateParams = params.toLowerCase()
+        this.loginNameOrigin.filter(v => {
+          let testBool = v['loginName'].toLowerCase().indexOf(translateParams) > -1 || v['customerName'].indexOf(translateParams) > -1 || pinyin.getFullChars(v['customerName']).toLowerCase().indexOf(translateParams) > -1 ||  pinyin.getCamelChars(v['customerName']).toLowerCase().indexOf(translateParams) > -1
+          if (testBool) {
+            this.loginName.push(v)
+          }
+        })
+      } else {
+        if(this.noAllLogin) {
+          this.loginName = this.loginNameOrigin
+        } else {
+          this.loginName = [...[{
+            customerId: '',
+            loginName: '',
+            customerName: '全部'
+          }], ...this.loginNameOrigin]
+        }
+      }
     }
   }
 }
@@ -177,6 +200,7 @@ export const services = { // 接口类型
   data () {
     return {
       services: [],
+      servicesOrigin: []
     }
   },
   mounted () {
@@ -185,18 +209,41 @@ export const services = { // 接口类型
   methods: {
     getAllServices () {
       $http(this.API.upApi.services, {}).then((res) => {
-        this.services = []
+        this.services = [], this.servicesOrigin = res.resData
         if (this.allFlag) {
-          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...res.resData]
+          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...this.servicesOrigin]
           this.queryParams.serviceNames.push(this.services[0].serviceName)
         } else if (this.allServiceNameFlag) {
-          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...res.resData]
+          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...this.servicesOrigin]
           this.queryParams.serviceName = this.services[0].serviceName
         } else {
-          this.services = res.resData
+          this.services = this.servicesOrigin
           this.queryParams.serviceName = this.services[0].serviceName
         }
       })
+    },
+    filterServiceName (params) {
+      this.services = []
+      if (params) {
+        let translateService = params.toLowerCase()
+        this.servicesOrigin.filter(v => {
+          let testBool = v['serviceName'].toLowerCase().indexOf(translateService) > -1 || v['serviceNameZh'].indexOf(translateService) > -1 || pinyin.getFullChars(v['serviceNameZh']).toLowerCase().indexOf(translateService) > -1 ||  pinyin.getCamelChars(v['serviceNameZh']).toLowerCase().indexOf(translateService) > -1
+          if (testBool) {
+            this.services.push(v)
+          }
+        })
+      } else {
+        if (this.allFlag) {
+          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...this.servicesOrigin]
+          this.queryParams.serviceNames.push(this.services[0].serviceName)
+        } else if (this.allServiceNameFlag) {
+          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...this.servicesOrigin]
+          this.queryParams.serviceName = this.services[0].serviceName
+        } else {
+          this.services = this.servicesOrigin
+          this.queryParams.serviceName = this.services[0].serviceName
+        }
+      }
     }
   }
 }
@@ -326,3 +373,5 @@ export const getParam = {
     }
   }
 }
+
+
