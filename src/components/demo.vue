@@ -47,22 +47,7 @@
     data() {
       return {
         isCollapse: true
-  //         i {
-  //     transition: All 0.4s ease-in-out;
-  //     -webkit-transition: All 0.4s ease-in-out;
-  //     -moz-transition: All 0.4s ease-in-out;
-  //     -o-transition: All 0.4s ease-in-out;
-  // }
-
-  // i:hover {
-  //     transform: rotate(360deg);
-  //     -webkit-transform: rotate(360deg);
-  //     -moz-transform: rotate(360deg);
-  //     -o-transform: rotate(360deg);
-  //     -ms-transform: rotate(360deg);
-  // }
-
-      };
+      }
     },
     methods: {
       handleOpen(key, keyPath) {

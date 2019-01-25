@@ -163,6 +163,7 @@ export default {
     .el-aside
       margin-top -10px
       width: auto !important
+      background $color-nave
       .el-submenu
         .el-submenu__title
           color #adb3c4 !important
