@@ -2,6 +2,8 @@
  * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/)
  * http://cssreset.com
  */
+@import 'variable.styl'
+
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -57,10 +59,10 @@ body
   min-height: 100%
   z-index: -2
   color rgb(158, 167, 179) !important
-  font-family "Open Sans", Arial, sans-serif !important
+  font-family "微软雅黑", Arial, sans-serif !important
   font-size 13px !important
   overflow-x hidden !important
-  background url(../images/bg.jpg) no-repeat top center fixed
+  background $color-body-background
   margin 0px !important
   background-size cover
 
