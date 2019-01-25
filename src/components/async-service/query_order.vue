@@ -76,12 +76,10 @@
           </el-table-column>
           <el-table-column
             label="数据源"
-            width="80"
             prop="datasourcename">
           </el-table-column>
           <el-table-column
             label="报告状态"
-            width="80"
             :formatter="(row)=>{
               return row.dataFrom / 1 ? '已生成' : '未生成'
             }"
@@ -107,6 +105,7 @@
           </el-table-column>
           <el-table-column
             label="数据源订单状态"
+            width="120"
             prop="upStatus">
           </el-table-column>
           <el-table-column label="车保报告">
@@ -128,9 +127,7 @@
         </Table>
       </div>
     </div>
-    <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog">
-    
-    </Guid>
+    <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid>
   </div>
 </template>
 
@@ -241,7 +238,6 @@ export default {
       $http(this.API.callbackServiceApi.getDecryptData, options).then((res) => {
         this.dialogVisible = true
         this.josn = JSON.parse(res.resData) || {}
-
       })
     }
   }

@@ -27,6 +27,7 @@
         <slot></slot>
     </el-table>
     <Pagination @changePage="changePage" :tatalPage="sidePagination === 'customer' ? total : tatalPage" v-show="tatalPage>1"></Pagination>
+    <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid>
   </div>
 </template>
 
@@ -36,6 +37,8 @@
   import FileSaver from 'file-saver'
   import XLSX from 'xlsx'
   import { Loading } from 'element-ui'
+  import Guid from './Guid'
+  import { $http } from '../common/js/ajax'
   export default {
     data () {
       return {
@@ -43,7 +46,9 @@
         pageSize: 10,
         search: '',
         start:0,
-        end: 10
+        end: 10,
+        dialogVisible: false,
+        josn: {}
       }
     },
     props: {
@@ -73,9 +78,19 @@
       }
     },
     components: {
-      Pagination
+      Pagination,
+      Guid
     },
     methods: {
+      queryGuid (val) {
+        $http(this.API.upApi.logDetail, {'guid': val}).then((res) => {
+          this.dialogVisible = true
+          this.josn = res.resData || {}
+        })
+      },
+      changeDialog (val) {
+        this.dialogVisible = val
+      },
       getSummaries (param) {
         const { columns } = param
         const sums = []

@@ -100,6 +100,9 @@
             label="guid"
             width="260"
             prop="guid">
+            <template slot-scope="scope">
+              <div class="link" @click="queryGuid(scope.row.guid)">{{scope.row.guid}}</div>
+            </template>
           </el-table-column>
           <el-table-column
             label="请求时间"
@@ -246,6 +249,9 @@ export default {
     },
     formatter(val) {
       return this.$refs.table.formatter(val)
+    },
+    queryGuid (val) {
+      return this.$refs.table.queryGuid(val)
     },
     selectService (v) {
       if (!this.showHideFlag) return
