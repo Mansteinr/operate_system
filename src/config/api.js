@@ -145,7 +145,10 @@ const api = {
   callbackServiceApi: {
     getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById', 'upapi'),  /* 订单号查看订单状态 */
     getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin', 'upapi'),  /* vin查询符合条件的订单信息 */
-    getDecryptData: apiFormat('callbackService/operator/getDecryptData', 'upapi') /* 订单号查询车保报告 */
+    getDecryptData: apiFormat('callbackService/operator/getDecryptData', 'upapi'), /* 订单号查询车保报告 */
+    getAllAbilityInfo: apiFormat('callbackService/operator/getAllAbilityInfo', 'upapi'), /* 订单号查询车保报告 */
+    getAbilitySupplilerInfo: apiFormat('callbackService/operator/getAbilitySupplilerInfo', 'upapi'), /* 订单号查询车保报告 */
+    alterAbilitySupplilerInfo: apiFormat('callbackService/operator/alterAbilitySupplilerInfo', 'upapi') /* 订单号查询车保报告 */
   }
 }
 export default api

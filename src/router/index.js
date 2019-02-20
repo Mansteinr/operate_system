@@ -20,6 +20,7 @@ import queryTrackDetail from '../components/data-output/query_trackDetail'
 import supplierAnalysis from '../components/quality-analysis/supplier_quality_analysis'
 import customerAnalysis from '../components/quality-analysis/customer_quality_analysis'
 import queryOrder from '../components/async-service/query_order'
+import channelManagement from '../components/async-service/channel_management'
 import parameterMaintenance from '../components/config-management/interface_parameter_maintenance'
 import sensitiveWord from '../components/security-center/sensitive_word'
 import serviceRegular from '../components/security-center/service_regular'
@@ -116,6 +117,10 @@ const router = new Router({
       path: '/queryOrder',
       name: 'query_order',
       component: queryOrder  
+    }, {
+      path: '/channelManagement',
+      name: 'channel_management',
+      component: channelManagement    
     }, {
       path: '/parameterMaintenance',
       name: 'interface_parameter_maintenance',

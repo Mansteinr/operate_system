@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import {$downFile} from '../../common/js/ajax'
+import { $downFile } from '../../common/js/ajax'
 import { hotKeyTime, loginName, services } from '../../common/js/mixin'
 import QueryButton from '../../base/QueryButton'
 import { trim } from '../../utils'

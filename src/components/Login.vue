@@ -11,7 +11,7 @@
       </div>
       <div class="input-code">
         <input type="text" id="code" v-model.trim="vcode" class="user-input" placeholder="验证码" @keyup.enter="goLogin" maxlength="4">
-        <img class="code-img" :src="imgSrc" alt="点击刷新验证码">
+        <img class="code-img" :src="imgSrc" alt="点击刷新验证码" @click="reloadImg">
       </div>
       <el-button type="primary" @click="goLogin" class="login-btn">登录</el-button>
     </div>
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { $http } from '../common/js/ajax'
 import { showModal } from '../utils'
 import { mapMutations } from 'vuex' // 引入mapMutations函数
@@ -37,9 +38,11 @@ export default {
     this.getVerifyCode()
   },
   methods: {
+    reloadImg () {
+      this.getVerifyCode()
+    },
     getVerifyCode () {
       $http(this.API.base.getVerifyCode, {}, 'get').then((res) => {
-        console.log(res)
         this.uuid = res.resData.uuid
         this.imgSrc = 'data:image/png;base64,' + res.resData.vcode
       })
@@ -48,12 +51,23 @@ export default {
       if (!this.username || !this.password) {
         showModal('密码账号不能为空', 'error')
       } else {
-        $http(this.API.base.login, { pwd: md5(this.password), account: this.username, uuid: this.uuid,vcode: this.vcode }, 'post').then((res) => {
-          localStorage.setItem('mtk', res.resData.mtk)
-          localStorage.setItem('userId', res.resData.userId)
-          localStorage.setItem('accountName', res.resData.accountName)
-          this.$router.push('/')
-          showModal('登录成功')
+        axios({
+          method: 'post',
+          url: this.API.base.login,
+          data: { pwd: md5(this.password), account: this.username, uuid: this.uuid,vcode: this.vcode },
+          responseType: 'json'
+        }).then(res => {
+          if (!res.data.resCode) {
+            this.getVerifyCode()
+            this.vcode = ''
+            showModal(res.data.resMsg[0].msgText, 'error')
+          } else {
+            localStorage.setItem('mtk', res.data.resData.mtk)
+            localStorage.setItem('userId', res.data.resData.userId)
+            localStorage.setItem('accountName', res.data.resData.accountName)
+            this.$router.push('/')
+            showModal('登录成功')
+          }
         })
       }
     },

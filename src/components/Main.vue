@@ -62,12 +62,25 @@
         </el-menu>
       </el-aside>
       <el-main>
-        <router-view />
+        <div class="m-tabs">
+          <router-link 
+            tag="div" class="tab-item" 
+            :class="{active:editableTabsValue===item.name}" 
+            v-for="item in editableTabs" 
+            :key="item.name" 
+            :to="{name: item.url}"  
+            @click.native='clickTabs(item.name)'>
+              {{item.title}}
+            <i class="icon-delete" @click.stop="deleteTab(item)"></i>
+          </router-link>
+        </div>
+        <keep-alive>
+            <router-view/>
+        </keep-alive>
       </el-main>
     </el-container>
   </el-container>
 </template>
-
 <script>
 import { $http } from '../common/js/ajax'
 export default {
@@ -77,17 +90,36 @@ export default {
       userName: 'zhoumingye',
       menu: [],
       menuActive: '',
-      isCollapse: false
+      isCollapse: false,
+      editableTabsValue: '',
+      editableTabs: [],
+      tabIndex: 2
     }
   },
   methods: {
+    clickTabs (value) {
+      this.editableTabsValue = value
+    },
     collapse () {
       this.isCollapse = !this.isCollapse
     },
     selectItem (value) {
-      let paramArr = value.resourceUrl.split('/')
+      let paramArr = value.resourceUrl.split('/'), unqiuFlag = false
       this.$router.push({name: paramArr[paramArr.length - 1].split('.')[0]})
       this.menuActive = value.id+'' // 需要传入字符串 传入number会报错
+      this.editableTabs.map(v => {
+        if (v.name === this.menuActive) {
+          unqiuFlag = true
+        }
+      })
+      if (!unqiuFlag) {
+        this.editableTabs.push({
+          title: value.name,
+          name: this.menuActive,
+          url: value.resourceUrl.split('/')[1].split('.')[0]
+        })
+      }
+      this.editableTabsValue = this.menuActive
     },
     selectLang (value) {
       console.log(value)
@@ -103,6 +135,26 @@ export default {
       $http(this.API.base.querymenus, { 'systemName': '服务平台' }).then((res) => {
         this.menu =  res.resData
         this.menuActive = this.menu[0].id + ''
+        this.editableTabs.push({
+          title: this.menu[0].name,
+          name: this.menuActive,
+          url: this.menu[0].resourceUrl.split('/')[1].split('.')[0]
+        })
+        this.editableTabsValue = this.menuActive
+      })
+    },
+    deleteTab (value) { // 删除tabs
+      if (this.editableTabs.length <= 1) {
+        return
+      }
+      this.editableTabs.map((v, k) => {
+        if (v.name === value.name) {
+          this.editableTabs.splice(k, 1)
+          if (this.editableTabsValue === value.name) { // 删除的是激活状态的tabs
+            this.editableTabsValue = this.editableTabs[this.editableTabs.length-1].name
+            this.$router.push({name: this.editableTabs[this.editableTabs.length-1].url})
+          }
+        }
       })
     }
   },
@@ -121,7 +173,6 @@ export default {
   .el-header 
     box-shadow 0 4px 16px rgba(0, 0, 0, 0.08)
     background $color-nave
-    margin-bottom 10px
     .header-menu-warp 
       position relative
       float right
@@ -160,8 +211,55 @@ export default {
     .el-main
       overflow-y scroll
       padding 0px 10px 20px 10px !important
+      .m-tabs
+        height 40px
+        background $color-white
+        margin-bottom 10px
+        margin-left -10px
+        margin-right -10px
+        display flex
+        background $color-tab-color
+        overflow auto
+        .tab-item
+          position relative
+          z-index 50
+          height 100%
+          line-height 40px
+          padding 0 20px
+          cursor pointer
+          border-right 1px solid rgb(228, 231, 237)
+          overflow hidden
+          max-width 150px
+          i 
+            position absolute
+            width 0px
+            height 15px
+            margin-right 0px
+            border-radius 50%
+            font-size 12px
+            line-height 14px
+            right 0px
+            top 13px
+            opacity 0
+            transition all .7s
+            z-index 105
+            &:hover
+              background-color rgb(192, 196, 204)
+              color rgb(255, 255, 255)
+              opacity 1
+          &.active
+            color $color-bule
+            background $color-white
+            border-top-left-radius 10px
+            border-top-right-radius 10px
+            i 
+              width 15px
+              opacity 1
+          &:hover
+            i 
+              width 15px
+              opacity 1
     .el-aside
-      margin-top -10px
       width: auto !important
       background $color-nave
       .el-submenu

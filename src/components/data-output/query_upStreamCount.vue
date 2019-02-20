@@ -41,7 +41,7 @@
             <el-input placeholder="请输入相应描述" v-model="queryParams.statMsg"  name="statMsg"></el-input>
           </el-form-item>
           <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
+            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
         </el-form>
       </div>
