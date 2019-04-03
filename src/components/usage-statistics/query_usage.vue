@@ -19,7 +19,8 @@
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item label="行业类型：" prop="type">
+          <Select :labelTitle="'行业类型'" :originArr="businessType" :defaultValue="'typeName'" :searchName="'typeId'" @changeInputValue="changeType"> </Select>
+          <!-- <el-form-item label="行业类型：" prop="type">
             <el-select @change="changeType" v-model="queryParams.type" placeholder="请选择">
               <el-option
                 v-for="v in businessType"
@@ -28,7 +29,7 @@
                 :value="v.typeId">
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="客户名称：" prop="loginName">
             <el-select filterable v-model="queryParams.loginName" :filter-method="filterLoginName" placeholder="请选择">
               <el-option
@@ -102,6 +103,7 @@ import { $http } from '../../common/js/ajax'
 import { setLineData, renderChart } from '../../common/js/myCharts'
 import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
 import Table from '../../base/Table'
+import Select from '../../base/Select'
 import QueryButton from '../../base/QueryButton'
 export default {
   mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
@@ -118,7 +120,8 @@ export default {
   },
   components: {
     Table,
-    QueryButton
+    QueryButton,
+    Select
   },
   methods: {
     reset () {

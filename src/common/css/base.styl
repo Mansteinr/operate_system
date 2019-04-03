@@ -44,15 +44,15 @@
         left 49%
     .el-form-item
       margin 0
-      margin-top 10px
-      margin-left 10px
+      text-align right 
       label
-        max-width 82px
+        width 85px
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
         word-wrap: break-word;
         word-break: break-all;
+        padding-right 0px !important
       &.short-specail-item
         width 370px
         .el-select
@@ -98,10 +98,14 @@
   margin-left -440px !important
 
 .query-form
+  display flex
+  flex-wrap wrap 
+  >div
+    margin-top 10px !important
   .el-form-item
     width 32%
     .el-form-item__content
-      width calc(100% - 82px)
+      width calc(100% - 85px)
       float right
       .el-date-editor
         width 100%
@@ -110,9 +114,7 @@
       .query-button
         float right
 .query-item
-  width 28.8% !important
-  float right 
-  padding-right 1.8%
+  flex 1
   .el-form-item__content
     width 100% !important
 .el-select-dropdown:not(.is-multiple)

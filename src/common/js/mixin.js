@@ -26,14 +26,14 @@ export const hotKeyTime = {
   data () {
     let timeRule = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请选择时间范围'));
+        callback(new Error('请选择时间范围'))
       } else {
         callback()
       }
     }
     return {
       rules: {
-        time: [{ validator: timeRule, trigger: 'change' },]
+        time: [{ validator: timeRule, trigger: 'change' }]
       },
       pickerOptions2: {
         disabledDate (time) {
@@ -98,15 +98,16 @@ export const businessType = { // 行业类型
         this.queryParams.type = this.businessType[0].typeId
       })
     },
-    changeType () {
+    changeType (msg) {
+      console.log(msg, 'mad')
       this.loginName = [{
         customerId: '',
         loginName: '',
         customerName: '全部'
       }]
-      if (this.queryParams.type) {
+      if (msg.type) {
         this.loginNameOrigin.map((v) => {
-          if (this.queryParams.type === v.businessId) {
+          if (tmsg.type === v.businessId) {
             this.loginName.push(v)
           }
         })
@@ -117,6 +118,7 @@ export const businessType = { // 行业类型
           customerName: '全部'
         }], ...this.loginNameOrigin]
       }
+      console.log(this.queryParams.loginName)
       this.queryParams.loginName = this.loginName[0].loginName
     }
   }
