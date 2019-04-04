@@ -22,22 +22,22 @@
           <Select 
             :labelTitle="'行业类型'" 
             :originArr="businessType" 
-            :defaultValue="'typeName'" 
-            :defaultLable="'typeName'" 
-            :searchName="'typeId'" 
+            :defaultValue="'typeId'" 
+            :defaultLable="'typeName'"
             @changeInputValue="changeType"> 
           </Select>
           <loginNameSelect 
             :labelTitle="'客户名称'" 
             :originArr="loginName" 
-            :defaultValue="'customerName'" 
+            :defaultValue="'loginName'" 
             :searchName="'loginName'"
+            :defaultLable="'customerName'"
             @changeInputValue="changeCustomer">
           </loginNameSelect>
           <serviceSelect 
             :labelTitle="'接口类型'" 
             :originArr="services" 
-            :defaultValue="'serviceNameZh'" 
+            :defaultValue="'serviceName'" 
             :searchName="'serviceName'"
             :defaultLable="'serviceNameZh'"
             @changeInputValue="changeCustomer">

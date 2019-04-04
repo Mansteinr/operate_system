@@ -3,6 +3,7 @@
     <label class="input-label">{{labelTitle}}：</label>
     <div class="select-dropdown m-input" :class="defaultValue">
       <div class="text-warp selected-value" @click="toggleExp($event)">{{selectedValue}}</div>
+      <input type="hidden" :name="defaultValue" value="">
       <ul class="dropdown-menu" :class="isMultiple ? 'multiple' : ''">
         <li class="dropdown-input" v-show="searchInput">
           <input type="text" placeholder="输入搜索" @change="searchItem" v-model.lazy.trim="searchValue" class="search-input m-input">
@@ -11,7 +12,7 @@
           <span v-for="v  in choseCondition" :key="v.method" @click="selectWay(v.method)" :class="v.method === selectOption ? 'active':''">{{v.title}}</span>
         </li>
         <li class="dropdown-item text-warp" v-for="(v, k) in originArr" :key="k" @click.stop.prevent="searchClick($event,v,k)" :class="isMultiple ? '': (k === selectedIndex?'active': '')">
-          {{v[defaultValue] ? v[defaultValue] : v}}
+          {{v[defaultLable] ? v[defaultLable] : v}}
         </li>
       </ul>
     </div>
@@ -27,7 +28,6 @@ export default {
       searchValue: '', // 搜索内容
       selectedArr: [], // 多选时，存储已经选中的
       selectOption: '',
-      isFirst: true, // 是否是第一次
       choseCondition: [{
           title: '全选',
           method: 'selectAll'
@@ -69,7 +69,7 @@ export default {
       type: String,
       default: ''
     },
-    searchField: { // 搜索字段
+    searchField: { // 搜索字段 
       type: String,
       default: ''
     }
@@ -78,15 +78,19 @@ export default {
     originArr: function() {
       this.$nextTick(() => {
         let selector = '.' + this.defaultValue + ' .text-warp.selected-value'
-        document.querySelector(selector).innerHTML = this.originArr[0][this.defaultValue]
+        document.querySelector(selector).innerHTML = this.originArr[0][this.defaultLable]
+        document.querySelector('.' + this.defaultValue + ' input').value = this.originArr[0][this.defaultValue]
       })
     }
   },
+  mounted () {
+    window.addEventListener('click', (e) => {
+      e.stopPropagation()
+      console.log(8989898)
+    }, false)
+  },
   methods: {
     toggleExp(e) { // 展开折叠下拉框
-      // let selector = '.' + this.defaultValue + '.select-dropdown.m-input'
-      // let classNames = document.querySelector(selector).className
-      // console.log(e.target)
       let selector = null, classNames = ''
       if (e.target) {
         classNames = e.target.parentNode.className
@@ -102,25 +106,12 @@ export default {
           e.className = e.className.replace(' active', '')
         }
       }
-      // console.log(this.defaultValue, e.target.className)
-      // if (classNames.indexOf('active') < 0) {
-      //   document.querySelector(selector).className = classNames + ' active'
-      // } else {
-      //   document.querySelector(selector).className = classNames.replace(' active', '')
-      // }
     },
     searchClick (e,v, k) {
       this.selectedIndex = k
       if (!this.isMultiple) { // 单选
-      console.log(e.target.parentNode.parentNode)
         this.toggleExp(e.target.parentNode.parentNode)
-        // if (!this.isFirst) { // 因为第一次是手动触发的  第一次不需要展开折叠
-        //   // this.toggleExp()
-        //   console.log(e.target)
-        // } else {
-        //   this.isFirst = false
-        // }
-        this.selectedValue = v[this.defaultValue]
+
         this.$emit('changeInputValue', v)
       } else { // 多选
         let currentClass = e.target.className
@@ -305,4 +296,11 @@ export default {
 .select-dropdown.active .dropdown-menu
     -webkit-transform scaleY(1)
     opacity 1
+::-webkit-scrollbar
+  display block
+  width 4px
+  height 8px
+::-webkit-scrollbar-thumb
+  background rgba(0, 0, 0, .3)
+  border-radius 8px
 </style>
