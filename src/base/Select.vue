@@ -1,9 +1,8 @@
 <template>
   <div class="search-item">
     <label class="input-label">{{labelTitle}}：</label>
-    <div class="select-dropdown m-input" :class="toggleExpandFoldFlag ? 'active': ''">
-      <div class="text-warp selected-value" @click="toggleExp">{{selectedValue}}</div>
-      <input type="hidden" v-model="sendBackgroundValue" @change="changeInputValue">
+    <div class="select-dropdown m-input" :class="defaultValue">
+      <div class="text-warp selected-value" @click="toggleExp($event)">{{selectedValue}}</div>
       <ul class="dropdown-menu" :class="isMultiple ? 'multiple' : ''">
         <li class="dropdown-input" v-show="searchInput">
           <input type="text" placeholder="输入搜索" @change="searchItem" v-model.lazy.trim="searchValue" class="search-input m-input">
@@ -11,7 +10,7 @@
         <li class="dropdown-item selection-criteria" v-show="isAll">
           <span v-for="v  in choseCondition" :key="v.method" @click="selectWay(v.method)" :class="v.method === selectOption ? 'active':''">{{v.title}}</span>
         </li>
-        <li class="dropdown-item text-warp" v-for="(v, k) in originArr" :key="k" @click.stop="searchClick(v,k)" :class="isMultiple ? '': (k === selectedIndex?'active': '')">
+        <li class="dropdown-item text-warp" v-for="(v, k) in originArr" :key="k" @click.stop.prevent="searchClick($event,v,k)" :class="isMultiple ? '': (k === selectedIndex?'active': '')">
           {{v[defaultValue] ? v[defaultValue] : v}}
         </li>
       </ul>
@@ -23,9 +22,7 @@ import pinyin from 'js-pinyin'
 export default {
   data() {
     return {
-      toggleExpandFoldFlag: false, // 展开折叠搜索
       selectedIndex: 0, // 用于切换active和非active的
-      sendBackgroundValue: '', // 发送至后台的关键字段对应的值
       selectedValue: '', // 选中内容， 用来显示
       searchValue: '', // 搜索内容
       selectedArr: [], // 多选时，存储已经选中的
@@ -60,19 +57,19 @@ export default {
       type: Boolean,
       default: false
     },
-    labelTitle: {
+    labelTitle: { // input前的 label值
       type: String,
       default: ''
     },
-    defaultValue: { // 用来发送至后台的 比如服务名称游 中文 英文 还有serveiceId  此时defalutValue即为serviceId
+    defaultValue: { // 需要向后台发送的字段 比如服务名称游 中文 英文 还有serveiceId  此时defalutValue即为serviceId
       type: String,
       default: ''
     },
-    defaultLable: { // 用来展示的
+    defaultLable: { // 展示字段
       type: String,
       default: ''
     },
-    searchName: { // 发送至后台的字段
+    searchField: { // 搜索字段
       type: String,
       default: ''
     }
@@ -80,24 +77,51 @@ export default {
   watch : {
     originArr: function() {
       this.$nextTick(() => {
-        document.querySelector('.dropdown-item.text-warp').click()
+        let selector = '.' + this.defaultValue + ' .text-warp.selected-value'
+        document.querySelector(selector).innerHTML = this.originArr[0][this.defaultValue]
       })
     }
   },
   methods: {
     toggleExp(e) { // 展开折叠下拉框
-      this.toggleExpandFoldFlag = !this.toggleExpandFoldFlag
+      // let selector = '.' + this.defaultValue + '.select-dropdown.m-input'
+      // let classNames = document.querySelector(selector).className
+      // console.log(e.target)
+      let selector = null, classNames = ''
+      if (e.target) {
+        classNames = e.target.parentNode.className
+        if ( classNames.indexOf('active') < 0 ) { 
+          e.target.parentNode.className = e.target.parentNode.className + ' active'
+        } else {
+          e.target.parentNode.className = e.target.parentNode.className.replace(' active', '')
+        }
+      } else {
+        if (e.className.indexOf('active') < 0) {
+          e.className = e.className + ' active'
+        } else {
+          e.className = e.className.replace(' active', '')
+        }
+      }
+      // console.log(this.defaultValue, e.target.className)
+      // if (classNames.indexOf('active') < 0) {
+      //   document.querySelector(selector).className = classNames + ' active'
+      // } else {
+      //   document.querySelector(selector).className = classNames.replace(' active', '')
+      // }
     },
-    searchClick (v, k) {
+    searchClick (e,v, k) {
       this.selectedIndex = k
       if (!this.isMultiple) { // 单选
-        if (!this.isFirst) { // 因为第一次是手动触发的  第一次不需要展开折叠
-          this.toggleExpandFoldFlag = !this.toggleExpandFoldFlag
-        } else {
-          this.isFirst = false
-        }
+      console.log(e.target.parentNode.parentNode)
+        this.toggleExp(e.target.parentNode.parentNode)
+        // if (!this.isFirst) { // 因为第一次是手动触发的  第一次不需要展开折叠
+        //   // this.toggleExp()
+        //   console.log(e.target)
+        // } else {
+        //   this.isFirst = false
+        // }
         this.selectedValue = v[this.defaultValue]
-        this.sendBackgroundValue = v[this.searchName]
+        this.$emit('changeInputValue', v)
       } else { // 多选
         let currentClass = e.target.className
         if (currentClass.indexOf('active') < 0) {
@@ -149,10 +173,6 @@ export default {
       }
       this.selectedArr = []
       this.selectedValue = ''
-    },
-    changeInputValue () {
-      console.log(this.sendBackgroundValue)
-      this.$emit('changeInputValue', this.sendBackgroundValue)
     }
   }
 }
@@ -164,7 +184,6 @@ export default {
     width calc(32% - 105px)
     height 40px
     line-height 40px
-    margin 0 3% 0 0
     float left
     padding 0 20px 0 85px
     .input-label
@@ -203,6 +222,7 @@ export default {
         opacity 0
         transform scaleY(0)
         -webkit-transform scaleY(0)
+        border-radius 5px
         transform-origin 0 0
         -webkit-transform-origin 0 0
         transition transform .5s ease, opacity .5s ease

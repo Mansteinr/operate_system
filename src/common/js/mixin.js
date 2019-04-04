@@ -99,15 +99,15 @@ export const businessType = { // 行业类型
       })
     },
     changeType (msg) {
-      console.log(msg, 'mad')
+      console.log(msg, 'msg')
       this.loginName = [{
         customerId: '',
         loginName: '',
         customerName: '全部'
       }]
-      if (msg.type) {
+      if (msg.typeId) {
         this.loginNameOrigin.map((v) => {
-          if (tmsg.type === v.businessId) {
+          if (msg.typeId === v.businessId) {
             this.loginName.push(v)
           }
         })
@@ -118,7 +118,6 @@ export const businessType = { // 行业类型
           customerName: '全部'
         }], ...this.loginNameOrigin]
       }
-      console.log(this.queryParams.loginName)
       this.queryParams.loginName = this.loginName[0].loginName
     }
   }

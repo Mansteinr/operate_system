@@ -19,41 +19,29 @@
               </el-date-picker>
             </div>
           </el-form-item>
-          <Select :labelTitle="'行业类型'" :originArr="businessType" :defaultValue="'typeName'" :searchName="'typeId'" @changeInputValue="changeType"> </Select>
-          <!-- <el-form-item label="行业类型：" prop="type">
-            <el-select @change="changeType" v-model="queryParams.type" placeholder="请选择">
-              <el-option
-                v-for="v in businessType"
-                :key="v.typeId"
-                :label="v.typeName"
-                :value="v.typeId">
-              </el-option>
-            </el-select>
-          </el-form-item> -->
-          <el-form-item label="客户名称：" prop="loginName">
-            <el-select filterable v-model="queryParams.loginName" :filter-method="filterLoginName" placeholder="请选择">
-              <el-option
-                v-for="v in loginName"
-                @click.native.stop="changeCustomer(v)"
-                :key="v.customerId"
-                :title="`${v.customerName}(${v.loginName})`"
-                :data-customerid="v.customerId"
-                :label="v.customerName"
-                :value="v.loginName">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="接口类型：" prop="serviceName">
-            <el-select filterable v-model="queryParams.serviceName" :filter-method="filterServiceName" placeholder="请选择">
-              <el-option
-                v-for="v in services"
-                :key="v.serviceId"
-                :title="`${v.serviceNameZh}(${v.serviceName})`"
-                :label="v.serviceNameZh"
-                :value="v.serviceName">
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <Select 
+            :labelTitle="'行业类型'" 
+            :originArr="businessType" 
+            :defaultValue="'typeName'" 
+            :defaultLable="'typeName'" 
+            :searchName="'typeId'" 
+            @changeInputValue="changeType"> 
+          </Select>
+          <loginNameSelect 
+            :labelTitle="'客户名称'" 
+            :originArr="loginName" 
+            :defaultValue="'customerName'" 
+            :searchName="'loginName'"
+            @changeInputValue="changeCustomer">
+          </loginNameSelect>
+          <serviceSelect 
+            :labelTitle="'接口类型'" 
+            :originArr="services" 
+            :defaultValue="'serviceNameZh'" 
+            :searchName="'serviceName'"
+            :defaultLable="'serviceNameZh'"
+            @changeInputValue="changeCustomer">
+          </serviceSelect>
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
@@ -104,6 +92,8 @@ import { setLineData, renderChart } from '../../common/js/myCharts'
 import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
 import Table from '../../base/Table'
 import Select from '../../base/Select'
+import loginNameSelect from '../../base/Select'
+import serviceSelect from '../../base/Select'
 import QueryButton from '../../base/QueryButton'
 export default {
   mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
@@ -120,8 +110,10 @@ export default {
   },
   components: {
     Table,
+    Select,
     QueryButton,
-    Select
+    serviceSelect,
+    loginNameSelect
   },
   methods: {
     reset () {
