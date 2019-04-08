@@ -5,7 +5,7 @@
         查询条件
       </div>
       <div class="card-container">
-        <el-form :inline="true" :rules="rules" ref="querForm" :model="queryParams" class="query-form">
+        <el-form :inline="true" ref="querForm" :model="queryParams" class="query-form">
           <el-form-item label="选择时间：" prop="time">
             <div class="block">
               <el-date-picker
@@ -32,6 +32,8 @@
             :defaultValue="'loginName'" 
             :searchName="'loginName'"
             :defaultLable="'customerName'"
+            :searchInput = true
+            :isMultiple = true
             @changeInputValue="changeCustomer">
           </loginNameSelect>
           <serviceSelect 
@@ -39,8 +41,8 @@
             :originArr="services" 
             :defaultValue="'serviceName'" 
             :searchName="'serviceName'"
-            :defaultLable="'serviceNameZh'"
-            @changeInputValue="changeCustomer">
+            :searchInput = true
+            :defaultLable="'serviceNameZh'">
           </serviceSelect>
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
@@ -95,15 +97,13 @@ import Select from '../../base/Select'
 import loginNameSelect from '../../base/Select'
 import serviceSelect from '../../base/Select'
 import QueryButton from '../../base/QueryButton'
+import moment from 'moment'
 export default {
   mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
   data () {
     return {
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
-        loginName: '',
-        serviceName: '',
-        type: ''
       },
       tableData: []
     }
@@ -118,14 +118,17 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
-      this.queryParams.serviceName = this.services[0].serviceName
     },
     onSubmit () {
-      this.$refs.querForm.validate((valid) => {
-        if (valid) {
-         this.UsageByDate()
-        }
+      let options = {}
+      options.start = moment(this.queryParams.time[0]).format('YYYY-MM-DD')
+      options.end = moment(this.queryParams.time[1]).format('YYYY-MM-DD')
+      console.log(document.querySelectorAll('form input'))
+      document.querySelectorAll('form input').forEach(v => {
+        options[v.name] = v.value
       })
+      this.UsageByDate(options)
+      console.log(options)
     },
     UsageByDate () {
       $http(this.API.downApi.UsageByDate, this.queryParams).then((res) => {

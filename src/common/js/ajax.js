@@ -7,10 +7,10 @@ import moment from 'moment'
 let loading
 export function $http (url, data, method = 'post', responseType = 'json') {
   showFullScreenLoading()
-  if (data.time) {
-    data.start = moment(data.time[0]).format('YYYY-MM-DD')
-    data.end = moment(data.time[1]).format('YYYY-MM-DD')
-  }
+  // if (data.time) {
+  //   data.start = moment(data.time[0]).format('YYYY-MM-DD')
+  //   data.end = moment(data.time[1]).format('YYYY-MM-DD')
+  // }
   return new Promise((resolve, reject) => {
     axios({
       method: method,

@@ -8,9 +8,8 @@ const baseConfig = {
   },
   /*生产环境*/
   prod: {
-    base: 'boss.miniscores.cn:7202/agw/',	/* ! 当前系统api服务器地址 */
-    rbacweb: 'boss.miniscores.cn:80/',	/* ! 系统权限管理web页面地址 */
-    rbacapi: 'boss.miniscores.cn:9023/',	/* ! 系统权限管理api服务器地址 */
+    rbacweb: 'boss.miniclouds.cn:80/',	/* ! 系统权限管理web页面地址 */
+    rbacapi: 'userapi.miniclouds.cn/',	/* ! 系统权限管理api服务器地址 */
     upapi: '121.196.226.17:7200/',	/* ! 上游服务有关接口 */
     vehicleapi: '121.196.226.17:7200/',	/* ! 车辆维保 */
     qualityanalyzeapi: '121.196.226.17:7200/',	/* ! 质量分析 */
@@ -19,7 +18,6 @@ const baseConfig = {
   },
   /*生产环境*/
   gd: {
-    base: '172.16.9.183:5010/agw/',	/* ! 当前系统api服务器地址 */
     rbacweb: '172.16.9.216:8020/',	/* ! 系统权限管理web页面地址 */
     rbacapi: '172.16.6.83:58080/',	/* ! 系统权限管理api服务器地址 */
     upapi: 'crecds.cn:7202/',	/* ! 上游服务有关接口 */
@@ -30,7 +28,6 @@ const baseConfig = {
   },
   /*开发环境*/
   dev: {
-    base: '172.16.9.183:5010/agw/',	/* ! 当前系统api服务器地址 */
     rbacweb: '172.16.9.216:8020/',	/* ! 系统权限管理web页面地址 */
     rbacapi: '172.16.6.83:58080/',	/* ! 系统权限管理api服务器地址 */
     upapi: '172.16.9.116:7202/',	/* ! 上游服务有关接口 */
@@ -41,7 +38,6 @@ const baseConfig = {
   },
   /*测试环境*/
   test: {
-    base: '172.16.9.183:5010/agw/',	/* ! 当前系统api服务器地址 */
     rbacweb: '172.16.9.216:8020/',	/* ! 系统权限管理web页面地址 */
     rbacapi: '172.16.6.83:58080/',	/* ! 系统权限管理api服务器地址 */
     upapi: '192.168.109.171:7000/',	/* ! 上游服务有关接口 */
@@ -56,12 +52,12 @@ const baseConfig = {
 let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.prod[hostkey] + api
 const api = {
   base: {
-    login: apiFormat('login/doLogin', 'rbacapi'),
-    loginout: apiFormat('logout/ajaxLogout', 'rbacapi'),
-    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi'),
-    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb'),
-    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb'),
-    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi'),
+    login: apiFormat('login/doLogin', 'rbacapi', 'https'),
+    loginout: apiFormat('logout/ajaxLogout', 'rbacapi', 'https'),
+    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', 'https'),
+    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', 'https'),
+    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', 'https'),
+    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', 'https'),
     imageapi: baseConfig.prod.imageapi
   },
   upApi: {

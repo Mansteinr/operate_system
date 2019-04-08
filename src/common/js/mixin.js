@@ -99,7 +99,6 @@ export const businessType = { // 行业类型
       })
     },
     changeType (msg) {
-      console.log(msg, 'msg')
       this.loginName = [{
         customerId: '',
         loginName: '',
@@ -151,6 +150,7 @@ export const loginName = { // 客户登陆名称
       })
     },
     changeCustomer (v) {
+      console.log(v)
       if (this.noAllLogin) {
         return
       }

@@ -2,18 +2,26 @@
   <div class="search-item">
     <label class="input-label">{{labelTitle}}：</label>
     <div class="select-dropdown m-input" :class="defaultValue">
-      <div class="text-warp selected-value" @click="toggleExp($event)">{{selectedValue}}</div>
-      <input type="hidden" :name="defaultValue" value="">
+      <div class="text-warp selected-value" @click.stop="toggleExp($event)" :title="`${selectedValue} (${selectedDefault})`">{{selectedValue}}</div>
+      <input type="hidden" :name="defaultValue" :value="selectedDefault">
       <ul class="dropdown-menu" :class="isMultiple ? 'multiple' : ''">
         <li class="dropdown-input" v-show="searchInput">
           <input type="text" placeholder="输入搜索" @change="searchItem" v-model.lazy.trim="searchValue" class="search-input m-input">
         </li>
         <li class="dropdown-item selection-criteria" v-show="isAll">
-          <span v-for="v  in choseCondition" :key="v.method" @click="selectWay(v.method)" :class="v.method === selectOption ? 'active':''">{{v.title}}</span>
+          <span v-for="v  in choseCondition" :key="v.method" @click.stop="selectWay(v.method)" :class="v.method === selectOption ? 'active':''">{{v.title}}</span>
         </li>
-        <li class="dropdown-item text-warp" v-for="(v, k) in originArr" :key="k" @click.stop.prevent="searchClick($event,v,k)" :class="isMultiple ? '': (k === selectedIndex?'active': '')">
-          {{v[defaultLable] ? v[defaultLable] : v}}
-        </li>
+        <template v-if="localDataArr.length">
+          <li class="dropdown-item text-warp" v-for="(v, k) in localDataArr" :key="k" :title="`${v[defaultLable] ? v[defaultLable] : v} (${v[defaultValue] ? v[defaultValue] : v})`" @click.stop.prevent="searchClick($event,v,k)" :class="isMultiple ? '': (k === selectedIndex?'active': '')">
+            {{v[defaultLable] ? v[defaultLable] : v}}
+          </li>
+        </template>
+        <template v-if="!localDataArr.length">
+          <li class="dropdown-item text-warp">
+            暂无数据
+          </li>
+        </template>
+     
       </ul>
     </div>
   </div>
@@ -25,9 +33,12 @@ export default {
     return {
       selectedIndex: 0, // 用于切换active和非active的
       selectedValue: '', // 选中内容， 用来显示
+      selectedDefault: '',
       searchValue: '', // 搜索内容
       selectedArr: [], // 多选时，存储已经选中的
+      selectedDefaultArr: [], // 多选时，存储已经选中的
       selectOption: '',
+      localDataArr: [], // 防止计算过程污染源数据  故先将源数据进行拷贝至改数组中
       choseCondition: [{
           title: '全选',
           method: 'selectAll'
@@ -74,25 +85,39 @@ export default {
       default: ''
     }
   },
-  watch : {
-    originArr: function() {
-      this.$nextTick(() => {
-        let selector = '.' + this.defaultValue + ' .text-warp.selected-value'
-        document.querySelector(selector).innerHTML = this.originArr[0][this.defaultLable]
-        document.querySelector('.' + this.defaultValue + ' input').value = this.originArr[0][this.defaultValue]
-      })
+  watch: {
+    originArr() {
+      this.localDataArr = [...this.originArr]
     }
   },
   mounted () {
-    window.addEventListener('click', (e) => {
-      e.stopPropagation()
-      console.log(8989898)
+    window.addEventListener('click', e => { // 当点击其他部位时  则将select收回
+      if (e.target.className.indexOf('search-input') >= 0) {
+        return false
+      }
+      document.querySelectorAll('.select-dropdown.m-input').forEach(v => {
+        if (v.className.indexOf('active') > 0) {
+          v.className = v.className.replace(' active', '')
+        }
+      })
     }, false)
+
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.selectedValue = this.originArr[0][this.defaultLable]
+        this.selectedDefault = this.originArr[0][this.defaultValue]
+      },800)
+    })
+
+    
   },
   methods: {
     toggleExp(e) { // 展开折叠下拉框
       let selector = null, classNames = ''
       if (e.target) {
+        if(e.target.parentNode.querySelector('.search-input')) {
+          e.target.parentNode.querySelector('.search-input').focus()
+        }
         classNames = e.target.parentNode.className
         if ( classNames.indexOf('active') < 0 ) { 
           e.target.parentNode.className = e.target.parentNode.className + ' active'
@@ -110,24 +135,50 @@ export default {
     searchClick (e,v, k) {
       this.selectedIndex = k
       if (!this.isMultiple) { // 单选
+        this.selectedValue = v[this.defaultLable]
+        this.selectedDefault = v[this.defaultValue]
         this.toggleExp(e.target.parentNode.parentNode)
-
         this.$emit('changeInputValue', v)
       } else { // 多选
         let currentClass = e.target.className
         if (currentClass.indexOf('active') < 0) {
           e.target.className = currentClass + ' active'
-          this.selectedArr.push(v[this.defaultValue])
+          this.selectedArr.push(v[this.defaultLable])
+          this.selectedDefaultArr.push(v[this.defaultValue])
         } else {
-          this.selectedArr.splice(this.selectedArr.indexOf(v[this.defaultValue]))
+          this.selectedArr.splice(this.selectedArr.indexOf(v[this.defaultLable]))
+          this.selectedDefaultArr.splice(this.selectedDefaultArr.indexOf(v[this.defaultValue]))
           e.target.className = currentClass.replace(' active', '')
         }
         currentClass = ''
         this.selectedValue = this.selectedArr.join(',')
+        this.selectedDefault = this.selectedDefaultArr.join(',')
       }
     },
     searchItem () {
-     console.log(90)
+      //  首先清空 之前选择的数据
+      // this.selectedValue = ''
+      // this.selectedDefault = ''
+      // this.selectedDefaultArr = []
+      // this.selectedArr = []
+      if (!this.searchValue) { // 若没有搜索内容 则返回源数据
+        this.localDataArr = [...this.originArr]
+        return
+      }
+      let searchPinyin = this.searchValue.toLowerCase() // 搜索词
+      let searchItemArr = []
+      console.log(this.searchValue.toLowerCase())
+      // 估计要分多选和单选两种清空
+      // if(!this.isMultiple) { // 单选
+        this.localDataArr.map(v => { // 检索
+        // console.log(v[this.defaultLable])
+          if (v[this.defaultLable].indexOf(this.searchValue) > -1 || pinyin.getFullChars(v[this.defaultValue]).toLowerCase().indexOf(searchPinyin) > -1 ||  pinyin.getFullChars(v[this.defaultLable]).toLowerCase().indexOf(searchPinyin) > -1 || pinyin.getCamelChars(v[this.defaultValue]).toLowerCase().indexOf(searchPinyin) > -1 || pinyin.getCamelChars(v[this.defaultLable]).toLowerCase().indexOf(searchPinyin) > -1) {
+            searchItemArr.push(v)
+            console.log(v[this.defaultLable].indexOf(this.searchValue) > -1, v[this.defaultLable])
+          }
+        })
+        this.localDataArr = [...searchItemArr]
+      // }
     },
     selectWay (way) { //全选
       this.selectOption = way
@@ -137,6 +188,7 @@ export default {
           if (v.className.indexOf('active') < 0) {
             v.className += ' active'
              if (this.selectedArr.indexOf(v[this.defaultValue]) < 0) {
+              this.selectedArr.push(v[this.defaultValue])
               this.selectedArr.push(v[this.defaultValue])
               this.selectedValue = this.selectedArr.join(',')
             }
@@ -195,6 +247,8 @@ export default {
           transform scaleY(1)
           -webkit-transform scaleY(1)
           opacity 1
+      &:hover
+        cursor pointer
       .multiple
         li.active:after
           font-family iconfont
