@@ -13,6 +13,7 @@
                 unlink-panels
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                name='se'
                 v-model="queryParams.time"
                 range-separator="至"
                 :picker-options="pickerOptions2">
@@ -123,7 +124,6 @@ export default {
       let options = {}
       options.start = moment(this.queryParams.time[0]).format('YYYY-MM-DD')
       options.end = moment(this.queryParams.time[1]).format('YYYY-MM-DD')
-      console.log(document.querySelectorAll('form input'))
       document.querySelectorAll('form input').forEach(v => {
         options[v.name] = v.value
       })

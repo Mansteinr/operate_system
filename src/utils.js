@@ -76,7 +76,6 @@ export function mockTime() {
   }
   return arr
 }
-
   /*身份证号码规则验证*/
   const vcity = {
     11: "北京 ",
@@ -208,4 +207,8 @@ export function mockTime() {
       return card
     }
     return card
+  }
+
+  export function formSearize() {
+    
   }
