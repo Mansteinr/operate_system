@@ -171,10 +171,8 @@ export default {
       // 估计要分多选和单选两种清空
       // if(!this.isMultiple) { // 单选
         this.localDataArr.map(v => { // 检索
-        // console.log(v[this.defaultLable])
           if (v[this.defaultLable].indexOf(this.searchValue) > -1 || pinyin.getFullChars(v[this.defaultValue]).toLowerCase().indexOf(searchPinyin) > -1 ||  pinyin.getFullChars(v[this.defaultLable]).toLowerCase().indexOf(searchPinyin) > -1 || pinyin.getCamelChars(v[this.defaultValue]).toLowerCase().indexOf(searchPinyin) > -1 || pinyin.getCamelChars(v[this.defaultLable]).toLowerCase().indexOf(searchPinyin) > -1) {
             searchItemArr.push(v)
-            console.log(v[this.defaultLable].indexOf(this.searchValue) > -1, v[this.defaultLable])
           }
         })
         this.localDataArr = [...searchItemArr]
@@ -188,7 +186,6 @@ export default {
           if (v.className.indexOf('active') < 0) {
             v.className += ' active'
              if (this.selectedArr.indexOf(v[this.defaultValue]) < 0) {
-              this.selectedArr.push(v[this.defaultValue])
               this.selectedArr.push(v[this.defaultValue])
               this.selectedValue = this.selectedArr.join(',')
             }
@@ -213,9 +210,9 @@ export default {
             v.className = v.className.replace(' active', '')
           }
         })
+        this.selectedArr = []
+        this.selectedValue = ''
       }
-      this.selectedArr = []
-      this.selectedValue = ''
     }
   }
 }
@@ -279,13 +276,14 @@ export default {
         z-index 49
         .selection-criteria
           display flex
+          background #f2f6fc
           span 
             flex 1
             text-align center
             position relative
             font-size 12px
+            color #606266
             &.active
-              background-color #f3f3f3
               color #2d8cf0
             &.active:after
               font-family iconfont
@@ -309,7 +307,6 @@ export default {
           color #606266
           clear: both
           &.active
-            background-color #f3f3f3
             color #2d8cf0
           &:hover
             background-color #f3f3f3

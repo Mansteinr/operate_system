@@ -13,7 +13,7 @@
                 unlink-panels
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                name='se'
+                :name="['start', 'end']"
                 v-model="queryParams.time"
                 range-separator="至"
                 :picker-options="pickerOptions2">
@@ -34,7 +34,6 @@
             :searchName="'loginName'"
             :defaultLable="'customerName'"
             :searchInput = true
-            :isMultiple = true
             @changeInputValue="changeCustomer">
           </loginNameSelect>
           <serviceSelect 
@@ -62,7 +61,7 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
+        <Table class="table1" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
           <el-table-column
             label="使用日期"
             sortable
@@ -122,16 +121,15 @@ export default {
     },
     onSubmit () {
       let options = {}
-      options.start = moment(this.queryParams.time[0]).format('YYYY-MM-DD')
-      options.end = moment(this.queryParams.time[1]).format('YYYY-MM-DD')
       document.querySelectorAll('form input').forEach(v => {
-        options[v.name] = v.value
+        if (v.name && v.name != 'typeId') {
+          options[v.name] = v.value
+        }
       })
       this.UsageByDate(options)
-      console.log(options)
     },
-    UsageByDate () {
-      $http(this.API.downApi.UsageByDate, this.queryParams).then((res) => {
+    UsageByDate (options) {
+      $http(this.API.downApi.UsageByDate, options).then((res) => {
         let xAxisData = [], 
           series= [{
             name: '共计使用量',

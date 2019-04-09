@@ -208,7 +208,3 @@ export function mockTime() {
     }
     return card
   }
-
-  export function formSearize() {
-    
-  }
