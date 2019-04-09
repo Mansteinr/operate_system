@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     toggleExp(e) { // 展开折叠下拉框
-      let selector = null, classNames = ''
+      let classNames = ''
       if (e.target) {
         if(e.target.parentNode.querySelector('.search-input')) {
           e.target.parentNode.querySelector('.search-input').focus()
@@ -182,7 +182,7 @@ export default {
       this.selectOption = way
       let lis = document.querySelectorAll('.dropdown-item.text-warp')
       if (way === 'selectAll') { // 全选
-        lis.forEach((v, k) => {
+        lis.forEach(v => {
           if (v.className.indexOf('active') < 0) {
             v.className += ' active'
              if (this.selectedArr.indexOf(v[this.defaultValue]) < 0) {
@@ -192,7 +192,7 @@ export default {
           }
         })
       } else if (way === 'selectInverse') { // 反选
-        lis.forEach((v, k) => {
+        lis.forEach(v => {
            if (v.className.indexOf('active') > 0) {
               v.className = v.className.replace(' active', '')
           } else {
@@ -205,7 +205,7 @@ export default {
         })
        
       } else { // 全不选
-        lis.forEach((v, k) => {
+        lis.forEach(v => {
            if (v.className.indexOf('active') > 0) {
             v.className = v.className.replace(' active', '')
           }

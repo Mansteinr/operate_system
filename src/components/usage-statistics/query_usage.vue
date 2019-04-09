@@ -97,7 +97,6 @@ import Select from '../../base/Select'
 import loginNameSelect from '../../base/Select'
 import serviceSelect from '../../base/Select'
 import QueryButton from '../../base/QueryButton'
-import moment from 'moment'
 export default {
   mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
   data () {

@@ -5,7 +5,7 @@
         查询条件
       </div>
       <div class="card-container">
-        <el-form :inline="true" :rules="rules" :model="queryParams" ref="querForm" class="query-form">
+        <el-form :inline="true" :model="queryParams" ref="querForm" class="query-form">
           <el-form-item label="选择时间：" prop="time">
             <div class="block">
               <el-date-picker
@@ -14,6 +14,7 @@
                 align="right"
                 unlink-panels
                 range-separator="至"
+                :name="['start', 'end']"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 :picker-options="pickerOptions2">
@@ -126,22 +127,23 @@ export default {
       this.$refs.querForm.resetFields()
     },
     onSubmit () {
-      this.$refs.querForm.validate((valid) => {
-        if (valid) {
-          this.resetTabFlag()
-          this.initFun()
+      let options = {}
+      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
+        if (v.name) {
+          options[v.name] = v.value
         }
       })
+      this.initFun(options)
     },
-    initFun () {
-      this.UsageByDate()
-      this.UsageByCustomer()
+    initFun (options) {
+      this.UsageByDate(options)
+      this.UsageByCustomer(options)
     },
     formatter (val) {
       return this.$refs.table.formatter(val)
     },
-    UsageByDate () {
-      $http(this.API.downApi.UsageByDate, this.queryParams).then((res) => {
+    UsageByDate (options) {
+      $http(this.API.downApi.UsageByDate, options).then((res) => {
         let xAxisData = [], series= [{
               name: '共计使用量',
               data:[]
@@ -164,8 +166,8 @@ export default {
         }
       })
     },
-    UsageByCustomer () {
-      $http(this.API.downApi.UsageByCustomer, this.queryParams).then((res) => {
+    UsageByCustomer (options) {
+      $http(this.API.downApi.UsageByCustomer, options).then((res) => {
         let xAxisData = [], series= [{
               name: '共计使用量',
               data:[]

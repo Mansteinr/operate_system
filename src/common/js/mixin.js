@@ -346,7 +346,7 @@ export const queryPipe = {
           this.classNames.push(v.pipeName)
         })
       } else {
-        let index = this.queryParams.classNames.findIndex((value, index, arr) => {
+        let index = this.queryParams.classNames.findIndex(value => {
           return value ==='全部'
         })
         if (index > -1) {

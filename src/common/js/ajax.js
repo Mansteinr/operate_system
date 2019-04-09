@@ -2,15 +2,9 @@
 import axios from 'axios'
 import { Loading } from 'element-ui'
 import { showModal } from '../../utils'
-import { mapMutations } from 'vuex' // 引入mapMutations函数
-import moment from 'moment'
 let loading
 export function $http (url, data, method = 'post', responseType = 'json') {
   showFullScreenLoading()
-  // if (data.time) {
-  //   data.start = moment(data.time[0]).format('YYYY-MM-DD')
-  //   data.end = moment(data.time[1]).format('YYYY-MM-DD')
-  // }
   return new Promise((resolve, reject) => {
     axios({
       method: method,
@@ -46,10 +40,10 @@ export function $http (url, data, method = 'post', responseType = 'json') {
 }
 
 export function $downFile (url, op) {
-  if (op.time) {
-    op.start = moment(op.time[0]).format('YYYY-MM-DD')
-    op.end = moment(op.time[1]).format('YYYY-MM-DD')
-  }
+  // if (op.time) {
+  //   op.start = moment(op.time[0]).format('YYYY-MM-DD')
+  //   op.end = moment(op.time[1]).format('YYYY-MM-DD')
+  // }
   var xhr = new XMLHttpRequest();
   xhr.open("POST", url, true);
   xhr.responseType = "blob"; //这里是关键，它指明返回的数据的类型是二进制  
