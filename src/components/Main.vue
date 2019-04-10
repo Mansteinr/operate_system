@@ -31,10 +31,12 @@
           active-text-color="#ffd04b"
           :unique-opened="true" 
           :collapse="isCollapse"
+          :router="true"
           :default-active="menuActive">
           <div class="mv-collapse" @click="collapse"><i class="iconfont icon-tubiaozhizuomoban"></i></div>
           <template v-for="v in menu">
-            <el-menu-item :index="v.id+''" :key="v.id" v-if="v.childResource.length==0" @click="selectItem(v)">
+            <el-menu-item :index="v.resourceUrl+''" :key="v.id" v-if="v.childResource.length==0" @click="selectItem(v)">
+            <!-- <el-menu-item :index="v.id+''" :key="v.id" v-if="v.childResource.length==0" @click="selectItem(v)"> -->
               <i :class="v.icon"></i>
               <span slot="title">{{v.name}}</span>
             </el-menu-item>
@@ -44,7 +46,8 @@
                 <span slot="title">{{v.name}}</span>
               </template>
               <template v-for="v1 in v.childResource">
-                <el-menu-item v-if="v1.childResource.length==0" :key="v1.id" :index="v.id+'-'+v1.id" @click="selectItem(v1)">
+                <el-menu-item v-if="v1.childResource.length==0" :key="v1.id" :index="v1.resourceUrl" @click="selectItem(v1)">
+                <!-- <el-menu-item v-if="v1.childResource.length==0" :key="v1.id" :index="v.id+'-'+v1.id" @click="selectItem(v1)"> -->
                   <i :class="v1.icon"></i>
                   <span slot="title">{{v1.name}}</span>
                 </el-menu-item>
@@ -53,7 +56,8 @@
                     <i :class="v.icon"></i>
                     <span slot="title">{{v1.name}}</span>
                   </template>
-                  <el-menu-item v-for="v2 in v1.childResource" :index="v.id+'-'+v1.id+'-'+v2.id" :key="v2.id" @click="selectItem(v2)">
+                  <el-menu-item v-for="v2 in v1.childResource" :index="v2.resourceUrl" :key="v2.id" @click="selectItem(v2)">
+                  <!-- <el-menu-item v-for="v2 in v1.childResource" :index="v.id+'-'+v1.id+'-'+v2.id" :key="v2.id" @click="selectItem(v2)"> -->
                     <span slot="title">{{v2.name}}</span></el-menu-item>
                 </el-submenu>
               </template>
@@ -62,21 +66,19 @@
         </el-menu>
       </el-aside>
       <el-main>
-        <div class="m-tabs">
-          <router-link 
-            tag="div" class="tab-item" 
-            :class="{active:editableTabsValue===item.name}" 
-            v-for="item in editableTabs" 
-            :key="item.name" 
-            :to="{name: item.url}"  
-            @click.native='clickTabs(item.name)'>
-              {{item.title}}
-            <i class="icon-delete" @click.stop="deleteTab(item)"></i>
-          </router-link>
-        </div>
+        <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab" @tab-click="clickTabs">
+          <el-tab-pane
+            v-for="item in editableTabs"
+            :key="item.name"
+            :label="item.title"
+            :name="item.url"
+          >
+          </el-tab-pane>
+        </el-tabs>
         <keep-alive>
-            <router-view/>
+          <router-view/>
         </keep-alive>
+      
       </el-main>
     </el-container>
   </el-container>
@@ -89,16 +91,17 @@ export default {
       value4: '中文',
       userName: 'zhoumingye',
       menu: [],
-      menuActive: '',
+      menuActive: '', // 标记菜单激活状态
       isCollapse: false,
-      editableTabsValue: '',
+      editableTabsValue: '', // 标记卡片激活状态
       editableTabs: [],
-      tabIndex: 2
+      tabIndex: 1
     }
   },
   methods: {
-    clickTabs (value) {
-      this.editableTabsValue = value
+    clickTabs (tab) {
+      this.menuActive = tab.name
+      this.$router.push({name: tab.name})
     },
     collapse () {
       this.isCollapse = !this.isCollapse
@@ -106,9 +109,9 @@ export default {
     selectItem (value) {
       let paramArr = value.resourceUrl.split('/'), unqiuFlag = false
       this.$router.push({name: paramArr[paramArr.length - 1].split('.')[0]})
-      this.menuActive = value.id+'' // 需要传入字符串 传入number会报错
+      this.menuActive = value.resourceUrl
       this.editableTabs.map(v => {
-        if (v.name === this.menuActive) {
+        if (v.name === value.resourceUrl) {
           unqiuFlag = true
         }
       })
@@ -116,7 +119,7 @@ export default {
         this.editableTabs.push({
           title: value.name,
           name: this.menuActive,
-          url: value.resourceUrl.split('/')[1].split('.')[0]
+          url: value.resourceUrl
         })
       }
       this.editableTabsValue = this.menuActive
@@ -134,28 +137,36 @@ export default {
     querySubSystemMenuList () { // 获取菜单
       $http(this.API.base.querymenus, { 'systemName': '服务平台' }).then((res) => {
         this.menu =  res.resData
-        this.menuActive = this.menu[0].id + ''
+        this.menuActive = this.menu[0].resourceUrl
         this.editableTabs.push({
           title: this.menu[0].name,
           name: this.menuActive,
-          url: this.menu[0].resourceUrl.split('/')[1].split('.')[0]
+          url: this.menu[0].resourceUrl
         })
         this.editableTabsValue = this.menuActive
       })
     },
-    deleteTab (value) { // 删除tabs
-      if (this.editableTabs.length <= 1) {
+    removeTab(targetName) {
+      if (!(this.editableTabs.length - 1)) {
         return
       }
-      this.editableTabs.map((v, k) => {
-        if (v.name === value.name) {
-          this.editableTabs.splice(k, 1)
-          if (this.editableTabsValue === value.name) { // 删除的是激活状态的tabs
-            this.editableTabsValue = this.editableTabs[this.editableTabs.length-1].name
-            this.$router.push({name: this.editableTabs[this.editableTabs.length-1].url})
+      let tabs = this.editableTabs
+      let activeName = this.editableTabsValue;
+      if (activeName === targetName) {
+        tabs.forEach((tab, index) => {
+          if (tab.name === targetName) {
+            let nextTab = tabs[index + 1] || tabs[index - 1];
+            if (nextTab) {
+              activeName = nextTab.name;
+            }
           }
-        }
-      })
+        });
+      }
+      this.editableTabsValue = activeName;
+      this.editableTabs = tabs.filter(tab => tab.name !== targetName)
+      this.$router.push({ name: `${this.editableTabs[this.editableTabs.length-1].url}` })
+      this.editableTabsValue = this.editableTabs[this.editableTabs.length-1].url
+      this.menuActive = this.editableTabs[this.editableTabs.length-1].url
     }
   },
   mounted() {
@@ -211,54 +222,8 @@ export default {
     .el-main
       overflow-y scroll
       padding 0px 10px 20px 10px !important
-      .m-tabs
-        height 40px
-        background $color-white
-        margin-bottom 10px
-        margin-left -10px
-        margin-right -10px
-        display flex
-        background $color-tab-color
-        overflow auto
-        .tab-item
-          position relative
-          z-index 50
-          height 100%
-          line-height 40px
-          padding 0 20px
-          cursor pointer
-          border-right 1px solid rgb(228, 231, 237)
-          overflow hidden
-          max-width 150px
-          i 
-            position absolute
-            width 0px
-            height 15px
-            margin-right 0px
-            border-radius 50%
-            font-size 12px
-            line-height 14px
-            right 0px
-            top 13px
-            opacity 0
-            transition all .7s
-            z-index 105
-            &:hover
-              background-color rgb(192, 196, 204)
-              color rgb(255, 255, 255)
-              opacity 1
-          &.active
-            color $color-bule
-            background $color-white
-            border-top-left-radius 10px
-            border-top-right-radius 10px
-            i 
-              width 15px
-              opacity 1
-          &:hover
-            i 
-              width 15px
-              opacity 1
+      .el-tabs
+        height 51px !important
     .el-aside
       width: auto !important
       background $color-nave

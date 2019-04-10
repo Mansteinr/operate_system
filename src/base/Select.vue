@@ -88,6 +88,8 @@ export default {
   watch: {
     originArr() {
       this.localDataArr = [...this.originArr]
+      this.selectedValue = this.originArr[0][this.defaultLable]
+      this.selectedDefault = this.originArr[0][this.defaultValue]
     }
   },
   mounted () {
@@ -112,6 +114,14 @@ export default {
     
   },
   methods: {
+    reset () {
+      // debugger
+      // 方法重置
+      // this.selectedValue = this.originArr[0][this.defaultLable]
+      // this.selectedDefault = this.originArr[0][this.defaultValue]
+      // 一开始是按照上面方法做的 也可以实现重置功能 但是这样无法触发chang事件 然后导致无法联动
+      document.querySelector('.dropdown-item.text-warp').click()
+    },
     toggleExp(e) { // 展开折叠下拉框
       let classNames = ''
       if (e.target) {

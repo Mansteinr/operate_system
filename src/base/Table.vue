@@ -191,11 +191,8 @@
           text: '下载中…',
           background: 'rgba(0, 0, 0, 0.7)'
         })
-        // debugger
-        console.log(document.querySelector('table'))
         if (this.tableData.length > 10) {
           let parentDOm = document.querySelector('.' + this.selector)
-          console.log(parentDOm)
           let ul = parentDOm.getElementsByClassName('el-select-dropdown__list')[0]
           let lis = ul.getElementsByTagName('li')
           lis[lis.length -1].click()
@@ -212,10 +209,8 @@
             }, 1000)
           })
         } else {
-          console.log(kind)
           var wb = XLSX.utils.table_to_book(document.querySelector('.' + this.selector))
           var wbout = XLSX.write(wb, { bookType: kind, bookSST: true, type: 'array' })
-          console.log(wbout)
           try {
               FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'download.' + kind)
           } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }

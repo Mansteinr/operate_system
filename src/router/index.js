@@ -33,6 +33,7 @@ import Main from '../components/Main'
 Vue.use(Router)
 
 const router = new Router({
+  mode: 'history',
   routes: [{
     path: '/',
     name: 'Main',

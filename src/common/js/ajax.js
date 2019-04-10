@@ -40,10 +40,6 @@ export function $http (url, data, method = 'post', responseType = 'json') {
 }
 
 export function $downFile (url, op) {
-  // if (op.time) {
-  //   op.start = moment(op.time[0]).format('YYYY-MM-DD')
-  //   op.end = moment(op.time[1]).format('YYYY-MM-DD')
-  // }
   var xhr = new XMLHttpRequest();
   xhr.open("POST", url, true);
   xhr.responseType = "blob"; //这里是关键，它指明返回的数据的类型是二进制  

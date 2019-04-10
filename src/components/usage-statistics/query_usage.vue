@@ -21,6 +21,7 @@
             </div>
           </el-form-item>
           <Select 
+            ref='select'
             :labelTitle="'行业类型'" 
             :originArr="businessType" 
             :defaultValue="'typeId'" 
@@ -28,6 +29,7 @@
             @changeInputValue="changeType"> 
           </Select>
           <loginNameSelect 
+            ref="loginNameSelect"
             :labelTitle="'客户名称'" 
             :originArr="loginName" 
             :defaultValue="'loginName'" 
@@ -37,6 +39,7 @@
             @changeInputValue="changeCustomer">
           </loginNameSelect>
           <serviceSelect 
+            ref="serviceSelect"
             :labelTitle="'接口类型'" 
             :originArr="services" 
             :defaultValue="'serviceName'" 
@@ -117,6 +120,9 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
+      this.$refs.select.reset()
+      // this.$refs.serviceSelect.reset()
+      // this.$refs.loginNameSelect.reset()
     },
     onSubmit () {
       let options = {}
