@@ -40,107 +40,107 @@ const router = new Router({
     component: Main,
     children: [{
       path: '/QueryIndex',
-      name: 'query-index',
+      name: 'views/query_index.html',
       component: QueryIndex
     }, {
       path: '/QueryUsage',
-      name: 'query_usage',
+      name: 'views/query_usage.html',
       component: QueryUsage
     }, {
       path: '/upstreamSupplier',
-      name: 'query_upstream_supplier',
+      name: 'views/query_upstream_supplier.html',
       component: upstreamSupplier
     }, {
       path: '/upstreamCustomer',
-      name: 'query_upstream_customer',
+      name: 'views/query_upstream_customer.html',
       component: upstreamCustomer
     }, {
       path: '/upstreamService',
-      name: 'query_upstream_service',
+      name: 'views/query_upstream_service.html',
       component: upstreamService
     }, {
       path: '/upstreamServiceByData',
-      name: 'query_upstream_serviceByData',
+      name: 'views/query_upstream_serviceByData.html',
       component: upstreamServiceByData
     }, {
       path: '/downstreamCustomer',
-      name: 'query_downstream_customer',
+      name: 'views/query_downstream_customer.html',
       component: downstreamCustomer
     }, {
       path: '/downstreamService',
-      name: 'query_downstream_service',
+      name: 'views/query_downstream_service.html',
       component: downstreamService
     }, {
       path: '/QueryLog',
-      name: 'query_logs',
+      name: 'views/query_logs.html',
       component: QueryLog
     }, {
       path: '/queryQuality',
-      name: 'query_quality',
+      name: 'views/query_quality.html',
       component: queryQuality
     }, {
       path: '/queryGuid',
-      name: 'query_guid',
+      name: 'views/query_guid.html',
       component: queryGuid
     }, {
       path: '/queryMvTrackId',
-      name: 'query_mvTrackId',
+      name: 'views/query_mvTrackId.html',
       component: queryMvTrackId
     }, {
       path: '/operationCache',
-      name: 'opreat_cache',
+      name: 'views/opreat_cache.html',
       component: operationCache
     }, {
       path: '/dataReset',
-      name: 'query_dataReset',
+      name: 'views/query_dataReset.html',
       component: dataReset
     }, {
       path: '/upStreamCount',
-      name: 'query_upStreamCount',
+      name: 'views/query_upStreamCount.html',
       component: upStreamCount
     }, {
       path: '/mobileOperator',
-      name: 'query_mobileOperator',
+      name: 'views/query_mobileOperator.html',
       component: mobileOperator
     }, {
       path: '/queryTrackDetail',
-      name: 'query_trackDetail',
+      name: 'views/query_trackDetail.html',
       component: queryTrackDetail
     }, {
       path: '/supplierAnalysis',
-      name: 'supplier_quality_analysis',
+      name: 'views/supplier_quality_analysis.html',
       component: supplierAnalysis
     }, {
       path: '/customerAnalysis',
-      name: 'customer_quality_analysis',
+      name: 'views/customer_quality_analysis.html',
       component: customerAnalysis
     }, {
       path: '/queryOrder',
-      name: 'query_order',
+      name: 'views/vehicle/query_order.html',
       component: queryOrder  
     }, {
       path: '/channelManagement',
-      name: 'channel_management',
+      name: 'views/vehicle/channel_management.html',
       component: channelManagement    
     }, {
       path: '/parameterMaintenance',
-      name: 'interface_parameter_maintenance',
+      name: 'views/interface_parameter_maintenance.html',
       component: parameterMaintenance
     }, {
       path: '/sensitiveWord',
-      name: 'sensitive_word',
+      name: 'views/security/sensitive_word.html',
       component: sensitiveWord
     }, {
       path: '/serviceRegular',
-      name: 'service_regular',
+      name: 'views/security/service_regular.html',
       component: serviceRegular
     }, {
       path: '/paramRecord',
-      name: 'param_record',
+      name: 'views/security/param_record.html',
       component: paramRecord
     }, {
       path: '/ruleInstance',
-      name: 'rule_instance',
+      name: 'views/security/rule_instance.html',
       component: ruleInstance
     }, {
       path: '/Demo',

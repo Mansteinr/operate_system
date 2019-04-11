@@ -28,7 +28,7 @@ router.beforeEach((to, from, next) => {
   if (login) {
     if (path === '/') {
       next({
-        name: 'query-index'
+        name: 'views/query_index.html'
       })
     } else {
       next()

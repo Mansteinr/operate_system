@@ -16,8 +16,8 @@
             {{userName}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="choseProject">项目选择</el-dropdown-item>
-            <el-dropdown-item @click.native="loginOut">退出</el-dropdown-item>
+            <el-dropdown-item @click.native="choseProject">{{$t('m.header.choseProject')}}</el-dropdown-item>
+            <el-dropdown-item @click.native="loginOut">{{$t('m.header.loginOut')}}</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -36,7 +36,6 @@
           <div class="mv-collapse" @click="collapse"><i class="iconfont icon-tubiaozhizuomoban"></i></div>
           <template v-for="v in menu">
             <el-menu-item :index="v.resourceUrl+''" :key="v.id" v-if="v.childResource.length==0" @click="selectItem(v)">
-            <!-- <el-menu-item :index="v.id+''" :key="v.id" v-if="v.childResource.length==0" @click="selectItem(v)"> -->
               <i :class="v.icon"></i>
               <span slot="title">{{v.name}}</span>
             </el-menu-item>
@@ -47,8 +46,7 @@
               </template>
               <template v-for="v1 in v.childResource">
                 <el-menu-item v-if="v1.childResource.length==0" :key="v1.id" :index="v1.resourceUrl" @click="selectItem(v1)">
-                <!-- <el-menu-item v-if="v1.childResource.length==0" :key="v1.id" :index="v.id+'-'+v1.id" @click="selectItem(v1)"> -->
-                  <i :class="v1.icon"></i>
+                 <i :class="v1.icon"></i>
                   <span slot="title">{{v1.name}}</span>
                 </el-menu-item>
                 <el-submenu :index="v.id+'-'+v1.id" :key="v1.id"  v-else>
@@ -57,8 +55,7 @@
                     <span slot="title">{{v1.name}}</span>
                   </template>
                   <el-menu-item v-for="v2 in v1.childResource" :index="v2.resourceUrl" :key="v2.id" @click="selectItem(v2)">
-                  <!-- <el-menu-item v-for="v2 in v1.childResource" :index="v.id+'-'+v1.id+'-'+v2.id" :key="v2.id" @click="selectItem(v2)"> -->
-                    <span slot="title">{{v2.name}}</span></el-menu-item>
+                  <span slot="title">{{v2.name}}</span></el-menu-item>
                 </el-submenu>
               </template>
             </el-submenu>
