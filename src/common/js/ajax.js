@@ -23,7 +23,7 @@ export function $http (url, data, method = 'post', responseType = 'json') {
         resolve(res.data)
       } else { // 返回吗 不为1
         if (res.data.resMsg[0].msgCode === '10005') { // 若没有登录 则强制到登录页面
-          window.location.href = window.location.origin + '/#/Login' // 跳转页面
+          window.location.href = window.location.origin + '/Login' // 跳转页面
         } else if (res.data.resMsg[0].msgCode === '40001005') {
           showModal(res.data.resMsg[0].msgText, 'warning')
         } else {

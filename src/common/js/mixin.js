@@ -91,33 +91,19 @@ export const businessType = { // 行业类型
       $http(this.API.upApi.businessTypes, {}).then((res) => {
         this.businessType = []
         this.businessType = res.resData
-        this.businessType.unshift({
-          typeId: '',
-          typeName: '全部'
-        })
-        this.queryParams.type = this.businessType[0].typeId
       })
     },
-    changeType (msg) {
-      this.loginName = [{
-        customerId: '',
-        loginName: '',
-        customerName: '全部'
-      }]
-      if (msg.typeId) {
-        this.loginNameOrigin.map((v) => {
-          if (msg.typeId === v.businessId) {
+    changeType (msg) { // 行业类型切换时 对应的客户名称发生变化 该变化时前端做的 不需要发送请求
+      this.loginName = [] // 改变时 首先清空原有的数组 防止重复
+      if (msg.typeId) { // 不是全部选项时
+        this.loginNameOrigin.map(v => {
+          if (msg.typeId === v.businessId) { // 筛选合适的客户名称 并保存
             this.loginName.push(v)
           }
         })
-      } else {
-        this.loginName = [...[{
-          customerId: '',
-          loginName: '',
-          customerName: '全部'
-        }], ...this.loginNameOrigin]
+      } else { // 是全部选型时
+        this.loginName = [...this.loginNameOrigin] // 全部时重新赋值
       }
-      this.queryParams.loginName = this.loginName[0].loginName
     }
   }
 }
@@ -137,23 +123,10 @@ export const loginName = { // 客户登陆名称
       $http(this.API.upApi.customers, {}).then((res) => {
         this.loginNameOrigin = []
         this.loginNameOrigin = res.resData
-        if(this.noAllLogin) { // 有的页面需要带上‘全部’ 有点不需要故作此标记
-          this.loginName = this.loginNameOrigin
-        } else {
-          this.loginName = [...[{
-            customerId: '',
-            loginName: '',
-            customerName: '全部'
-          }], ...this.loginNameOrigin]
-        }
-        this.queryParams.loginName = this.loginName[0].loginName
+        this.loginName = this.loginNameOrigin
       })
     },
     changeCustomer (v) {
-      console.log(v)
-      if (this.noAllLogin) {
-        return
-      }
       if (v.customerId) {
         this.getHasService({ customerId: v.customerId })
       } else {
@@ -173,28 +146,28 @@ export const loginName = { // 客户登陆名称
         }
       })
     },
-    filterLoginName (params) {
-      this.loginName = []
-      if (params) {
-        let translateParams = params.toLowerCase()
-        this.loginNameOrigin.filter(v => {
-          let testBool = v['loginName'].toLowerCase().indexOf(translateParams) > -1 || v['customerName'].indexOf(translateParams) > -1 || pinyin.getFullChars(v['customerName']).toLowerCase().indexOf(translateParams) > -1 ||  pinyin.getCamelChars(v['customerName']).toLowerCase().indexOf(translateParams) > -1
-          if (testBool) {
-            this.loginName.push(v)
-          }
-        })
-      } else {
-        if(this.noAllLogin) {
-          this.loginName = this.loginNameOrigin
-        } else {
-          this.loginName = [...[{
-            customerId: '',
-            loginName: '',
-            customerName: '全部'
-          }], ...this.loginNameOrigin]
-        }
-      }
-    }
+    // filterLoginName (params) {
+    //   this.loginName = []
+    //   if (params) {
+    //     let translateParams = params.toLowerCase()
+    //     this.loginNameOrigin.filter(v => {
+    //       let testBool = v['loginName'].toLowerCase().indexOf(translateParams) > -1 || v['customerName'].indexOf(translateParams) > -1 || pinyin.getFullChars(v['customerName']).toLowerCase().indexOf(translateParams) > -1 ||  pinyin.getCamelChars(v['customerName']).toLowerCase().indexOf(translateParams) > -1
+    //       if (testBool) {
+    //         this.loginName.push(v)
+    //       }
+    //     })
+    //   } else {
+    //     if(this.noAllLogin) {
+    //       this.loginName = this.loginNameOrigin
+    //     } else {
+    //       this.loginName = [...[{
+    //         customerId: '',
+    //         loginName: '',
+    //         customerName: '全部'
+    //       }], ...this.loginNameOrigin]
+    //     }
+    //   }
+    // }
   }
 }
 export const services = { // 接口类型

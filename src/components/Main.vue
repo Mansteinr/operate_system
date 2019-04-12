@@ -96,16 +96,16 @@ export default {
     }
   },
   methods: {
-    clickTabs (tab) {
+    clickTabs (tab) { // 点击选项卡
       this.menuActive = tab.name
-      this.$router.push({name: tab.name})
+      this.$router.push({name: tab.name}) //点击选项卡时 切换路由
     },
-    collapse () {
+    collapse () { // 左侧菜单展开折叠
       this.isCollapse = !this.isCollapse
     },
-    selectItem (value) {
-      let paramArr = value.resourceUrl.split('/'), unqiuFlag = false
-      this.$router.push({name: paramArr[paramArr.length - 1].split('.')[0]})
+    selectItem (value) { // 点击左侧菜单
+      let unqiuFlag = false // 防止重复点击
+      this.$router.push({name: value.resourceUrl})
       this.menuActive = value.resourceUrl
       this.editableTabs.map(v => {
         if (v.name === value.resourceUrl) {
@@ -124,10 +124,10 @@ export default {
     selectLang (value) {
       console.log(value)
     },
-    choseProject () {
+    choseProject () { // 选择项目
        window.location.href = this.API.base.projectchoose
     },
-    loginOut () {
+    loginOut () { // 退出
       localStorage.removeItem('mtk')
       this.$router.push({ name: '/Login' })
     },
@@ -143,7 +143,7 @@ export default {
         this.editableTabsValue = this.menuActive
       })
     },
-    removeTab(targetName) {
+    removeTab(targetName) { // 删除tab选项卡
       if (!(this.editableTabs.length - 1)) {
         return
       }
@@ -221,6 +221,29 @@ export default {
       padding 0px 10px 20px 10px !important
       .el-tabs
         height 51px !important
+        margin-left -10px
+        margin-right -10px
+        .is-active
+          background white
+          border-top-left-radius 10px
+          border-top-right-radius 10px
+          // &::before, &:after
+          //   content ''
+          //   display inline-block
+          //   position absolute
+          //   border-top solid 10px transparent
+          //   border-left solid 10px white
+          //   border-right solid 10px transparent
+          //   border-bottom solid 10px white
+          //   bottom -1px
+          //   border-radius 50%
+          //   z-index 199
+          // &::before
+          //   left -13px
+          //   transform rotate(-99deg)
+          // &:after
+          //   right -13px
+          //   transform rotate(4deg)
     .el-aside
       width: auto !important
       background $color-nave

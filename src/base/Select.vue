@@ -8,11 +8,13 @@
         <li class="dropdown-input" v-show="searchInput">
           <input type="text" placeholder="输入搜索" @change="searchItem" v-model.lazy.trim="searchValue" class="search-input m-input">
         </li>
-        <li class="dropdown-item selection-criteria" v-show="isAll">
-          <span v-for="v  in choseCondition" :key="v.method" @click.stop="selectWay(v.method)" :class="v.method === selectOption ? 'active':''">{{v.title}}</span>
-        </li>
         <template v-if="localDataArr.length">
-          <li class="dropdown-item text-warp" v-for="(v, k) in localDataArr" :key="k" :title="`${v[defaultLable] ? v[defaultLable] : v} (${v[defaultValue] ? v[defaultValue] : v})`" @click.stop.prevent="searchClick($event,v,k)" :class="isMultiple ? '': (k === selectedIndex?'active': '')">
+          <li class="dropdown-item text-warp" v-for="(v, k) in localDataArr" 
+            :key="k"
+            :title="`${v[defaultLable] ? v[defaultLable] : v} (${v[defaultValue] ? v[defaultValue] : v})`" 
+            @click.stop.prevent="searchClick($event,v,k)" 
+            :class="isMultiple ? '': (k === selectedIndex?'active': '')"
+          >
             {{v[defaultLable] ? v[defaultLable] : v}}
           </li>
         </template>
@@ -38,17 +40,7 @@ export default {
       selectedArr: [], // 多选时，存储已经选中的
       selectedDefaultArr: [], // 多选时，存储已经选中的
       selectOption: '',
-      localDataArr: [], // 防止计算过程污染源数据  故先将源数据进行拷贝至改数组中
-      choseCondition: [{
-          title: '全选',
-          method: 'selectAll'
-        }, {
-          title: '反选',
-          method: 'selectInverse'
-        }, {
-          title: '全不选',
-          method: 'unselectAll'
-        }]
+      localDataArr: [] // 防止计算过程污染源数据  故先将源数据进行拷贝至改数组中
       }
   },
   props: {
@@ -72,24 +64,32 @@ export default {
       type: String,
       default: ''
     },
-    defaultValue: { // 需要向后台发送的字段 比如服务名称游 中文 英文 还有serveiceId  此时defalutValue即为serviceId
+    defaultValue: { // 需要向后台发送的字段 比如服务名称 英文
       type: String,
       default: ''
     },
-    defaultLable: { // 展示字段
+    defaultLable: { //  需要向后台发送的字段 展示字段 比如服务名称 中文
       type: String,
       default: ''
     },
-    searchField: { // 搜索字段 
+    needValue: { // 需要向后台发送的字段 比如服务名称 英文 中文 除此之可能需要serviceId
       type: String,
       default: ''
     }
   },
   watch: {
     originArr() {
-      this.localDataArr = [...this.originArr]
-      this.selectedValue = this.originArr[0][this.defaultLable]
-      this.selectedDefault = this.originArr[0][this.defaultValue]
+      if (this.isAll) {
+        this.localDataArr = [{
+          [this.defaultValue]:'',
+          [this.needValue]: '',
+          [this.defaultLable]:'全部'
+        }, ...this.originArr]
+      } else {
+        this.localDataArr = [...this.originArr]
+      }
+      this.selectedValue = this.localDataArr[0][this.defaultLable]
+      this.selectedDefault = this.localDataArr[0][this.defaultValue]
     }
   },
   mounted () {
@@ -103,19 +103,9 @@ export default {
         }
       })
     }, false)
-
-    this.$nextTick(() => {
-      setTimeout(() => {
-        this.selectedValue = this.originArr[0][this.defaultLable]
-        this.selectedDefault = this.originArr[0][this.defaultValue]
-      },800)
-    })
-
-    
   },
   methods: {
     reset () {
-      // debugger
       // 方法重置
       // this.selectedValue = this.originArr[0][this.defaultLable]
       // this.selectedDefault = this.originArr[0][this.defaultValue]
@@ -143,6 +133,7 @@ export default {
       }
     },
     searchClick (e,v, k) {
+      console.log(v, this.defaultValue, v[this.defaultValue])
       this.selectedIndex = k
       if (!this.isMultiple) { // 单选
         this.selectedValue = v[this.defaultLable]
@@ -177,7 +168,6 @@ export default {
       }
       let searchPinyin = this.searchValue.toLowerCase() // 搜索词
       let searchItemArr = []
-      console.log(this.searchValue.toLowerCase())
       // 估计要分多选和单选两种清空
       // if(!this.isMultiple) { // 单选
         this.localDataArr.map(v => { // 检索
@@ -188,42 +178,52 @@ export default {
         this.localDataArr = [...searchItemArr]
       // }
     },
-    selectWay (way) { //全选
-      this.selectOption = way
-      let lis = document.querySelectorAll('.dropdown-item.text-warp')
-      if (way === 'selectAll') { // 全选
-        lis.forEach(v => {
-          if (v.className.indexOf('active') < 0) {
-            v.className += ' active'
-             if (this.selectedArr.indexOf(v[this.defaultValue]) < 0) {
-              this.selectedArr.push(v[this.defaultValue])
-              this.selectedValue = this.selectedArr.join(',')
-            }
-          }
-        })
-      } else if (way === 'selectInverse') { // 反选
-        lis.forEach(v => {
-           if (v.className.indexOf('active') > 0) {
-              v.className = v.className.replace(' active', '')
-          } else {
-            v.className += ' active'
-            if (this.selectedArr.indexOf(v[this.defaultValue]) < 0) {
-              this.selectedArr.push(v[this.defaultValue])
-              this.selectedValue = this.selectedArr.join(',')
-            }
-          }
-        })
+    // selectWay (way, e) { //全选
+    //   this.selectOption = way
+    //   let lis = e.target.parentNode.parentNode.querySelectorAll('.dropdown-item.text-warp')
+    //   let defaultValue = data-defaultValue, 
+    //   console.log(lis)
+    //   if (way === 'selectAll') { // 全选
+    //     lis.forEach(v => {
+    //       if (v.className.indexOf('active') < 0) {
+    //         v.getAttribute()
+    //         v.className += ' active'
+    //           // console.log(this.selectedArr.indexOf(v[this.defaultValue]))
+    //           // console.log(this.selectedArr)
+    //           // console.log(v[this.defaultValue])
+    //           // console.log(this.defaultValue)
+    //           // console.log(v)
+    //           console.log(e.target)
+    //          if (this.selectedArr.indexOf(v[this.defaultValue]) <= -1) {
+    //           this.selectedArr.push(v[this.defaultValue])
+    //         }
+    //       }
+    //     })
+    //     this.selectedValue = this.selectedArr.join(',')
+    //           console.log(this.selectedValue)
+    //   } else if (way === 'selectInverse') { // 反选
+    //     lis.forEach(v => {
+    //        if (v.className.indexOf('active') > 0) {
+    //           v.className = v.className.replace(' active', '')
+    //       } else {
+    //         v.className += ' active'
+    //         if (this.selectedArr.indexOf(v[this.defaultValue]) < 0) {
+    //           this.selectedArr.push(v[this.defaultValue])
+    //           this.selectedValue = this.selectedArr.join(',')
+    //         }
+    //       }
+    //     })
        
-      } else { // 全不选
-        lis.forEach(v => {
-           if (v.className.indexOf('active') > 0) {
-            v.className = v.className.replace(' active', '')
-          }
-        })
-        this.selectedArr = []
-        this.selectedValue = ''
-      }
-    }
+    //   } else { // 全不选
+    //     lis.forEach(v => {
+    //        if (v.className.indexOf('active') > 0) {
+    //         v.className = v.className.replace(' active', '')
+    //       }
+    //     })
+    //     this.selectedArr = []
+    //     this.selectedValue = ''
+    //   }
+    // }
   }
 }
 </script>

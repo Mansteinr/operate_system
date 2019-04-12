@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import QueryIndex from '../components/query-index'
 import QueryUsage from '../components/usage-statistics/query_usage'
+import QueryFinance from '../components/usage-statistics/query_finance'
 import upstreamSupplier from '../components/usage-statistics/upper-service/upstream_supplier'
 import upstreamCustomer from '../components/usage-statistics/upper-service/upstream_customer'
 import upstreamService from '../components/usage-statistics/upper-service/upstream_service'
@@ -40,12 +41,17 @@ const router = new Router({
     component: Main,
     children: [{
       path: '/QueryIndex',
+      label: 'popo',
       name: 'views/query_index.html',
       component: QueryIndex
     }, {
       path: '/QueryUsage',
       name: 'views/query_usage.html',
       component: QueryUsage
+    }, {
+      path: '/QueryFinance',
+      name: 'views/query_finance.html',
+      component: QueryFinance
     }, {
       path: '/upstreamSupplier',
       name: 'views/query_upstream_supplier.html',

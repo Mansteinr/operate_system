@@ -83,6 +83,7 @@ const api = {
     UsageByDate: apiFormat('operator/down/UsageByDate', 'upapi'), // 
     UsageByCustomer: apiFormat('operator/down/UsageByCustomer', 'upapi'),
     UsageByResultNew: apiFormat('operator/down/UsageByResultNew', 'upapi'),
+    getBalanceSnapshot: apiFormat('operator/accounting/getBalanceSnapshot', 'upapi') // 余额快照
   },
   secureApi: { // 安全中心
     allWords: apiFormat('secure/web/word/allWords', 'safaCenterapi'), /*查询所有的敏感词*/
