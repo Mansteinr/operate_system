@@ -22,7 +22,6 @@
             </div>
           </el-form-item>
           <loginNameSelect 
-            ref="loginNameSelect"
             :labelTitle="'客户名称'" 
             :originArr="loginName" 
             :defaultValue="'loginName'" 

@@ -7,7 +7,7 @@
       <!-- <input type="hidden" :name="defaultValue"  @change="op" v-model="selectedDefault"> -->
       <ul class="dropdown-menu" :class="isMultiple ? 'multiple' : ''">
         <li class="dropdown-input" v-show="searchInput">
-          <input type="text" placeholder="输入搜索" @change="searchItem" v-model.lazy.trim="searchValue" class="search-input m-input">
+          <input type="text" placeholder="输入搜索" v-model.trim="searchValue" class="search-input m-input">
         </li>
         <template v-if="localDataArr.length">
           <li class="dropdown-item text-warp" v-for="(v, k) in localDataArr" 
@@ -100,9 +100,12 @@ export default {
       } else {
         this.localDataArr = [...this.originArr]
       }
-      this.selectedValue = this.localDataArr[0][this.defaultLable]
-      this.selectedDefault = this.localDataArr[0][this.defaultValue]
+      this.selectedValue = this.localDataArr[0][this.defaultLable]?this.localDataArr[0][this.defaultLable]:this.localDataArr[0]
+      this.selectedDefault = this.localDataArr[0][this.defaultValue]?this.localDataArr[0][this.defaultValue]:this.localDataArr[0]
       this.selectedIndex = 0
+    },
+    searchValue () {
+      this.searchItem()
     }
   },
   mounted () {
@@ -142,8 +145,8 @@ export default {
       this.selectedIndex = k
       let lis = e.target.parentNode.querySelectorAll('.dropdown-item.text-warp')
       if (!this.isMultiple) { // 单选
-        this.selectedValue = v[this.defaultLable]
-        this.selectedDefault = v[this.defaultValue]
+        this.selectedValue = v[this.defaultLable]?v[this.defaultLable]:v
+        this.selectedDefault = v[this.defaultValue]?v[this.defaultValue]:v
         this.toggleExp(e.target.parentNode.parentNode)
         this.$emit('changeInputValue', v)
       } else { // 多选
@@ -151,7 +154,6 @@ export default {
           if (this.isSelecltedAll && lis.length === this.selectedArr.length) { // 单击时 取消全部按钮的选中状态，并将相应数组中的字段去掉
             this.selectedArr = this.selectedArr.splice(1,this.selectedArr.length)
             this.selectedDefaultArr = this.selectedDefaultArr.splice(1,this.selectedDefaultArr.length)
-            console.log(e.target)
             e.target.parentNode.querySelector('.dropdown-item.text-warp').classList.remove('active')
           }
           let currentClass = e.target.className
@@ -211,64 +213,30 @@ export default {
         this.localDataArr = [...this.originArr]
         return
       }
-      let searchPinyin = this.searchValue.toLowerCase() // 搜索词
       let searchItemArr = []
-      // 估计要分多选和单选两种清空
-      // if(!this.isMultiple) { // 单选
-        this.localDataArr.map(v => { // 检索
-          if (v[this.defaultLable].indexOf(this.searchValue) > -1 || pinyin.getFullChars(v[this.defaultValue]).toLowerCase().indexOf(searchPinyin) > -1 ||  pinyin.getFullChars(v[this.defaultLable]).toLowerCase().indexOf(searchPinyin) > -1 || pinyin.getCamelChars(v[this.defaultValue]).toLowerCase().indexOf(searchPinyin) > -1 || pinyin.getCamelChars(v[this.defaultLable]).toLowerCase().indexOf(searchPinyin) > -1) {
-            searchItemArr.push(v)
-          }
-        })
-        this.localDataArr = [...searchItemArr]
-      // }
+      if (typeof this.localDataArr[0] === 'string') { // 非对象搜索
+        this.notObjectSearch(searchItemArr)
+      } else { // 对象搜索
+        this.objectSearch(searchItemArr)
+      }
     },
-    // selectWay (way, e) { //全选
-    //   this.selectOption = way
-    //   let lis = e.target.parentNode.parentNode.querySelectorAll('.dropdown-item.text-warp')
-    //   let defaultValue = data-defaultValue, 
-    //   console.log(lis)
-    //   if (way === 'selectAll') { // 全选
-    //     lis.forEach(v => {
-    //       if (v.className.indexOf('active') < 0) {
-    //         v.getAttribute()
-    //         v.className += ' active'
-    //           // console.log(this.selectedArr.indexOf(v[this.defaultValue]))
-    //           // console.log(this.selectedArr)
-    //           // console.log(v[this.defaultValue])
-    //           // console.log(this.defaultValue)
-    //           // console.log(v)
-    //           console.log(e.target)
-    //          if (this.selectedArr.indexOf(v[this.defaultValue]) <= -1) {
-    //           this.selectedArr.push(v[this.defaultValue])
-    //         }
-    //       }
-    //     })
-    //     this.selectedValue = this.selectedArr.join(',')
-    //           console.log(this.selectedValue)
-    //   } else if (way === 'selectInverse') { // 反选
-    //     lis.forEach(v => {
-    //        if (v.className.indexOf('active') > 0) {
-    //           v.className = v.className.replace(' active', '')
-    //       } else {
-    //         v.className += ' active'
-    //         if (this.selectedArr.indexOf(v[this.defaultValue]) < 0) {
-    //           this.selectedArr.push(v[this.defaultValue])
-    //           this.selectedValue = this.selectedArr.join(',')
-    //         }
-    //       }
-    //     })
-       
-    //   } else { // 全不选
-    //     lis.forEach(v => {
-    //        if (v.className.indexOf('active') > 0) {
-    //         v.className = v.className.replace(' active', '')
-    //       }
-    //     })
-    //     this.selectedArr = []
-    //     this.selectedValue = ''
-    //   }
-    // }
+    objectSearch (searchItemArr) {
+      this.localDataArr.map(v => { // 检索
+        if (v[this.defaultLable].indexOf(this.searchValue) > -1 || pinyin.getFullChars(v[this.defaultValue]).toLowerCase().indexOf(this.searchValue) > -1 ||  pinyin.getFullChars(v[this.defaultLable]).toLowerCase().indexOf(this.searchValue) > -1 || pinyin.getCamelChars(v[this.defaultValue]).toLowerCase().indexOf(this.searchValue) > -1 || pinyin.getCamelChars(v[this.defaultLable]).toLowerCase().indexOf(this.searchValue) > -1) {
+          searchItemArr.push(v)
+        }
+      })
+      this.localDataArr = [...searchItemArr]
+    },
+    notObjectSearch (searchItemArr) {
+      console.log(0)
+      this.localDataArr.map(v => { // 检索
+        if (v.indexOf(this.searchValue) > -1 || pinyin.getFullChars(v).toLowerCase().indexOf(this.searchValue) > -1 ||  pinyin.getFullChars(v).toLowerCase().indexOf(this.searchValue) > -1 ) {
+          searchItemArr.push(v)
+        }
+      })
+      this.localDataArr = [...searchItemArr]
+    }
   }
 }
 </script>

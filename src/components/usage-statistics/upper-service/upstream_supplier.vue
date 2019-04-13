@@ -13,13 +13,20 @@
                 unlink-panels
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                :name="['start', 'end']"
                 v-model="queryParams.time"
                 range-separator="至"
                 :picker-options="pickerOptions2">
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item label="供应商：" prop="companyName">
+          <supplierSelect 
+            :labelTitle="'供应商'" 
+            :searchInput=true
+            :originArr="companys" 
+            >
+          </supplierSelect>
+          <!-- <el-form-item label="供应商：" prop="companyName">
             <el-select filterable v-model="queryParams.companyName" placeholder="请选择">
               <el-option
                 v-for="(v, index) in companys"
@@ -28,7 +35,7 @@
                 :value="v">
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
@@ -82,6 +89,7 @@ import { setLineData, renderChart } from '../../../common/js/myCharts'
 import { switchMixin, hotKeyTime, company } from '../../../common/js/mixin'
 import Table from '../../../base/Table'
 import QueryButton from '../../../base/QueryButton'
+import supplierSelect from '../../../base/Select'
 export default {
   mixins: [switchMixin, hotKeyTime, company],
   data () {
@@ -95,7 +103,8 @@ export default {
   },
   components: {
     Table,
-    QueryButton
+    QueryButton,
+    supplierSelect
   },
   methods: {
     reset () {
