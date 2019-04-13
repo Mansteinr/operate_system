@@ -51,7 +51,10 @@
             :label="v.title"
             :key="k"
             :sortable="v.sortable"
-            :prop="v.field">
+            :prop='v.field'>
+              <template slot-scope="scope">
+                <span>{{ v.title==="中文"? loginNameObj[scope.row[v.field]] : scope.row[v.field]}}</span>
+              </template>
           </el-table-column>
         </Table>
       </div>
@@ -68,7 +71,7 @@
             :key="k"
             :label="v.title"
             :sortable="v.sortable"
-            :prop="v.field">
+            :prop='v.field'>
           </el-table-column>
         </Table>
       </div>
@@ -95,12 +98,19 @@ export default {
       queryParams: { // 保留该参数 是为了重置方便
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
       },
+      loginNameObj: {}, // 由于后端 传参的时候 没有将中文名传过来 前端自己将中英文对照
       chargeLogFlag: false, // 控制显示隐藏充值记录
       tableData: [], // 余额快照table数据
       tableData2: [],  // 充值记录table数据
       multiple: false, // 是否多选
       all: false, // 是否多选
       coloums: [{
+        field: 'customerName',
+        title: '客户名称'
+      }, {
+        field: 'customerName',
+        title: '中文'
+      },{
         field: 'dateTime',
         title: '时间',
         sortable: true,
@@ -150,6 +160,13 @@ export default {
     Table,
     QueryButton,
     loginNameSelect
+  },
+  watch: {
+    loginName () {
+      this.loginName.forEach(v => {
+        this.loginNameObj[v.loginName] = v.customerName
+      })
+    }
   },
   methods: {
     reset () {

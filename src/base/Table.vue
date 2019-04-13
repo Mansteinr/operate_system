@@ -102,7 +102,8 @@
           // column.property 为自己定义的 data为table中的数据 即会计算当前页面的总和
           // const values = data.map(item => Number(item[column.property]))
           const values = this.tableDataComputed.map(item => Number(item[column.property]))
-          if (!values.every(value => isNaN(value))) {
+          // !values.some(value => isNaN(value)) 是判断数组中是否含有NaN
+          if (!values.some(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr)
               if (!isNaN(value)) {
@@ -113,10 +114,10 @@
             }, 0)
             sums[index]
           } else {
-            sums[index] = ''
+            sums[index] = '-'
           }
         })
-        sums.forEach((v, k) => {
+        sums.forEach((v, k) => { // 保留两位
           if (Number(v)) {
             sums[k] = Math.round(v * 100) / 100
           }
@@ -198,14 +199,14 @@
           lis[lis.length -1].click()
           this.$nextTick(() => {
             setTimeout(()=> {
-                var wb = XLSX.utils.table_to_book(document.querySelector('.' + this.selector))
-                var wbout = XLSX.write(wb, { bookType: kind, bookSST: true, type: 'array' })
-                try {
-                    FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'download.' + kind)
-                } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
-                loading.close()
-                lis[0].click()
-                return wbout
+              var wb = XLSX.utils.table_to_book(document.querySelector('.' + this.selector))
+              var wbout = XLSX.write(wb, { bookType: kind, bookSST: true, type: 'array' })
+              try {
+                  FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'download.' + kind)
+              } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+              loading.close()
+              lis[0].click()
+              return wbout
             }, 1000)
           })
         } else {
@@ -261,7 +262,7 @@
         return this.tableData
       },
       total () {
-         return this.tableDataComputed.length
+        return this.tableDataComputed.length
       }
     }
   }
