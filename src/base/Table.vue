@@ -101,7 +101,10 @@
           }
           // column.property 为自己定义的 data为table中的数据 即会计算当前页面的总和
           // const values = data.map(item => Number(item[column.property]))
-          const values = this.tableDataComputed.map(item => Number(item[column.property]))
+          const values = this.tableDataComputed.map(item => 
+            (column.property.toLowerCase().indexOf('time')>-1||column.property.toLowerCase().indexOf('date')>-1||column.property.toLowerCase().indexOf('day')>-1)? Number(item[column.property])+',' : Number(item[column.property])
+          )
+          console.log(values)
           // !values.some(value => isNaN(value)) 是判断数组中是否含有NaN
           if (!values.some(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {

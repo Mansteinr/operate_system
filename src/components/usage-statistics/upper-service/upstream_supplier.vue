@@ -23,19 +23,10 @@
           <supplierSelect 
             :labelTitle="'供应商'" 
             :searchInput=true
+            :defaultValue="'companyName'"
             :originArr="companys" 
             >
           </supplierSelect>
-          <!-- <el-form-item label="供应商：" prop="companyName">
-            <el-select filterable v-model="queryParams.companyName" placeholder="请选择">
-              <el-option
-                v-for="(v, index) in companys"
-                :key="index"
-                :label="v"
-                :value="v">
-              </el-option>
-            </el-select>
-          </el-form-item> -->
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
@@ -55,28 +46,33 @@
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
         <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
           <el-table-column
-            label="供应商名称"
-            prop="company">
+            v-for="(v, k) in columns"
+            :key="k"
+            :label="v.title"
+            :prop="v.field">
+            <template slot-scope="scope">
+              <span>{{ v.title==="不计费调用量"? (scope.row.usedCount - scope.row.chargeUsedCount) : scope.row[v.field]}}</span>
+            </template>
           </el-table-column>
+        </Table>
+      </div>
+    </div>
+        <div class="card-wrapper card-content">
+      <div class="card-title">
+        查询结果
+      </div>
+      <div class="card-container">
+        <div v-show="!tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
+        <Table class="table" :tableData="tableData2" :tatalPage="tableData.length" v-show="tableData2.length">
           <el-table-column
-            label="服务名称"
-            prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="调用总量（条）"
-            sortable
-            prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="计费调用量（条）"
-            sortable
-            prop="chargeUsedCount">
-          </el-table-column>
-          <el-table-column
-            label="不计费调用量（条）"
-            sortable
-            prop="noChargeCount">
-          </el-table-column>
+              v-for="(v, k) in columns1"
+              :key="k"
+              :label="v.title"
+              :prop="v.field">
+              <template slot-scope="scope">
+                <span>{{ v.title==="不计费调用量"? (scope.row.usedCount - scope.row.chargeUsedCount) : scope.row[v.field]}}</span>
+              </template>
+            </el-table-column>
         </Table>
       </div>
     </div>
@@ -98,7 +94,53 @@ export default {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
         companyName: ''
       },
-      tableData: []
+      columns: [{
+        field: 'company',
+        title: '供应商名称'
+      },{
+        field: 'dayTime',
+        title: '时间'
+      },{
+        field: 'serviceNameZh',
+        title: '服务名称'
+      },{
+        field: 'usedCount',
+        title: '调用总量',
+        sortable: true
+      },{
+        field: 'chargeUsedCount',
+        title: '计费调用量',
+        sortable: true
+      },{
+        field: 'noChargeCount',
+        title: '不计费调用量',
+        sortable: true
+      },{
+        field: 'cost',
+        title: '小视入账',
+        sortable: true
+      }],
+      columns1: [{
+        field: 'company',
+        title: '供应商名称'
+      },{
+        field: 'serviceNameZh',
+        title: '服务名称'
+      },{
+        field: 'usedCount',
+        title: '调用总量',
+        sortable: true
+      },{
+        field: 'chargeUsedCount',
+        title: '计费调用量',
+        sortable: true
+      },{
+        field: 'noChargeCount',
+        title: '不计费调用量',
+        sortable: true
+      }],
+      tableData: [],
+      tableData2: [],
     }
   },
   components: {
@@ -109,25 +151,25 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
-      this.queryParams.companyName = this.companys[0]
     },
     onSubmit () {
-      this.$refs.querForm.validate((valid) => {
-        if (valid) {
-          this.resetTabFlag()
-          this.getOutServiceChargeInfoBySupplier()
+      let options = {}
+      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
+        if (v.name) {
+          options[v.name] = v.value
         }
       })
+      this.getOutServiceChargeInfoBySupplier(options)
     },
-    getOutServiceChargeInfoBySupplier () {
-      $http(this.API.upApi.getOutServiceChargeInfoBySupplier, this.queryParams).then((res) => {
-        // table
+    getOutServiceChargeInfoBySupplier (options) {
+      $http(this.API.upApi.getOutServiceChargeInfoBySupplier, options).then((res) => {
         if (res.resData.serviceCompany.length) {
           res.resData.serviceCompany.forEach(v => {
             v.noChargeCount = v.usedCount - v.chargeUsedCount
           })
         }
-        this.tableData = res.resData.serviceCompany
+        this.tableData = res.resData.dayCompany
+        this.tableData2 = res.resData.serviceCompany
         // 图标
         let xFiled = {},  
             finalArr = {} // 将所有的服务名都存储在该对象中
