@@ -5,17 +5,22 @@ import { showModal } from '../../utils'
 let loading
 export function $http (url, data, method = 'post', responseType = 'json') {
   showFullScreenLoading()
+  let options = {
+    method: method,
+    url: url,
+    responseType: responseType,
+    headers: {
+      'mtk': localStorage.getItem('mtk'),
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+  }
+  if (method === 'post') { // get post 方法兼容
+    options = Object.assign(options, {data: data})
+  } else {
+    options = Object.assign(options, {params: data})
+  }
   return new Promise((resolve, reject) => {
-    axios({
-      method: method,
-      url: url,
-      data: data,
-      responseType: responseType,
-      headers: {
-        'mtk': localStorage.getItem('mtk'),
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
-    }).then(res => {
+    axios(options).then(res => {
       // 成功
       if (res.data.resCode) { // 成功并且返回码为1
         resolve(res.data)

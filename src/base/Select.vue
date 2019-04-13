@@ -4,6 +4,7 @@
     <div class="select-dropdown m-input" :class="defaultValue">
       <div class="text-warp selected-value" @click.stop="toggleExp($event)" :title="`${selectedValue} (${selectedDefault})`">{{selectedValue}}</div>
       <input type="hidden" :name="defaultValue" :value="selectedDefault">
+      <!-- <input type="hidden" :name="defaultValue"  @change="op" v-model="selectedDefault"> -->
       <ul class="dropdown-menu" :class="isMultiple ? 'multiple' : ''">
         <li class="dropdown-input" v-show="searchInput">
           <input type="text" placeholder="输入搜索" @change="searchItem" v-model.lazy.trim="searchValue" class="search-input m-input">
@@ -36,12 +37,13 @@ export default {
       selectedIndex: 0, // 用于切换active和非active的
       selectedValue: '', // 选中内容， 用来显示
       selectedDefault: '',
+      inputValue: '',
       searchValue: '', // 搜索内容
       selectedArr: [], // 多选时，存储已经选中的
       selectedDefaultArr: [], // 多选时，存储已经选中的
-      selectOption: '',
+      isSelecltedAll: false, // 是否已经选中全部
       localDataArr: [] // 防止计算过程污染源数据  故先将源数据进行拷贝至改数组中
-      }
+    }
   },
   props: {
     isMultiple: { // 是否支持多选
@@ -75,10 +77,20 @@ export default {
     needValue: { // 需要向后台发送的字段 比如服务名称 英文 中文 除此之可能需要serviceId
       type: String,
       default: ''
+    },
+    loginNames: {
+      type: Array,
+      default: () => []
     }
   },
   watch: {
     originArr() {
+      if (!this.originArr.length) { // 没有数据 直接返回 防止报错
+        this.localDataArr = []
+        this.selectedValue = '暂无数据'
+        this.selectedValue = ''
+        return
+      } 
       if (this.isAll) {
         this.localDataArr = [{
           [this.defaultValue]:'',
@@ -90,6 +102,7 @@ export default {
       }
       this.selectedValue = this.localDataArr[0][this.defaultLable]
       this.selectedDefault = this.localDataArr[0][this.defaultValue]
+      this.selectedIndex = 0
     }
   },
   mounted () {
@@ -105,13 +118,6 @@ export default {
     }, false)
   },
   methods: {
-    reset () {
-      // 方法重置
-      // this.selectedValue = this.originArr[0][this.defaultLable]
-      // this.selectedDefault = this.originArr[0][this.defaultValue]
-      // 一开始是按照上面方法做的 也可以实现重置功能 但是这样无法触发chang事件 然后导致无法联动
-      document.querySelector('.dropdown-item.text-warp').click()
-    },
     toggleExp(e) { // 展开折叠下拉框
       let classNames = ''
       if (e.target) {
@@ -133,35 +139,74 @@ export default {
       }
     },
     searchClick (e,v, k) {
-      console.log(v, this.defaultValue, v[this.defaultValue])
       this.selectedIndex = k
+      let lis = e.target.parentNode.querySelectorAll('.dropdown-item.text-warp')
       if (!this.isMultiple) { // 单选
         this.selectedValue = v[this.defaultLable]
         this.selectedDefault = v[this.defaultValue]
         this.toggleExp(e.target.parentNode.parentNode)
         this.$emit('changeInputValue', v)
       } else { // 多选
-        let currentClass = e.target.className
-        if (currentClass.indexOf('active') < 0) {
-          e.target.className = currentClass + ' active'
-          this.selectedArr.push(v[this.defaultLable])
-          this.selectedDefaultArr.push(v[this.defaultValue])
-        } else {
-          this.selectedArr.splice(this.selectedArr.indexOf(v[this.defaultLable]))
-          this.selectedDefaultArr.splice(this.selectedDefaultArr.indexOf(v[this.defaultValue]))
-          e.target.className = currentClass.replace(' active', '')
+        if (v.customerId) { // 选择的不是 '全部'
+          if (this.isSelecltedAll && lis.length === this.selectedArr.length) { // 单击时 取消全部按钮的选中状态，并将相应数组中的字段去掉
+            this.selectedArr = this.selectedArr.splice(1,this.selectedArr.length)
+            this.selectedDefaultArr = this.selectedDefaultArr.splice(1,this.selectedDefaultArr.length)
+            console.log(e.target)
+            e.target.parentNode.querySelector('.dropdown-item.text-warp').classList.remove('active')
+          }
+          let currentClass = e.target.className
+          if (currentClass.indexOf('active') < 0) {
+            e.target.className = currentClass + ' active'
+            this.selectedArr.push(v[this.defaultLable])
+            this.selectedDefaultArr.push(v[this.defaultValue])
+          } else {
+            this.selectedArr.splice(this.selectedArr.indexOf(v[this.defaultLable]), 1)
+            this.selectedDefaultArr.splice(this.selectedDefaultArr.indexOf(v[this.defaultValue]), 1)
+            e.target.className = currentClass.replace(' active', '')
+          }
+          currentClass = ''
+          this.selectedValue = this.selectedArr.join(',')
+          this.selectedDefault = this.selectedDefaultArr.join(',')
+        } else { // 选择全部
+          // 清空数据防止影响
+          this.selectedArr = []
+          this.selectedDefaultArr = []
+          this.selectedValue = ''
+          this.selectedDefault = ''
+          if (this.isSelecltedAll) { // 已经选中全部 即将取消全部选中
+            this.isSelecltedAll = false
+            lis.forEach(v => {  
+              if (v.className.indexOf('active') > 0) {
+                v.className = v.className.replace(' active', '')
+              }
+            })
+            this.selectedValue = ''
+          } else { // 没有全部选中时 即将要全部选中
+            this.selectedArr = []
+            this.selectedDefaultArr = []
+            this.selectedValue = ''
+            this.selectedDefault = ''
+            this.isSelecltedAll = true  
+            lis.forEach(v => {  
+              if (v.className.indexOf('active') <= 0) {
+                v.className += ' active'
+              }
+            })
+            this.localDataArr.forEach(v1 => {
+              if (this.selectedDefaultArr.indexOf(v1[this.defaultValue]) <= -1) {
+                this.selectedArr.push(v1[this.defaultLable])
+                this.selectedDefaultArr.push(v1[this.defaultValue])
+              } else {
+                console.log(v1)
+              }
+            })
+            this.selectedValue = this.selectedArr.join(',')
+            this.selectedDefault = this.selectedDefaultArr.join(',')
+          }
         }
-        currentClass = ''
-        this.selectedValue = this.selectedArr.join(',')
-        this.selectedDefault = this.selectedDefaultArr.join(',')
       }
     },
     searchItem () {
-      //  首先清空 之前选择的数据
-      // this.selectedValue = ''
-      // this.selectedDefault = ''
-      // this.selectedDefaultArr = []
-      // this.selectedArr = []
       if (!this.searchValue) { // 若没有搜索内容 则返回源数据
         this.localDataArr = [...this.originArr]
         return

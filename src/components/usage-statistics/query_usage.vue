@@ -94,6 +94,7 @@
 <script>
 import { $http } from '../../common/js/ajax'
 import { setLineData, renderChart } from '../../common/js/myCharts'
+import { reset } from '../../utils'
 import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
 import Table from '../../base/Table'
 import Select from '../../base/Select'
@@ -120,7 +121,7 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
-      this.$refs.select.reset()
+      reset()
     },
     onSubmit () {
       let options = {}

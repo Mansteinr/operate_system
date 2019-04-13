@@ -27,3 +27,7 @@ yarn run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+###项目概述
+  1、技术vue+elementui+axios
+  2、总体来说 前端做的东西较多
