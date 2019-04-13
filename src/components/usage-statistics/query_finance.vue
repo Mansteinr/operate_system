@@ -159,6 +159,7 @@ export default {
       if (+new Date(this.queryParams.time[0]) === +new Date(this.queryParams.time[1])) { // 同一天为 为多选
         this.multiple = true
         this.all = true
+        this.chargeLogFlag = false
       } else {
         this.multiple = false // 不是同一天 则为单选
         this.all = false
@@ -178,9 +179,16 @@ export default {
         this.chargeLogFlag = true // 显示充值记录
         this.chargeLog(options.loginName)
       } else {
-
+        options.loginNames = options.loginName.split(',')
+        if (options.loginNames[0] === '') { // 包含全部
+          options.loginNames = []
+        } else { 
+          if (options.loginNames.length === 1) { //只选择一个客户 需要展示充值记录
+            this.chargeLogFlag = true
+            this.chargeLog(options.loginName)
+          }
+        }
       }
-      console.log(options.loginName)
       delete options.loginName
       this.getBalanceSnapshot(options)
     },
