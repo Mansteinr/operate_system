@@ -45,7 +45,7 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table1" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
+        <Table class="table1" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
           <el-table-column
             v-for="(v, k) in coloums"
             :label="v.title"
@@ -65,7 +65,7 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table2" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tableData2.length">
+        <Table class="table2" :showSummary="false" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tableData2.length">
           <el-table-column
             v-for="(v, k) in columns2"
             :key="k"
