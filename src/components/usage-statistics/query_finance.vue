@@ -45,17 +45,7 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table1" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
-          <!-- <el-table-column
-            v-for="(v, k) in coloums"
-            :label="v.title"
-            :key="k"
-            :sortable="v.sortable"
-            :prop='v.field'>
-              <template slot-scope="scope">
-                <span>{{ v.title==="中文"? loginNameObj[scope.row[v.field]] : scope.row[v.field]}}</span>
-              </template>
-          </el-table-column> -->
+        <Table class="table1" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length" :columns="columns">
         </Table>
       </div>
     </div>
@@ -65,14 +55,7 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table2" :showSummary="false" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tableData2.length">
-          <!-- <el-table-column
-            v-for="(v, k) in columns2"
-            :key="k"
-            :label="v.title"
-            :sortable="v.sortable"
-            :prop='v.field'>
-          </el-table-column> -->
+        <Table :columns="columns2" class="table2" :showSummary="false" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tableData2.length">
         </Table>
       </div>
     </div>
@@ -104,7 +87,7 @@ export default {
       tableData2: [],  // 充值记录table数据
       multiple: false, // 是否多选
       all: false, // 是否多选
-      coloums: [{
+      columns: [{
         prop: 'customerName',
         label: '客户名称'
       }, {

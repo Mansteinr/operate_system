@@ -64,27 +64,7 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table class="table1" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
-          <el-table-column
-            label="使用日期"
-            sortable
-            prop="dayTime">
-          </el-table-column>
-          <el-table-column
-            label="共计使用量"
-            sortable
-            prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="计费使用量"
-            sortable
-            prop="downChargedCount">
-          </el-table-column>
-          <el-table-column
-            label="消费金额"
-            sortable
-            prop="downCost">
-          </el-table-column>
+        <Table class="table1" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
         </Table>
       </div>
     </div>
@@ -109,22 +89,25 @@ export default {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
       },
       tableData: [],
-      coloums: [{
-        field: 'dayTime',
+      columns: [{
+        prop: 'dayTime',
         sortable: true,
-        title: '使用日期'
+        label: '使用日期'
       }, {
-        field: 'usedCount',
+        prop: 'usedCount',
         sortable: true,
-        title: '共计使用量'
+        label: '共计使用量'
       },{
-        field: 'downChargedCount',
-        title: '计费使用量',
+        prop: 'downChargedCount',
+        label: '计费使用量',
         sortable: true,
       },{
-        field: 'downCost',
+        prop: 'downCost',
         sortable: true,
-        title: '消费金额'
+        formatter: (row, column) => {
+          return row[column.property].toFixed(4)
+        },
+        label: '消费金额'
       }]
     }
   },

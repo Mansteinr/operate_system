@@ -108,6 +108,7 @@
         const { columns } = param
         const sums = []
         columns.forEach((column, index) => {
+          if (!column) return
           if (index === 0) {
             sums[index] = '合计'
             return
@@ -134,7 +135,7 @@
         })
         sums.forEach((v, k) => { // 保留两位
           if (Number(v)) {
-            sums[k] = Math.round(v * 10000) / 10000 // 防止出现很多为小数
+            sums[k] = Math.round(v * 100) / 100 // 防止出现很多为小数
           }
         })
         return sums
