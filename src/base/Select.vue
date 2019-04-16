@@ -175,8 +175,11 @@ export default {
       this.selectedIndex = k
       let lis = e.target.parentNode.querySelectorAll('.dropdown-item.text-warp')
       if (!this.isMultiple) { // 单选
-        if (!v[this.needValue]) { // 单选时  全部
-          this.selectedValue = v[this.defaultLable]?v[this.defaultLable]:v
+       if (typeof v === 'string') {
+         this.selectedValue = v
+          this.selectedDefault = v
+       } else if (!v[this.needValue]) { // 单选时  全部
+          this.selectedValue = v[this.defaultLable]
           this.selectedDefault = ''
         } else {
           this.selectedValue = v[this.defaultLable]?v[this.defaultLable]:v
