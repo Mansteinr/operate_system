@@ -108,7 +108,24 @@ export default {
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
       },
-      tableData: []
+      tableData: [],
+      coloums: [{
+        field: 'dayTime',
+        sortable: true,
+        title: '使用日期'
+      }, {
+        field: 'usedCount',
+        sortable: true,
+        title: '共计使用量'
+      },{
+        field: 'downChargedCount',
+        title: '计费使用量',
+        sortable: true,
+      },{
+        field: 'downCost',
+        sortable: true,
+        title: '消费金额'
+      }]
     }
   },
   components: {

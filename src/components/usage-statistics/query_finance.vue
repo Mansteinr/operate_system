@@ -46,7 +46,7 @@
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <Table class="table1" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
-          <el-table-column
+          <!-- <el-table-column
             v-for="(v, k) in coloums"
             :label="v.title"
             :key="k"
@@ -55,7 +55,7 @@
               <template slot-scope="scope">
                 <span>{{ v.title==="中文"? loginNameObj[scope.row[v.field]] : scope.row[v.field]}}</span>
               </template>
-          </el-table-column>
+          </el-table-column> -->
         </Table>
       </div>
     </div>
@@ -66,13 +66,13 @@
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <Table class="table2" :showSummary="false" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tableData2.length">
-          <el-table-column
+          <!-- <el-table-column
             v-for="(v, k) in columns2"
             :key="k"
             :label="v.title"
             :sortable="v.sortable"
             :prop='v.field'>
-          </el-table-column>
+          </el-table-column> -->
         </Table>
       </div>
     </div>
@@ -105,54 +105,54 @@ export default {
       multiple: false, // 是否多选
       all: false, // 是否多选
       coloums: [{
-        field: 'customerName',
-        title: '客户名称'
+        prop: 'customerName',
+        label: '客户名称'
       }, {
-        field: 'customerName',
-        title: '中文'
+        prop: 'customerName',
+        label: '中文'
       },{
-        field: 'dateTime',
-        title: '时间',
+        prop: 'dateTime',
+        label: '时间',
         sortable: true,
       },{
-        field: 'balance',
+        prop: 'balance',
         sortable: true,
-        title: '余额'
+        label: '余额'
       },{
-        field: 'diffValue',
+        prop: 'diffValue',
         sortable: true,
-        title: '差额'
+        label: '差额'
       }],
       columns2: [{
-        field: 'dateTime',
-        title: '充值时间',
+        prop: 'dateTime',
+        label: '充值时间',
         sortable: true
       }, {
-        field: 'curBalance',
-        title: '当前余额',
+        prop: 'curBalance',
+        label: '当前余额',
         sortable: true
       }, {
-        field: 'actualRechargeAmount',
-        title: '实际充值金额',
+        prop: 'actualRechargeAmount',
+        label: '实际充值金额',
         sortable: true
       }, {
-        field: 'extRechargeAmount',
-        title: '附加充值金额',
+        prop: 'extRechargeAmount',
+        label: '附加充值金额',
         sortable: true
       }, {
-        field: 'packRechargeAmount',
-        title: '包年包月充值金额',
+        prop: 'packRechargeAmount',
+        label: '包年包月充值金额',
         sortable: true
       }, {
-        field: 'preBalance',
-        title: '充值前金额',
+        prop: 'preBalance',
+        label: '充值前金额',
         sortable: true
       }, {
-        field: 'operator',
-        title: '经办人',
+        prop: 'operator',
+        label: '经办人',
       }, {
-        field: 'remark',
-        title: '说明',
+        prop: 'remark',
+        label: '说明',
       }]
     }
   },

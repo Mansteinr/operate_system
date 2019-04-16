@@ -38,28 +38,7 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts1" style="height:400px;width:100%;"></div>        
-        <Table ref="table" class="table table1" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
-          <el-table-column
-            label="使用日期"
-            sortable
-            prop="dayTime">
-          </el-table-column>
-          <el-table-column
-            label="共计使用量"
-            sortable
-            prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="计费使用量"
-            sortable
-            prop="downChargedCount">
-          </el-table-column>
-          <el-table-column
-            label="消费金额"
-            sortable
-            :formatter="formatter"
-            prop="downCost">
-          </el-table-column>
+        <Table ref="table" class="table table1" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
         </Table>
       </div>
     </div>
@@ -74,27 +53,7 @@
       <div class="card-container">
        <div v-show="!tabFlag2 && !tableData2.length" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div> 
-        <Table class="table table2" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2" :selector="'table2'">
-          <el-table-column
-            label="客户名称"
-            prop="customerName">
-          </el-table-column>
-          <el-table-column
-            label="共计使用量"
-            sortable
-            prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="计费使用量"
-            sortable
-            prop="downChargedCount">
-          </el-table-column>
-          <el-table-column
-            label="消费金额"
-            sortable
-            :formatter="formatter"
-            prop="downCost">
-          </el-table-column>
+        <Table class="table table2" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2" :selector="'table2'" :columns="columns1">
         </Table>
       </div>
     </div>
@@ -115,7 +74,47 @@ export default {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
       },
       tableData: [],
-      tableData2: []
+      tableData2: [],
+      columns: [{
+        prop: 'dayTime',
+        sortable: true,
+        label: '使用日期'
+      },{
+        prop: 'usedCount',
+        sortable: true,
+        label: '共计使用量'
+      },{
+        prop: 'downChargedCount',
+        sortable: true,
+        label: '计费使用量'
+      },{
+        prop: 'downCost',
+        sortable: true,
+        formatter: (row, column) => {
+          return row[column.property].toFixed(4)
+        },
+        label: '消费金额'
+      }],
+      columns1: [{
+        prop: 'customerName',
+        sortable: true,
+        label: '客户名称'
+      },{
+        prop: 'usedCount',
+        sortable: true,
+        label: '共计使用量'
+      },{
+        prop: 'downChargedCount',
+        sortable: true,
+        label: '计费使用量'
+      },{
+        prop: 'downCost',
+        sortable: true,
+        formatter: (row, column) => {
+          return row[column.property].toFixed(4)
+        },
+        label: '消费金额'
+      }]
     }
   },
   components: {
@@ -138,9 +137,6 @@ export default {
     initFun (options) {
       this.UsageByDate(options)
       this.UsageByCustomer(options)
-    },
-    formatter (val) {
-      return this.$refs.table.formatter(val)
     },
     UsageByDate (options) {
       $http(this.API.downApi.UsageByDate, options).then((res) => {

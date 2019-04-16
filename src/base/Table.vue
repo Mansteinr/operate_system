@@ -24,7 +24,16 @@
       :summary-method="getSummaries"
       :stripe="true"
       style="width: 100%">
-        <slot></slot>
+        <!-- <slot></slot> -->
+        <el-table-column
+          v-for="(v, k) in columns"
+          :key="k"
+          :label="v.label"
+          :fixed="v.fixed"
+          :formatter="v.formatter"
+          :sortable="v.sortable"
+          :prop='v.prop'>
+        </el-table-column>
     </el-table>
     <Pagination @changePage="changePage" :tatalPage="sidePagination === 'customer' ? total : tatalPage" v-show="tatalPage>1"></Pagination>
     <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid>
@@ -75,6 +84,10 @@
       selector: {
         type: String,
         default: 'table1'
+      },
+      columns: {
+        type: Array,
+        default: () => []
       }
     },
     components: {
@@ -121,13 +134,10 @@
         })
         sums.forEach((v, k) => { // 保留两位
           if (Number(v)) {
-            sums[k] = Math.round(v * 100) / 100
+            sums[k] = Math.round(v * 10000) / 10000 // 防止出现很多为小数
           }
         })
         return sums
-      },
-      formatter (val, param="downCost") {
-        return Math.round(val[param] * 100) / 100
       },
       formatterTime (val) {
         return moment(val).format('YYYY-MM-DD HH:mm:ss')
