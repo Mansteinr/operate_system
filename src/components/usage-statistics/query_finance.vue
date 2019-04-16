@@ -25,7 +25,6 @@
             :labelTitle="'客户名称'" 
             :originArr="loginName" 
             :defaultValue="'loginName'" 
-            :searchName="'loginName'"
             :searchInput=true
             :isMultiple='multiple'
             :isAll='all'

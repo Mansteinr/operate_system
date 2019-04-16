@@ -137,13 +137,13 @@ export const loginName = { // 客户登陆名称
       $http(this.API.upApi.hasServices, op).then((res) => {
         this.services = []
         this.services = res.resData
-        if (this.isServiceNames) {
-          this.queryParams.serviceNames = []
-          let pushData = this.services.length ? this.services[0].serviceName : null
-          this.queryParams.serviceNames.push(pushData)
-        } else {
-          this.queryParams.serviceName = this.services.length ? this.services[0].serviceName : null
-        }
+        // if (this.isServiceNames) {
+        //   this.queryParams.serviceNames = []
+        //   let pushData = this.services.length ? this.services[0].serviceName : null
+        //   this.queryParams.serviceNames.push(pushData)
+        // } else {
+        //   this.queryParams.serviceName = this.services.length ? this.services[0].serviceName : null
+        // }
       })
     },
     // filterLoginName (params) {
@@ -184,40 +184,8 @@ export const services = { // 接口类型
     getAllServices () {
       $http(this.API.upApi.services, {}).then((res) => {
         this.services = [], this.servicesOrigin = res.resData
-        if (this.allFlag) {
-          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...this.servicesOrigin]
-          this.queryParams.serviceNames.push(this.services[0].serviceName)
-        } else if (this.allServiceNameFlag) {
-          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...this.servicesOrigin]
-          this.queryParams.serviceName = this.services[0].serviceName
-        } else {
-          this.services = this.servicesOrigin
-          this.queryParams.serviceName = this.services[0].serviceName
-        }
+        this.services = this.servicesOrigin 
       })
-    },
-    filterServiceName (params) {
-      this.services = []
-      if (params) {
-        let translateService = params.toLowerCase()
-        this.servicesOrigin.filter(v => {
-          let testBool = v['serviceName'].toLowerCase().indexOf(translateService) > -1 || v['serviceNameZh'].indexOf(translateService) > -1 || pinyin.getFullChars(v['serviceNameZh']).toLowerCase().indexOf(translateService) > -1 ||  pinyin.getCamelChars(v['serviceNameZh']).toLowerCase().indexOf(translateService) > -1
-          if (testBool) {
-            this.services.push(v)
-          }
-        })
-      } else {
-        if (this.allFlag) {
-          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...this.servicesOrigin]
-          this.queryParams.serviceNames.push(this.services[0].serviceName)
-        } else if (this.allServiceNameFlag) {
-          this.services = [...[{ serviceNameZh: '全部', serviceName: '' }], ...this.servicesOrigin]
-          this.queryParams.serviceName = this.services[0].serviceName
-        } else {
-          this.services = this.servicesOrigin
-          this.queryParams.serviceName = this.services[0].serviceName
-        }
-      }
     }
   }
 }

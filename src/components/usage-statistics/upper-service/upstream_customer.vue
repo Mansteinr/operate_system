@@ -33,10 +33,9 @@
             :originArr="loginName" 
             :defaultValue="'loginName'" 
             :defaultLable="'customerName'"
-            :needValue="'customerId'"
             :searchInput=true
             :isAll=true
-            @changeInputValue="changeCustomer">
+            :needValue="'customerId'">
           </loginNameSelect>
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>

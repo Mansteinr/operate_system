@@ -173,9 +173,13 @@ export default {
     },
     searchClick (e,v, k) {
       this.selectedIndex = k
-      let lis = e.target.parentNode.querySelectorAll('.dropdown-item.text-warp')
+      /**
+       * needValue 和 defaultValue 主要时后台比较乱导致的
+       * 例如 接口名称 有些接口需要要serviceNameZh serviceId serviceName 
+       * judge判断 因为有些全部  为''  这些的话下面的有些判断条件不通过
+       */
+      let lis = e.target.parentNode.querySelectorAll('.dropdown-item.text-warp'), judge = v[this.needValue] ? v[this.needValue] : v[this.defaultValue]
       if (!this.isMultiple) { // 单选
-        let judge = v[this.needValue] ? v[this.needValue] : v[this.defaultValue]
        if (typeof v === 'string') {
          this.selectedValue = v
           this.selectedDefault = v
@@ -189,7 +193,7 @@ export default {
         this.toggleExp(e.target.parentNode.parentNode)
         this.$emit('changeInputValue', v)
       } else { // 多选
-        if (v[this.needValue]) { // 选择的不是 '全部'
+        if (judge) { // 选择的不是 '全部'
           if (this.isSelecltedAll && lis.length === this.selectedArr.length) { // 单击时 取消全部按钮的选中状态，并将相应数组中的字段去掉
             this.selectedArr = this.selectedArr.splice(1,this.selectedArr.length)
             this.selectedDefaultArr = this.selectedDefaultArr.splice(1,this.selectedDefaultArr.length)
