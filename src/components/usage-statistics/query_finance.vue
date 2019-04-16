@@ -29,6 +29,7 @@
             :searchInput=true
             :isMultiple='multiple'
             :isAll='all'
+            :needValue="'customerId'"
             :defaultLable="'customerName'"
             >
           </loginNameSelect>

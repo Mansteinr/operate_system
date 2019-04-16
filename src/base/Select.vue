@@ -88,20 +88,30 @@ export default {
       if (!this.originArr.length) { // 没有数据 直接返回 防止报错
         this.localDataArr = []
         this.selectedValue = '暂无数据'
-        this.selectedValue = ''
+        this.selectedValue = '暂无数据'
         return
       } 
       if (this.isAll) {
         this.localDataArr = [{
-          [this.defaultValue]:'',
+          [this.defaultValue]: '',
           [this.needValue]: '',
           [this.defaultLable]:'全部'
         }, ...this.originArr]
+        this.selectedValue = '全部'
+        this.selectedDefault = ''
+        this.$nextTick(() => {
+          setTimeout(() => {
+            let lis = document.querySelectorAll('.' + this.defaultValue + ' .dropdown-item.text-warp')
+            if (this.isMultiple) {
+              this.clickAllItem(lis)
+            }
+          } , 120)
+        })
       } else {
         this.localDataArr = [...this.originArr]
+        this.selectedValue = this.localDataArr[0][this.defaultLable]?this.localDataArr[0][this.defaultLable]:this.localDataArr[0]
+        this.selectedDefault = this.localDataArr[0][this.defaultValue]?this.localDataArr[0][this.defaultValue]:this.localDataArr[0]
       }
-      this.selectedValue = this.localDataArr[0][this.defaultLable]?this.localDataArr[0][this.defaultLable]:this.localDataArr[0]
-      this.selectedDefault = this.localDataArr[0][this.defaultValue]?this.localDataArr[0][this.defaultValue]:this.localDataArr[0]
       this.selectedIndex = 0
     },
     searchValue () {
@@ -141,20 +151,46 @@ export default {
         }
       }
     },
+    clickAllItem (lis) { // 这个时点击全部按钮时 触发的函数
+      this.selectedArr = []
+      this.selectedDefaultArr = []
+      this.selectedValue = ''
+      this.selectedDefault = ''
+      this.isSelecltedAll = true  
+      lis.forEach(v => {  
+        if (v.className.indexOf('active') <= 0) {
+          v.className += ' active'
+        }
+      })
+      this.localDataArr.forEach(v1 => {
+        if (this.selectedDefaultArr.indexOf(v1[this.defaultValue]) <= -1) {
+          this.selectedArr.push(v1[this.defaultLable])
+          this.selectedDefaultArr.push(v1[this.defaultValue])
+        }
+      })
+      this.selectedValue = this.selectedArr.join(',')
+      this.selectedDefault = this.selectedDefaultArr.join(',')
+    },
     searchClick (e,v, k) {
       this.selectedIndex = k
       let lis = e.target.parentNode.querySelectorAll('.dropdown-item.text-warp')
       if (!this.isMultiple) { // 单选
-        this.selectedValue = v[this.defaultLable]?v[this.defaultLable]:v
-        this.selectedDefault = v[this.defaultValue]?v[this.defaultValue]:v
+        if (!v[this.needValue]) { // 单选时  全部
+          this.selectedValue = v[this.defaultLable]?v[this.defaultLable]:v
+          this.selectedDefault = ''
+        } else {
+          this.selectedValue = v[this.defaultLable]?v[this.defaultLable]:v
+          this.selectedDefault = v[this.defaultValue]?v[this.defaultValue]:v
+        }
         this.toggleExp(e.target.parentNode.parentNode)
         this.$emit('changeInputValue', v)
       } else { // 多选
-        if (v.customerId) { // 选择的不是 '全部'
+        if (v[this.needValue]) { // 选择的不是 '全部'
           if (this.isSelecltedAll && lis.length === this.selectedArr.length) { // 单击时 取消全部按钮的选中状态，并将相应数组中的字段去掉
             this.selectedArr = this.selectedArr.splice(1,this.selectedArr.length)
             this.selectedDefaultArr = this.selectedDefaultArr.splice(1,this.selectedDefaultArr.length)
             e.target.parentNode.querySelector('.dropdown-item.text-warp').classList.remove('active')
+            this.isSelecltedAll = false
           }
           let currentClass = e.target.className
           if (currentClass.indexOf('active') < 0) {
@@ -165,6 +201,12 @@ export default {
             this.selectedArr.splice(this.selectedArr.indexOf(v[this.defaultLable]), 1)
             this.selectedDefaultArr.splice(this.selectedDefaultArr.indexOf(v[this.defaultValue]), 1)
             e.target.className = currentClass.replace(' active', '')
+          }
+          if (!this.isSelecltedAll && ((lis.length - 1) === this.selectedArr.length)) { // 单击时 取消全部按钮的选中状态，并将相应数组中的字段去
+            this.selectedArr = [...['全部'], ...this.selectedArr]
+            this.selectedDefaultArr = [...[''], ...this.selectedDefaultArr]
+            e.target.parentNode.querySelector('.dropdown-item.text-warp').classList.add('active')
+            this.isSelecltedAll = true
           }
           currentClass = ''
           this.selectedValue = this.selectedArr.join(',')
@@ -184,26 +226,7 @@ export default {
             })
             this.selectedValue = ''
           } else { // 没有全部选中时 即将要全部选中
-            this.selectedArr = []
-            this.selectedDefaultArr = []
-            this.selectedValue = ''
-            this.selectedDefault = ''
-            this.isSelecltedAll = true  
-            lis.forEach(v => {  
-              if (v.className.indexOf('active') <= 0) {
-                v.className += ' active'
-              }
-            })
-            this.localDataArr.forEach(v1 => {
-              if (this.selectedDefaultArr.indexOf(v1[this.defaultValue]) <= -1) {
-                this.selectedArr.push(v1[this.defaultLable])
-                this.selectedDefaultArr.push(v1[this.defaultValue])
-              } else {
-                console.log(v1)
-              }
-            })
-            this.selectedValue = this.selectedArr.join(',')
-            this.selectedDefault = this.selectedDefaultArr.join(',')
+            this.clickAllItem(lis)
           }
         }
       }
@@ -229,7 +252,6 @@ export default {
       this.localDataArr = [...searchItemArr]
     },
     notObjectSearch (searchItemArr) {
-      console.log(0)
       this.localDataArr.map(v => { // 检索
         if (v.indexOf(this.searchValue) > -1 || pinyin.getFullChars(v).toLowerCase().indexOf(this.searchValue) > -1 ||  pinyin.getFullChars(v).toLowerCase().indexOf(this.searchValue) > -1 ) {
           searchItemArr.push(v)
@@ -297,22 +319,6 @@ export default {
         max-height 300px
         overflow-y auto
         z-index 49
-        .selection-criteria
-          display flex
-          background #f2f6fc
-          span 
-            flex 1
-            text-align center
-            position relative
-            font-size 12px
-            color #606266
-            &.active
-              color #2d8cf0
-            &.active:after
-              font-family iconfont
-              content "\e83b"
-              position absolute
-              right 0px
         .dropdown-input
           padding 0 20px
           height 40px

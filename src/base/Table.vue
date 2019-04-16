@@ -104,7 +104,6 @@
           const values = this.tableDataComputed.map(item => 
             (column.property.toLowerCase().indexOf('time')>-1||column.property.toLowerCase().indexOf('date')>-1||column.property.toLowerCase().indexOf('day')>-1)? Number(item[column.property])+',' : Number(item[column.property])
           )
-          console.log(values)
           // !values.some(value => isNaN(value)) 是判断数组中是否含有NaN
           if (!values.some(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
