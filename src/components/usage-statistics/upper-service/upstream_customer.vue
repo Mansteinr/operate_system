@@ -58,31 +58,12 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
-          <el-table-column
-            label="服务名称"
-            prop="outServiceName">
-          </el-table-column>
-          <el-table-column
-            label="服务名称（中文）"
-            prop="serviceNameZh">
-          </el-table-column>
-          <el-table-column
-            label="总调用条数"
-            sortable
-            prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="计费调用量"
-            sortable
-            prop="chargeUsedCount">
-          </el-table-column>
-          <el-table-column
-            label="下游计费"
-            sortable
-            :formatter="formatter"
-            prop="downCost">
-          </el-table-column>
+        <Table ref="table" 
+          class="table" 
+          :tableData="tableData" 
+          :tatalPage="tableData.length" 
+          v-show="tabFlag"
+          :columns="columns" >
         </Table>
       </div>
     </div>
@@ -97,27 +78,11 @@
       <div class="card-container">
        <div v-show="!tabFlag2 && !tableData2.length" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div> 
-        <Table class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2">
-          <el-table-column
-            label="上游公司名称"
-            prop="company">
-          </el-table-column>
-          <el-table-column
-            label="上游总调用条数"
-            sortable
-            prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="计费条数"
-            sortable
-            prop="chargeUsedCount">
-          </el-table-column>
-          <el-table-column
-            label="上游计费"
-            sortable
-            :formatter="formatter"
-            prop="downCost">
-          </el-table-column>
+        <Table class="table"  
+          :tableData="tableData2" 
+          :tatalPage="tableData2.length" 
+          v-show="tabFlag2"
+          :columns="columns2" >
         </Table>
       </div>
     </div>
@@ -134,6 +99,42 @@ export default {
   mixins: [switchMixin, hotKeyTime, loginName, businessType],
   data () {
     return {
+      columns: [{
+        prop: 'outServiceName',
+        label: '服务名称'
+      },{
+        prop: 'serviceNameZh',
+        label: '服务名称（中文）'
+      },{
+        prop: 'usedCount',
+        sortable: true,
+        label: '总调用条数'
+      },{
+        prop: 'downCost',
+        sortable: true,
+        formatter: (row, column) => {
+          return row[column.property].toFixed(4)
+        },
+        label: '下游计费'
+      }],
+      columns2: [{
+        prop: 'company',
+        label: '上游公司名称'
+      },{
+        prop: 'usedCount',
+        label: '上游总调用条数'
+      },{
+        prop: 'chargeUsedCount',
+        sortable: true,
+        label: '计费条数'
+      },{
+        prop: 'downCost',
+        sortable: true,
+        formatter: (row, column) => {
+          return row[column.property].toFixed(4)
+        },
+        label: '上游计费'
+      }],
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
         loginName: ''
@@ -159,9 +160,6 @@ export default {
         }
       })
     },
-    formatter(val) {
-      return this.$refs.table.formatter(val)
-    },
     getCustomerChargeInfo () {
       $http(this.API.upApi.getCustomerChargeInfo, this.queryParams).then((res) => {
         // 图表
@@ -180,6 +178,7 @@ export default {
           data:[]
         }]
         this.tableData = res.resData.outServiceList
+        console.log(this.tableData)
         if (this.tableData.length) {
           this.tableData.forEach(v => {
             xAxisData.push(v.outServiceName)
@@ -196,6 +195,7 @@ export default {
             let list = res.resData.outServiceList[index].companyList
             let costs = [],legend = []
             _this.tableData2 = list
+            console.log(list)
             let paramKey = (params.seriesName === '下游总调用次数'?'usedCount': (params.seriesName === '计费条数'?'chargeUsedCount':'cost'))
           // if (params.seriesName === '下游计费') {
             list.forEach(v => {

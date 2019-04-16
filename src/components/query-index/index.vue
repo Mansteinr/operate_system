@@ -38,7 +38,12 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts1" style="height:400px;width:100%;"></div>        
-        <Table ref="table" class="table table1" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
+        <Table ref="table" 
+          class="table table1" 
+          :tableData="tableData" 
+          :tatalPage="tableData.length" 
+          v-show="tabFlag" 
+          :columns="columns">
         </Table>
       </div>
     </div>
@@ -53,7 +58,12 @@
       <div class="card-container">
        <div v-show="!tabFlag2 && !tableData2.length" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div> 
-        <Table class="table table2" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2" :selector="'table2'" :columns="columns1">
+        <Table class="table table2" 
+          :tableData="tableData2" 
+          :tatalPage="tableData2.length" 
+          v-show="tabFlag2" 
+          :selector="'table2'" 
+          :columns="columns1">
         </Table>
       </div>
     </div>

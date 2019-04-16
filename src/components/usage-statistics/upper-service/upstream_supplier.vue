@@ -44,8 +44,12 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
-          <el-table-column
+        <Table class="table" 
+          :tableData="tableData" 
+          :tatalPage="tableData.length" 
+          :columns="columns"
+          v-show="tabFlag">
+          <!-- <el-table-column
             v-for="(v, k) in columns"
             :key="k"
             :label="v.title"
@@ -53,7 +57,7 @@
             <template slot-scope="scope">
               <span>{{ v.title==="不计费调用量"? (scope.row.usedCount - scope.row.chargeUsedCount) : scope.row[v.field]}}</span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </Table>
       </div>
     </div>
@@ -63,8 +67,12 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData2" :tatalPage="tableData.length" v-show="tableData2.length">
-          <el-table-column
+        <Table class="table" 
+          :tableData="tableData2" 
+          :tatalPage="tableData.length" 
+          v-show="tableData2.length"
+          :columns="columns1">
+          <!-- <el-table-column
               v-for="(v, k) in columns1"
               :key="k"
               :label="v.title"
@@ -72,7 +80,7 @@
               <template slot-scope="scope">
                 <span>{{ v.title==="不计费调用量"? (scope.row.usedCount - scope.row.chargeUsedCount) : scope.row[v.field]}}</span>
               </template>
-            </el-table-column>
+            </el-table-column> -->
         </Table>
       </div>
     </div>
@@ -95,48 +103,51 @@ export default {
         companyName: ''
       },
       columns: [{
-        field: 'company',
-        title: '供应商名称'
+        prop: 'company',
+        label: '供应商名称'
       },{
-        field: 'dayTime',
-        title: '时间'
+        prop: 'dayTime',
+        label: '时间'
       },{
-        field: 'serviceNameZh',
-        title: '服务名称'
+        prop: 'serviceNameZh',
+        label: '服务名称'
       },{
-        field: 'usedCount',
-        title: '调用总量',
+        prop: 'usedCount',
+        label: '调用总量',
         sortable: true
       },{
-        field: 'chargeUsedCount',
-        title: '计费调用量',
+        prop: 'chargeUsedCount',
+        label: '计费调用量',
         sortable: true
       },{
-        field: 'noChargeCount',
-        title: '不计费调用量',
+        prop: 'noChargeCount',
+        label: '不计费调用量',
         sortable: true
       },{
-        field: 'cost',
-        title: '小视入账',
-        sortable: true
+        prop: 'cost',
+        label: '小视入账',
+        sortable: true,
+        formatter: (row, column) => {
+          return row[column.property].toFixed(4)
+        }
       }],
       columns1: [{
-        field: 'company',
-        title: '供应商名称'
+        prop: 'company',
+        label: '供应商名称'
       },{
-        field: 'serviceNameZh',
-        title: '服务名称'
+        prop: 'serviceNameZh',
+        label: '服务名称'
       },{
-        field: 'usedCount',
-        title: '调用总量',
+        prop: 'usedCount',
+        label: '调用总量',
         sortable: true
       },{
-        field: 'chargeUsedCount',
-        title: '计费调用量',
+        prop: 'chargeUsedCount',
+        label: '计费调用量',
         sortable: true
       },{
-        field: 'noChargeCount',
-        title: '不计费调用量',
+        prop: 'noChargeCount',
+        label: '不计费调用量',
         sortable: true
       }],
       tableData: [],
@@ -165,6 +176,11 @@ export default {
       $http(this.API.upApi.getOutServiceChargeInfoBySupplier, options).then((res) => {
         if (res.resData.serviceCompany.length) {
           res.resData.serviceCompany.forEach(v => {
+            v.noChargeCount = v.usedCount - v.chargeUsedCount
+          })
+        }
+        if (res.resData.dayCompany.length) {
+          res.resData.dayCompany.forEach(v => {
             v.noChargeCount = v.usedCount - v.chargeUsedCount
           })
         }
