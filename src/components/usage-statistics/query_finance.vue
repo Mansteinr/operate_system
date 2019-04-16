@@ -74,6 +74,7 @@ import { hotKeyTime, loginName } from '../../common/js/mixin'
 import Table from '../../base/Table'
 import loginNameSelect from '../../base/Select'
 import QueryButton from '../../base/QueryButton'
+import { reset } from '../../utils'
 export default {
   mixins: [hotKeyTime, loginName],
   data () {
@@ -154,6 +155,7 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
+      reset()
     },
     changeTime () { // 监听时间变化
       if (+new Date(this.queryParams.time[0]) === +new Date(this.queryParams.time[1])) { // 同一天为 为多选

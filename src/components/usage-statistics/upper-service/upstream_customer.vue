@@ -13,34 +13,31 @@
                 unlink-panels
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                :name="['start', 'end']"
                 v-model="queryParams.time"
                 range-separator="至"
                 :picker-options="pickerOptions2">
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item label="行业类型：" prop="type">
-            <el-select @change="changeType" v-model="queryParams.type" placeholder="请选择">
-              <el-option
-                v-for="v in businessType"
-                :key="v.typeId"
-                :label="v.typeName"
-                :value="v.typeId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="客户名称：" prop="loginName">
-            <el-select filterable v-model="queryParams.loginName" :filter-method="filterLoginName" placeholder="请选择">
-              <el-option
-                v-for="v in loginName"
-                :key="v.customerId"
-                :title="`${v.customerName}(${v.loginName})`"
-                :data-customerid="v.customerId"
-                :label="v.customerName"
-                :value="v.loginName">
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <Select 
+            :labelTitle="'行业类型'" 
+            :originArr="businessType" 
+            :defaultValue="'typeId'" 
+            :defaultLable="'typeName'"
+            :isAll = true
+            @changeInputValue="changeType"> 
+          </Select>
+          <loginNameSelect 
+            :labelTitle="'客户名称'" 
+            :originArr="loginName" 
+            :defaultValue="'loginName'" 
+            :defaultLable="'customerName'"
+            :needValue="'customerId'"
+            :searchInput=true
+            :isAll=true
+            @changeInputValue="changeCustomer">
+          </loginNameSelect>
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
@@ -95,6 +92,9 @@ import { setColumnData, renderChart, setPieData } from '../../../common/js/myCha
 import { switchMixin, hotKeyTime, loginName, businessType } from '../../../common/js/mixin'
 import Table from '../../../base/Table'
 import QueryButton from '../../../base/QueryButton'
+import Select from '../../../base/Select'
+import loginNameSelect from '../../../base/Select'
+import { reset } from '../../../utils'
 export default {
   mixins: [switchMixin, hotKeyTime, loginName, businessType],
   data () {
@@ -136,8 +136,7 @@ export default {
         label: '上游计费'
       }],
       queryParams: {
-        time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
-        loginName: ''
+        time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()]/**默认时间最近七天 */
       },
       tableData: [],
       tableData2: []
@@ -145,23 +144,31 @@ export default {
   },
   components: {
     Table,
-    QueryButton
+    Select,
+    QueryButton,
+    loginNameSelect
   },
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
-      this.queryParams.companyName = this.companys[0]
+      reset()
     },
     onSubmit () {
-      this.$refs.querForm.validate((valid) => {
-        if (valid) {
-          this.resetTabFlag()
-          this.getCustomerChargeInfo()
+      let options = {}
+      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
+        if (v.name) {
+          if (v.name === 'typeId') {
+            options.businessType = v.value
+          } else {
+            options[v.name] = v.value
+          }
+          
         }
       })
+      this.getCustomerChargeInfo(options)
     },
-    getCustomerChargeInfo () {
-      $http(this.API.upApi.getCustomerChargeInfo, this.queryParams).then((res) => {
+    getCustomerChargeInfo (options) {
+      $http(this.API.upApi.getCustomerChargeInfo, options).then((res) => {
         // 图表
         let xAxisData = [],
         series= [{
@@ -178,7 +185,6 @@ export default {
           data:[]
         }]
         this.tableData = res.resData.outServiceList
-        console.log(this.tableData)
         if (this.tableData.length) {
           this.tableData.forEach(v => {
             xAxisData.push(v.outServiceName)
@@ -195,7 +201,6 @@ export default {
             let list = res.resData.outServiceList[index].companyList
             let costs = [],legend = []
             _this.tableData2 = list
-            console.log(list)
             let paramKey = (params.seriesName === '下游总调用次数'?'usedCount': (params.seriesName === '计费条数'?'chargeUsedCount':'cost'))
           // if (params.seriesName === '下游计费') {
             list.forEach(v => {

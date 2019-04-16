@@ -49,15 +49,6 @@
           :tatalPage="tableData.length" 
           :columns="columns"
           v-show="tabFlag">
-          <!-- <el-table-column
-            v-for="(v, k) in columns"
-            :key="k"
-            :label="v.title"
-            :prop="v.field">
-            <template slot-scope="scope">
-              <span>{{ v.title==="不计费调用量"? (scope.row.usedCount - scope.row.chargeUsedCount) : scope.row[v.field]}}</span>
-            </template>
-          </el-table-column> -->
         </Table>
       </div>
     </div>
@@ -72,15 +63,6 @@
           :tatalPage="tableData.length" 
           v-show="tableData2.length"
           :columns="columns1">
-          <!-- <el-table-column
-              v-for="(v, k) in columns1"
-              :key="k"
-              :label="v.title"
-              :prop="v.field">
-              <template slot-scope="scope">
-                <span>{{ v.title==="不计费调用量"? (scope.row.usedCount - scope.row.chargeUsedCount) : scope.row[v.field]}}</span>
-              </template>
-            </el-table-column> -->
         </Table>
       </div>
     </div>
@@ -94,6 +76,7 @@ import { switchMixin, hotKeyTime, company } from '../../../common/js/mixin'
 import Table from '../../../base/Table'
 import QueryButton from '../../../base/QueryButton'
 import supplierSelect from '../../../base/Select'
+import { reset } from '../../../utils'
 export default {
   mixins: [switchMixin, hotKeyTime, company],
   data () {
@@ -162,6 +145,7 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
+      reset()
     },
     onSubmit () {
       let options = {}

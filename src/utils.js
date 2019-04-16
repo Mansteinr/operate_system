@@ -181,7 +181,7 @@ export function mockTime() {
  * 重置函数
  */
  export function reset () {
-  for (let k = 0; k < document.querySelectorAll('.search-item').length -1; k++) {
+  for (let k = 0; k < document.querySelectorAll('.search-item').length; k++) {
     document.querySelectorAll('.search-item')[k].querySelector('.dropdown-item.text-warp').click()
   }
  }

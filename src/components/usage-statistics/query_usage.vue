@@ -21,7 +21,6 @@
             </div>
           </el-form-item>
           <Select 
-            ref='select'
             :labelTitle="'行业类型'" 
             :originArr="businessType" 
             :defaultValue="'typeId'" 
@@ -30,7 +29,6 @@
             @changeInputValue="changeType"> 
           </Select>
           <loginNameSelect 
-            ref="loginNameSelect"
             :labelTitle="'客户名称'" 
             :originArr="loginName" 
             :defaultValue="'loginName'" 
