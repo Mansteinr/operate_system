@@ -44,12 +44,25 @@ export function $http (url, data, method = 'post', responseType = 'json') {
   })
 }
 
-export function $downFile (url, op) {
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
+export function $downFile (url, op, method = 'post', callback) {
+  console.log(callback)
+  var xhr = new XMLHttpRequest()
+  if (method.toUpperCase === 'POST') {
+    xhr.open("POST", url, true)
+    xhr.setRequestHeader('mtk', localStorage.getItem('mtk') || '909090')
+    xhr.setRequestHeader('Content-Type', 'application/json')
+    xhr.send(JSON.stringify(op))
+  } else {
+    let params = url.split('?')[1].split('&')
+    xhr.open('GET', url, true)
+    if (params.length) {
+      params.forEach(v => {
+        op[v.split('=')[0]] = v.split('=')[1]
+      })
+    }
+    xhr.send(null)
+  }
   xhr.responseType = "blob"; //这里是关键，它指明返回的数据的类型是二进制  
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.setRequestHeader('mtk', localStorage.getItem('mtk') || '909090');
   xhr.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       var response = this.response;
@@ -59,9 +72,10 @@ export function $downFile (url, op) {
       document.body.appendChild(a)
       a.click();
       document.body.removeChild(a)
+      callback()
     }
   }
-  xhr.send(JSON.stringify(op));
+  
 }
 
 function startLoading () {    //使用Element loading-start 方法

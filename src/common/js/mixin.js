@@ -137,37 +137,8 @@ export const loginName = { // 客户登陆名称
       $http(this.API.upApi.hasServices, op).then((res) => {
         this.services = []
         this.services = res.resData
-        // if (this.isServiceNames) {
-        //   this.queryParams.serviceNames = []
-        //   let pushData = this.services.length ? this.services[0].serviceName : null
-        //   this.queryParams.serviceNames.push(pushData)
-        // } else {
-        //   this.queryParams.serviceName = this.services.length ? this.services[0].serviceName : null
-        // }
       })
-    },
-    // filterLoginName (params) {
-    //   this.loginName = []
-    //   if (params) {
-    //     let translateParams = params.toLowerCase()
-    //     this.loginNameOrigin.filter(v => {
-    //       let testBool = v['loginName'].toLowerCase().indexOf(translateParams) > -1 || v['customerName'].indexOf(translateParams) > -1 || pinyin.getFullChars(v['customerName']).toLowerCase().indexOf(translateParams) > -1 ||  pinyin.getCamelChars(v['customerName']).toLowerCase().indexOf(translateParams) > -1
-    //       if (testBool) {
-    //         this.loginName.push(v)
-    //       }
-    //     })
-    //   } else {
-    //     if(this.noAllLogin) {
-    //       this.loginName = this.loginNameOrigin
-    //     } else {
-    //       this.loginName = [...[{
-    //         customerId: '',
-    //         loginName: '',
-    //         customerName: '全部'
-    //       }], ...this.loginNameOrigin]
-    //     }
-    //   }
-    // }
+    }
   }
 }
 export const services = { // 接口类型
