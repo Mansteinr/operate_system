@@ -13,35 +13,29 @@
                 unlink-panels
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                :name="['start', 'end']"
                 v-model="queryParams.time"
                 range-separator="至"
                 :picker-options="pickerOptions2">
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item label="行业类型：" prop="type">
-            <el-select @change="changeType" v-model="queryParams.type" placeholder="请选择">
-              <el-option
-                v-for="v in businessType"
-                :key="v.typeId"
-                :label="v.typeName"
-                :value="v.typeId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-                <el-form-item label="客户名称：" prop="loginName">
-            <el-select filterable v-model="queryParams.loginName" :filter-method="filterLoginName" placeholder="请选择">
-              <el-option
-                v-for="v in loginName"
-                @click.native.stop="changeCustomer(v)"
-                :key="v.customerId"
-                :title="`${v.customerName}(${v.loginName})`"
-                :data-customerid="v.customerId"
-                :label="v.customerName"
-                :value="v.loginName">
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <Select 
+            :labelTitle="'行业类型'" 
+            :originArr="businessType" 
+            :defaultValue="'typeId'" 
+            :defaultLable="'typeName'"
+            :isAll = true
+            @changeInputValue="changeType"> 
+          </Select>
+          <loginNameSelect 
+            :originArr="loginName" 
+            :defaultValue="'loginName'" 
+            :defaultLable="'customerName'"
+            :searchInput=true
+            :isAll=true
+            :labelTitle="'客户名称'">
+          </loginNameSelect>
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
@@ -59,29 +53,11 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
-          <el-table-column
-            label="服务名称"
-            prop="serviceName">
-          </el-table-column>
-          <el-table-column
-            label="服务名称(中文)"
-            prop="serviceNameZh">
-          </el-table-column>
-          <el-table-column
-            label="计费调用量（条）"
-            sortable
-            prop="downChargedCount">
-          </el-table-column>
-          <el-table-column
-            label="调用总量（条）"
-            sortable
-            prop="usedCount">
-          </el-table-column>
+        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
         </Table>
       </div>
     </div>
-        <div class="card-wrapper card-content">
+    <div class="card-wrapper card-content">
       <div class="card-title">
         查询结果
         <el-button-group>
@@ -92,21 +68,7 @@
       <div class="card-container">
         <div v-show="!tabFlag2 && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2">
-          <el-table-column
-            label="服务名称"
-            prop="serviceName">
-          </el-table-column>
-          <el-table-column
-            label="服务名称(中文)"
-            prop="serviceNameZh">
-          </el-table-column>
-          <el-table-column
-            label="调用金额"
-            sortable
-            :formatter="formatter"
-            prop="downCost">
-          </el-table-column>
+        <Table ref="table" class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2" :columns="columns1">
         </Table>
       </div>
     </div>
@@ -118,15 +80,44 @@ import { $http } from '../../../common/js/ajax'
 import { setRadiiData, renderChart } from '../../../common/js/myCharts'
 import { switchMixin, hotKeyTime, loginName,businessType } from '../../../common/js/mixin'
 import Table from '../../../base/Table'
+import Select from '../../../base/Select'
+import loginNameSelect from '../../../base/Select'
 import QueryButton from '../../../base/QueryButton'
 export default {
   mixins: [switchMixin, hotKeyTime, businessType, loginName],
   data () {
     return {
+      columns: [{
+        prop: 'serviceName',
+        label: '服务名称'
+      },{
+        prop: 'serviceNameZh',
+        label: '服务名称(中文)'
+      },{
+        prop: 'downChargedCount',
+        sortable: true,
+        label: '计费调用量（条）'
+      },{
+        prop: 'usedCount',
+        sortable: true,
+        label: '调用总量（条）'
+      }],
+      columns1: [{
+        prop: 'serviceName',
+        label: '服务名称'
+      },{
+        prop: 'serviceNameZh',
+        label: '服务名称(中文)'
+      },{
+        prop: 'downCost',
+        sortable: true,
+        label: '调用金额',
+        formatter: (row, column) => {
+          return row.downCost.toFixed(4)
+        }
+      }],
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
-        loginName: '',
-        type: ''
       },
       tableData: [],
       tableData2: [],
@@ -134,26 +125,27 @@ export default {
   },
   components: {
     Table,
-    QueryButton
+    Select,
+    QueryButton,
+    loginNameSelect
   },
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
-      this.queryParams.loginName = this.loginName[0]
     },
     onSubmit () {
-      this.$refs.querForm.validate((valid) => {
-        if (valid) {
-          this.resetTabFlag()
-          this.UsageByName()
+      let options = {}
+      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
+        if (v.name) {
+          options[v.name] = v.value
         }
       })
+      options.businessType = options.typeId
+      delete options.typeId
+      this.UsageByName(options)
     },
-    formatter(val) {
-      return this.$refs.table.formatter(val)
-    },
-    UsageByName () {
-      $http(this.API.downApi.UsageByName, this.queryParams).then((res) => {
+    UsageByName (options) {
+      $http(this.API.downApi.UsageByName, options).then((res) => {
         this.tableData = res.resData
         this.tableData2 = res.resData
         let pieCount = {}, pieCharge ={}
@@ -165,17 +157,14 @@ export default {
             pieCount[v.serviceNameZh] = v.downChargedCount
           }
         })
-
         this.tableData2.sort((a, b) => {
           return -(a.downCost - b.downCost)
         })
-
         this.tableData2.forEach((v, k) => {
           if (k <= 10 ){
             pieCharge[v.serviceNameZh] = v.downCost
           }
         })
-
         renderChart(this.$refs.charts, setRadiiData( 'Top10各服务计费调用数量占比','计费调用数量', pieCount))
         renderChart(this.$refs.charts2, setRadiiData( 'Top10各服务调用金额占比','计费调用数量', pieCharge))
       })

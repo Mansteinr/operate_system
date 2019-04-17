@@ -111,7 +111,8 @@ export default {
       }
     },
     getAllOutServiceChargeInfo (options) { // 下载excelc
-      const h = this.$createElement;
+      const h = this.$createElement 
+      let tips = null
       this.$msgbox({
         title: '下载',
         message: h('p', null, [
@@ -123,6 +124,7 @@ export default {
         cancelButtonText: '取消',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
+            tips = instance
             instance.confirmButtonLoading = true //提示正在下载
             instance.confirmButtonText = '执行中...'
             var url = this.API.upApi.getAllOutServiceChargeInfo + "?start=" + options.start + "&serviceName=" + options.serviceName + "&end=" + options.end + "&loginName=" + options.loginName;
@@ -134,13 +136,14 @@ export default {
           }
         }
       }).then(action => {
-        instance.confirmButtonLoading = false // 取消提示
+        console.log(action)
+        tips.confirmButtonLoading = false // 取消提示
         this.$message({
           type: 'info',
           message: '下载成功'
         })
-      }).catch ((err) => {
-        instance.confirmButtonLoading = false // 取消提示
+      }).catch (() => {
+        tips.confirmButtonLoading = false // 取消提示
       })
     },
     getOutServiceChargeInfoByDay (options) {
