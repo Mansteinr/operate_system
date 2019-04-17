@@ -82,11 +82,9 @@ export default {
     return {
       columns1: [{
         prop: 'customerName',
-        sortable: true,
         label: '下游客户名称(中文)'
       }, {
         prop: 'loginName',
-        sortable: true,
         label: '下游客户名称'
       },{
         prop: 'usedCount',

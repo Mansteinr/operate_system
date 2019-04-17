@@ -113,7 +113,7 @@ export default {
         prop: 'downCost',
         sortable: true,
         label: '调用金额',
-        formatter: (row, column) => {
+        formatter: row => {
           return row.downCost.toFixed(4)
         }
       }],

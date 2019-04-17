@@ -111,6 +111,14 @@ export default {
       }
     },
     getAllOutServiceChargeInfo (options) { // 下载excelc
+      var start = options.start.replace(/-/g, ''), end = options.end.replace(/-/g, '');
+      if ((Date.parse(options.end) - Date.parse(options.start)) / (1000 * 24 * 3600) > 31) {
+        this.$message({
+          type: 'warnning',
+          message: '时间跨度不能大于一个月'
+        })
+        return
+      }
       const h = this.$createElement 
       let tips = null
       this.$msgbox({

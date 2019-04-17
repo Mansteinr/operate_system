@@ -13,22 +13,20 @@
                 unlink-panels
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                :name="['start', 'end']"
                 v-model="queryParams.time"
                 range-separator="至"
                 :picker-options="pickerOptions2">
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item label="接口类型：" prop="serviceName">
-            <el-select v-model="queryParams.serviceName" placeholder="请选择">
-              <el-option
-                v-for="v in services"
-                :key="v.serviceId"
-                :label="v.serviceNameZh"
-                :value="v.serviceName">
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <serviceSelect 
+            :labelTitle="'接口类型'" 
+            :originArr="services" 
+            :defaultValue="'serviceName'" 
+            :searchInput=true
+            :defaultLable="'serviceNameZh'">
+          </serviceSelect>
           <el-form-item label="统计维度：" prop="timesAndMoneyUsed">
             <el-radio v-model="queryParams.timesAndMoneyUsed" label="customer">按客户</el-radio>
             <el-radio v-model="queryParams.timesAndMoneyUsed" label="business">按行业</el-radio>
@@ -50,25 +48,11 @@
       <div class="card-container">
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag">
-          <el-table-column
-            label="客户名称"
-            prop="Name">
-          </el-table-column>
-          <el-table-column
-            label="计费调用量（条）"
-            sortable
-            prop="downChargedCount">
-          </el-table-column>
-          <el-table-column
-            label="调用总量（条）"
-            sortable
-            prop="usedCount">
-          </el-table-column>
+        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
         </Table>
       </div>
     </div>
-        <div class="card-wrapper card-content">
+    <div class="card-wrapper card-content">
       <div class="card-title">
         查询结果
         <el-button-group>
@@ -79,17 +63,7 @@
       <div class="card-container">
         <div v-show="!tabFlag2 && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2">
-          <el-table-column
-            label="客户名称"
-            prop="Name">
-          </el-table-column>
-          <el-table-column
-            label="调用金额"
-            sortable
-            :formatter="formatter"
-            prop="downCost">
-          </el-table-column>
+        <Table ref="table" class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2" :columns="columns1">
         </Table>
       </div>
     </div>
@@ -102,14 +76,38 @@ import { setRadiiData, renderChart } from '../../../common/js/myCharts'
 import { switchMixin, hotKeyTime, services } from '../../../common/js/mixin'
 import Table from '../../../base/Table'
 import QueryButton from '../../../base/QueryButton'
-import { toFixed } from '../../../utils'
+import serviceSelect from '../../../base/Select'
 export default {
   mixins: [switchMixin, hotKeyTime, services],
   data () {
     return {
+      columns: [{
+        prop: 'Name',
+        sortable: true,
+        label: '客户名称'
+      },{
+        prop: 'downChargedCount',
+        sortable: true,
+        label: '计费调用量（条）'
+      },{
+        prop: 'usedCount',
+        sortable: true,
+        label: '调用总量（条）'
+      }],
+      columns1: [{
+        prop: 'Name',
+        sortable: true,
+        label: '客户名称'
+      },{
+        prop: 'downCost',
+        sortable: true,
+        label: '调用金额',
+        formatter: row => {
+          return row.downCost.toFixed(4)
+        }
+      }],
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
-        serviceName: '',
         timesAndMoneyUsed: 'customer'
       },
       tableData: [],
@@ -118,26 +116,26 @@ export default {
   },
   components: {
     Table,
-    QueryButton
+    QueryButton,
+    serviceSelect
   },
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
-      this.queryParams.loginName = this.loginName[0]
     },
     onSubmit () {
-      this.$refs.querForm.validate((valid) => {
-        if (valid) {
-          this.resetTabFlag()
-          this.UsageByCustomer()
-        }
+      let options = {}
+      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
+        if (!v.name) return
+        options[v.name] = v.value
       })
+      Object.assign(options, {
+        timesAndMoneyUsed: this.queryParams.timesAndMoneyUsed
+      })
+      this.UsageByCustomer(options)
     },
-    formatter(val) {
-      return this.$refs.table.formatter(val)
-    },
-    UsageByCustomer () {
-      $http(this.API.downApi.UsageByCustomer, this.queryParams).then((res) => {
+    UsageByCustomer (options) {
+      $http(this.API.downApi.UsageByCustomer, options).then((res) => {
         if(this.queryParams.timesAndMoneyUsed === 'business') {
           let objBusiness = {}, businessArray = []
           res.resData.forEach(v => {
@@ -147,7 +145,6 @@ export default {
               objBusiness[v.customerTypeZh] = [v]
             }
           })
-
           for (let k in objBusiness) {
             let obj = {}, arr = objBusiness[k]
             obj.Name = k
@@ -156,7 +153,7 @@ export default {
             obj.usedCount = 0
             arr.forEach(v => {
               obj.downChargedCount += v.downChargedCount
-              obj.downCost += toFixed(v.downCost)
+              obj.downCost += v.downCost
               obj.usedCount += v.usedCount
             })
             businessArray.push(obj)
@@ -181,7 +178,7 @@ export default {
             obj.usedCount = 0
             arr.forEach(v => {
               obj.downChargedCount += v.downChargedCount
-              obj.downCost += toFixed(v.downCost)
+              obj.downCost += v.downCost
               obj.usedCount += v.usedCount
             })
             customerArr.push(obj)
@@ -210,8 +207,6 @@ export default {
             pieCharge[v.Name] = v.downCost
           }
         })
-        console.log(pieCount)
-        console.log(pieCharge)
         renderChart(this.$refs.charts, setRadiiData( '各客户计费调用数量占比','计费调用数量', pieCount))
         renderChart(this.$refs.charts2, setRadiiData( '各客户调用金额占比','调用金额', pieCharge))
       })
