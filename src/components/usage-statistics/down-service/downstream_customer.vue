@@ -83,6 +83,7 @@ import Table from '../../../base/Table'
 import Select from '../../../base/Select'
 import loginNameSelect from '../../../base/Select'
 import QueryButton from '../../../base/QueryButton'
+import { reset } from '../../../utils'
 export default {
   mixins: [switchMixin, hotKeyTime, businessType, loginName],
   data () {
@@ -132,6 +133,7 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
+      reset()
     },
     onSubmit () {
       let options = {}
