@@ -51,15 +51,13 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
-          <!-- <el-table-column
-            v-for="(v, k) in unquieTable"
-            :fixed="v==='dateTime' || v==='chargeUsedCount'"
-            :key="k"
-            min-width="120"
-            :label="v|formatterName"
-            :prop="v">
-          </el-table-column> -->
+        <Table 
+          ref="table" 
+          class="table" 
+          :tableData="tableData" 
+          :tatalPage="tableData.length" 
+          v-show="tableData.length"
+          :columns="columns">
         </Table>
       </div>
     </div>
@@ -71,7 +69,6 @@ import { $http, $downFile } from '../../../common/js/ajax'
 import { hotKeyTime, services, loginName } from '../../../common/js/mixin'
 import Table from '../../../base/Table'
 import QueryButton from '../../../base/QueryButton'
-import moment from 'moment'
 import loginNameSelect from '../../../base/Select'
 import serviceSelect from '../../../base/Select'
 export default {
@@ -79,12 +76,11 @@ export default {
   data () {
     return {
       unquieTable:[],
-      allFlag: true,
-      isServiceNames: true,
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
       },
-      tableData: []
+      tableData: [],
+      columns: []
     }
   },
   components: {
@@ -93,17 +89,6 @@ export default {
     serviceSelect,
     loginNameSelect
   },
-  // filters: {
-  //   formatterName(value) {
-  //     if (value === 'dateTime') {
-  //       return '日期'
-  //     } else if (value === 'chargeUsedCount') {
-  //       return '计费调用总量'
-  //     } else {
-  //       return value
-  //     }
-  //   }
-  // },
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
@@ -124,53 +109,47 @@ export default {
         delete options.serviceName
         this.getOutServiceChargeInfoByDay(options)
       }
-      console.log(options)
     },
-    // formatter(val) {
-    //   return this.$refs.table.formatter(val, 'cost')
-    // },
-    getAllOutServiceChargeInfo (options) { // 下载excel
-      // let start = moment(this.queryParams.time[0]).format('YYYY-MM-DD'), end = moment(this.queryParams.time[1]).format('YYYY-MM-DD')
-        const h = this.$createElement;
-        this.$msgbox({
-          title: '下载',
-          message: h('p', null, [
-            h('span', null, `确定下载${options.start}~${options.end}全部`),
-            h('i', { style: 'color: teal' }, '服务信息？')
-          ]),
-          showCancelButton: true,
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          beforeClose: (action, instance, done) => {
-            if (action === 'confirm') {
-              instance.confirmButtonLoading = true
-              instance.confirmButtonText = '执行中...'
-              var url = this.API.upApi.getAllOutServiceChargeInfo + "?start=" + options.start + "&serviceName=''&end=" + options.end + "&loginName=''"
-              $downFile(url, {}, 'get', () => {
-                instance.confirmButtonLoading = false
-                debugger
-                done()
-                setTimeout(() => {
-                  instance.confirmButtonLoading = false
-                }, 300)
-              })
-            } else {
+    getAllOutServiceChargeInfo (options) { // 下载excelc
+      const h = this.$createElement;
+      this.$msgbox({
+        title: '下载',
+        message: h('p', null, [
+          h('span', null, `确定下载${options.start}~${options.end}全部`),
+          h('i', { style: 'color: teal' }, '服务信息？')
+        ]),
+        showCancelButton: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true //提示正在下载
+            instance.confirmButtonText = '执行中...'
+            var url = this.API.upApi.getAllOutServiceChargeInfo + "?start=" + options.start + "&serviceName=" + options.serviceName + "&end=" + options.end + "&loginName=" + options.loginName;
+            $downFile(url, {}, 'get', () => {
               done()
-            }
+            }, 'xls')
+          } else {
+            done()
           }
-        }).then(action => {
-          this.$message({
-            type: 'info',
-            message: '下载成功'
-          })
+        }
+      }).then(action => {
+        instance.confirmButtonLoading = false // 取消提示
+        this.$message({
+          type: 'info',
+          message: '下载成功'
         })
+      }).catch ((err) => {
+        instance.confirmButtonLoading = false // 取消提示
+      })
     },
-    getOutServiceChargeInfoByDay () {
-      $http(this.API.upApi.getOutServiceChargeInfoByDay, this.queryParams).then((res) => {
+    getOutServiceChargeInfoByDay (options) {
+      $http(this.API.upApi.getOutServiceChargeInfoByDay, options).then((res) => {
+        this.columns = [] // 清空数据
         //先将三维数组转为一维数组 因为最后只要将数组转为[{"日期":'2018-10-21','当天所有服务的计费总量之和'：10，'以及各个服务当天计费之和’：10}]
         let returnData = res.resData.serviceList, arrData = [],arrTableHeader = []
         if (!returnData.length) {
-          this.tableData = returnData
+          this.tableData = returnData // 当数据为空时 置空防止下面保错
           return
         }
         returnData.forEach(v => {
@@ -217,7 +196,13 @@ export default {
           arrTableHeader = [...arrTableHeader,...Object.keys(v)]
         })
         this.unquieTable = [...new Set(arrTableHeader)]
-        console.log(this.unquieTable)
+        this.unquieTable.forEach(v => {
+          this.columns.push({
+            prop: v,
+            sortable: true,
+            label: v === 'dateTime' ? '日期':(v==='chargeUsedCount'?'计费调用总量':v)
+          })
+        })
       })
     }
   }

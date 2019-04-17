@@ -44,8 +44,7 @@ export function $http (url, data, method = 'post', responseType = 'json') {
   })
 }
 
-export function $downFile (url, op, method = 'post', callback) {
-  console.log(callback)
+export function $downFile (url, op, method = 'post', callback, typeFile="xlxs") {
   var xhr = new XMLHttpRequest()
   if (method.toUpperCase === 'POST') {
     xhr.open("POST", url, true)
@@ -55,6 +54,7 @@ export function $downFile (url, op, method = 'post', callback) {
   } else {
     let params = url.split('?')[1].split('&')
     xhr.open('GET', url, true)
+    xhr.setRequestHeader('mtk', localStorage.getItem('mtk') || '909090')
     if (params.length) {
       params.forEach(v => {
         op[v.split('=')[0]] = v.split('=')[1]
@@ -67,7 +67,7 @@ export function $downFile (url, op, method = 'post', callback) {
     if (this.readyState == 4 && this.status == 200) {
       var response = this.response;
       var a = document.createElement('a');
-      a.download = op.start + '/' + op.end + "数据统计.xlsx"
+      a.download = op.start + '/' + op.end + "数据统计." + typeFile
       a.href = window.URL.createObjectURL(response);
       document.body.appendChild(a)
       a.click();

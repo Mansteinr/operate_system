@@ -1,5 +1,4 @@
 import { $http } from './ajax'
-let pinyin = require('js-pinyin')
 // 切换table相关方法
 export const switchMixin = {
   data () {
