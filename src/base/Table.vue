@@ -23,20 +23,42 @@
       :show-summary="showSummary"
       :summary-method="getSummaries"
       :stripe="true"
+      :span-method="mergeCell?objectSpanMethod:null"
+      :border="isBorder"
       style="width: 100%">
         <!-- <slot></slot> -->
-        <el-table-column
-          v-for="(v, k) in columns"
-          :key="k"
-          :label="v.label"
-          :fixed="v.fixed"
-          :formatter="v.formatter"
-          :sortable="v.sortable"
-          :prop='v.prop'>
-        </el-table-column>
+        <template  v-for="(v, k) in columns">
+          <el-table-column
+            :key="k"
+            v-if="v.label != '操作'"
+            :label="v.label"
+            :fixed="v.fixed"
+            :width="v.width"
+            :min-width="v.minWidth"
+            :show-overflow-tooltip="v.showOverflow?v.showOverflow:true"
+            :formatter="v.formatter"
+            :sortable="v.sortable"
+            :prop='v.prop'>
+          </el-table-column>
+          <el-table-column
+            :key="k"
+            v-else
+            :label="v.label"
+          >
+          <template slot-scope="scope">
+          <el-button
+            v-for="(v1, k1) in v.prop"
+            :key="k1"
+            plain
+            :type="v1.type?v1.type:'primary'"
+            :size="v1.size?v1.size:'mini'"
+            @click="handle(scope.row, v1.method)">{{v1.keyWord}}</el-button>
+          </template>
+          </el-table-column>
+        </template>
     </el-table>
     <Pagination @changePage="changePage" :tatalPage="sidePagination === 'customer' ? total : tatalPage" v-show="tatalPage>1"></Pagination>
-    <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid>
+    <!-- <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid> -->
   </div>
 </template>
 
@@ -56,8 +78,9 @@
         search: '',
         start:0,
         end: 10,
-        dialogVisible: false,
-        josn: {}
+        // dialogVisible: false,
+        josn: {},
+        spanArr: [] // 合并单元格时 统计需要合并单元格数量
       }
     },
     props: {
@@ -85,30 +108,43 @@
         type: String,
         default: 'table1'
       },
-      columns: {
+      columns: { // 定义表格
         type: Array,
         default: () => []
+      },
+      isBorder: { // 是否现在网格
+        type: Boolean,
+        default: false
+      },
+      mergeCell: { // 合并单元格
+        type: String,
+        default: ''
       }
     },
     components: {
-      Pagination,
-      Guid
+      Guid,
+      Pagination
     },
     methods: {
+      handle(row, method) {
+        this.$emit('handle', row, method)
+        this.dialogVisible = true
+      },
       queryGuid (val) {
         $http(this.API.upApi.logDetail, {'guid': val}).then((res) => {
           this.dialogVisible = true
           this.josn = res.resData || {}
         })
       },
-      changeDialog (val) {
-        this.dialogVisible = val
-      },
+      // changeDialog (val) {
+      //   console.log('guid table')
+      //   this.dialogVisible = val
+      // },
       getSummaries (param) {
         const { columns } = param
         const sums = []
         columns.forEach((column, index) => {
-          if (!column) return
+          if (!column || column.label === '操作') return
           if (index === 0) {
             sums[index] = '合计'
             return
@@ -199,6 +235,35 @@
         this.start = this.pageSize * (this.currentPage - 1)
         this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
       },
+      objectSpanMethod({ row, column, rowIndex, columnIndex }) { // 合并单元格
+        if (columnIndex === 0) {
+          const _row = this.spanArr[rowIndex];
+           const _col = _row > 0 ? 1 : 0;
+          return {
+            rowspan: _row,
+            colspan: _col
+          }
+        }
+      },
+      getSpanArr(data) {　// 统计需要合并的格数
+        if (data.length <= 0) return // 没数据时 直接返回
+        this.spanArr = []
+        for (var i = 0; i < data.length; i++) {
+          if (i === 0) {
+            this.spanArr.push(1);
+            this.pos = 0
+          } else {
+            // 判断当前元素与上一个元素是否相同
+          if (data[i][this.mergeCell] === data[i - 1][this.mergeCell]) {
+              this.spanArr[this.pos] += 1;
+              this.spanArr.push(0);
+            } else {
+              this.spanArr.push(1);
+              this.pos = i;
+            }
+          }
+        }
+      },
       exportExcel (kind) { // 导出excel
         const loading = Loading.service({
           lock: true,
@@ -271,6 +336,9 @@
               }
             })
           })
+        }
+        if (!!this.mergeCell) {
+          this.getSpanArr(this.tableData)
         }
         return this.tableData
       },

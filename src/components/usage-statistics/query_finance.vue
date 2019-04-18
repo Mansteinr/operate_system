@@ -74,6 +74,7 @@ import Table from '../../base/Table'
 import loginNameSelect from '../../base/Select'
 import QueryButton from '../../base/QueryButton'
 import { reset } from '../../utils'
+let loginNameObj = {}  // 由于后端 传参的时候 没有将中文名传过来 前端自己将中英文对照
 export default {
   mixins: [hotKeyTime, loginName],
   data () {
@@ -81,7 +82,6 @@ export default {
       queryParams: { // 保留该参数 是为了重置方便
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
       },
-      loginNameObj: {}, // 由于后端 传参的时候 没有将中文名传过来 前端自己将中英文对照
       chargeLogFlag: false, // 控制显示隐藏充值记录
       tableData: [], // 余额快照table数据
       tableData2: [],  // 充值记录table数据
@@ -92,7 +92,10 @@ export default {
         label: '客户名称'
       }, {
         prop: 'customerName',
-        label: '中文'
+        label: '中文',
+        formatter: row => {
+          return loginNameObj[row.customerName]
+        }
       },{
         prop: 'dateTime',
         label: '时间',
@@ -147,7 +150,7 @@ export default {
   watch: {
     loginName () {
       this.loginName.forEach(v => {
-        this.loginNameObj[v.loginName] = v.customerName
+        loginNameObj[v.loginName] = v.customerName
       })
     }
   },

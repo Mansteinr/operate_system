@@ -36,6 +36,7 @@ import 'jsoneditor/dist/jsoneditor.css'
     },
     methods: {
       handleClose() {
+        console.log('guid.vue')
         this.$emit('changeDialog', false)
       },
       renderJson (val) {

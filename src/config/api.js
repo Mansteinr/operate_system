@@ -76,7 +76,7 @@ const api = {
     getOutServiceChargeInfo: apiFormat('operator/up/getOutServiceChargeInfo', 'upapi'),
     getOutServiceChargeInfoByDay: apiFormat('operator/up/getOutServiceChargeInfoByDay', 'upapi'),
     getAllOutServiceChargeInfo: apiFormat('operator/up/getAllOutServiceChargeInfo', 'upapi'), /*--获取服务对应上游信息的每天详细统计信息(导出excel表格)*/
-
+    queryByDate: apiFormat('operator/margin/queryByDate', 'upapi'), /* 利润分析 */
   },
   downApi: {
     UsageByName: apiFormat('operator/down/UsageByName', 'upapi'),

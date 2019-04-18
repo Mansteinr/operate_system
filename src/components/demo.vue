@@ -1,69 +1,117 @@
 <template>
   <div>
-    <div style="margin-bottom: 20px;">
-      <el-button
-        size="small"
-        @click="addTab(editableTabsValue2)"
-      >
-        add tab
-      </el-button>
-    </div>
-    <el-tabs v-model="editableTabsValue2" type="card" closable @tab-remove="removeTab">
-      <el-tab-pane
-        v-for="item in editableTabs2"
-        :key="item.name"
-        :label="item.title"
-        :name="item.name"
-      >
-        {{item.content}}
-      </el-tab-pane>
-    </el-tabs>
+
+    <el-table
+      :data="tableData"
+      :span-method="objectSpanMethod"
+      border
+      style="width: 100%; margin-top: 20px">
+      <el-table-column
+        prop="id"
+        label="ID"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        label="姓名">
+      </el-table-column>
+      <el-table-column
+        prop="amount1"
+        label="数值 1（元）">
+      </el-table-column>
+      <el-table-column
+        prop="amount2"
+        label="数值 2（元）">
+      </el-table-column>
+      <el-table-column
+        prop="amount3"
+        label="数值 3（元）">
+      </el-table-column>
+    </el-table>
   </div>
 </template>
+
 <script>
   export default {
     data() {
       return {
-        editableTabsValue2: '2',
-        editableTabs2: [{
-          title: 'Tab 1',
-          name: '1',
-          content: 'Tab 1 content'
+        spanArr: [],
+        tableData: [{
+          id: '12987122',
+          name: '王小虎',
+          amount1: '234',
+          amount2: '3.2',
+          amount3: 10
         }, {
-          title: 'Tab 2',
-          name: '2',
-          content: 'Tab 2 content'
-        }],
-        tabIndex: 2
-      }
+          id: '12987122',
+          name: '王小虎',
+          amount1: '165',
+          amount2: '4.43',
+          amount3: 12
+        }, {
+          id: '12987122',
+          name: '王小虎',
+          amount1: '324',
+          amount2: '1.9',
+          amount3: 9
+        }, {
+          id: '12987125',
+          name: '王小虎',
+          amount1: '621', 
+          amount2: '2.2',
+          amount3: 17
+        }, {
+          id: '12987125',
+          name: '王小虎',
+          amount1: '539',
+          amount2: '4.1',
+          amount3: 15
+        }, {
+          id: '12987126',
+          name: '王小虎',
+          amount1: '621', 
+          amount2: '2.2',
+          amount3: 17
+        }, {
+          id: '12987127',
+          name: '王小虎',
+          amount1: '539',
+          amount2: '4.1',
+          amount3: 15
+        }]
+      };
     },
     methods: {
-      addTab(targetName) {
-        let newTabName = ++this.tabIndex + '';
-        this.editableTabs2.push({
-          title: 'New Tab',
-          name: newTabName,
-          content: 'New Tab content'
-        });
-        this.editableTabsValue2 = newTabName;
+      objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+        if (columnIndex === 0) {
+          const _row = this.spanArr[rowIndex];
+           const _col = _row > 0 ? 1 : 0;
+          return {
+            rowspan: _row,
+            colspan: _col
+          }
+        }
       },
-      removeTab(targetName) {
-        let tabs = this.editableTabs2;
-        let activeName = this.editableTabsValue2;
-        if (activeName === targetName) {
-          tabs.forEach((tab, index) => {
-            if (tab.name === targetName) {
-              let nextTab = tabs[index + 1] || tabs[index - 1];
-              if (nextTab) {
-                activeName = nextTab.name;
-              }
-            }
-          });
+      getSpanArr(data) {　
+        for (var i = 0; i < data.length; i++) {
+          if (i === 0) {
+            this.spanArr.push(1);
+            this.pos = 0
+          } else {
+            // 判断当前元素与上一个元素是否相同
+          if (data[i].id === data[i - 1].id) {
+              this.spanArr[this.pos] += 1;
+              this.spanArr.push(0);
+            } else {
+              this.spanArr.push(1);
+              this.pos = i;
+            }
+          }
         }
-        
-        this.editableTabsValue2 = activeName;
-        this.editableTabs2 = tabs.filter(tab => tab.name !== targetName);
       }
+    },
+    mounted () {
+      this.getSpanArr(this.tableData)
     }
-  }
+  };
 </script>

@@ -2,7 +2,8 @@
   <el-dialog
     :title="title"
     custom-class="customize-dialog"
-    :visible.sync="dialogVisible"
+    :visible.sync="dialogShow"
+    :width="width"
     :close-on-click-modal="isClickModal"
     :before-close="handleClose">
     <slot></slot>
@@ -32,17 +33,22 @@
         type: String,
         default: '取消'
       },
-      dialogVisible: {
+      dialogShow: {
         type: Boolean,
         default: false
+      },
+      width: {
+        type: String,
+        default: '50%'
       }
     },
     methods: {
       handleClose() {
-        this.$emit('closeDialog', false)
+        console.log(0)
+        this.$emit('handleClose', false)
       },
       determine () {
-        // this.handleClose()
+        console.log(2)
         this.$emit('determine', false)
       },
       cancel () {

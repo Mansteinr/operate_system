@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import QueryIndex from '../components/query-index'
 import QueryUsage from '../components/usage-statistics/query_usage'
-import QueryFinance from '../components/usage-statistics/query_finance'
+import QueryFinance from '../components/usage-statistics/query_finance' // 余额快照
+import QueryProfit from '../components/usage-statistics/query_profit' // 利润分析
 import upstreamSupplier from '../components/usage-statistics/upper-service/upstream_supplier'
 import upstreamCustomer from '../components/usage-statistics/upper-service/upstream_customer'
 import upstreamService from '../components/usage-statistics/upper-service/upstream_service'
@@ -48,6 +49,10 @@ const router = new Router({
       path: '/QueryUsage',
       name: 'views/query_usage.html',
       component: QueryUsage
+    }, {
+      path: '/QueryProfit',
+      name: 'views/query_profit.html',
+      component: QueryProfit
     }, {
       path: '/QueryFinance',
       name: 'views/query_finance.html',
