@@ -28,7 +28,7 @@
         <template  v-for="(v, k) in columns">
           <el-table-column
             :key="k"
-            v-if="v.label != '操作'"
+            v-if="v.label != '操作'&& v.label != 'guid'"
             :label="v.label"
             :fixed="v.fixed"
             :width="v.width"
@@ -40,18 +40,35 @@
           </el-table-column>
           <el-table-column
             :key="k"
-            v-else
+            v-else-if="v.label == '操作'"
             :label="v.label"
           >
-          <template slot-scope="scope">
-          <el-button
-            v-for="(v1, k1) in v.prop"
-            :key="k1"
-            plain
-            :type="v1.type?v1.type:'primary'"
-            :size="v1.size?v1.size:'mini'"
-            @click="handle(scope.row, v1.method)">{{v1.keyWord}}</el-button>
-          </template>
+            <template slot-scope="scope">
+            <el-button
+              v-for="(v1, k1) in v.prop"
+              :key="k1"
+              plain
+              :type="v1.type?v1.type:'primary'"
+              :size="v1.size?v1.size:'mini'"
+              @click="handle(scope.row, v1.method)">{{v1.keyWord}}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :key="k"
+            v-else-if="v.label == 'guid'"
+            :prop="v.prop"
+            :label="v.label"
+          >
+            <template slot-scope="scope">
+              <div class="link" @click="queryGuid(scope.row.guid)">{{scope.row.guid}}</div>
+            <!-- <el-button
+              v-for="(v1, k1) in v.prop"
+              :key="k1"
+              plain
+              :type="v1.type?v1.type:'primary'"
+              :size="v1.size?v1.size:'mini'"
+              @click="handle(scope.row, v1.method)">{{v1.keyWord}}</el-button> -->
+            </template>
           </el-table-column>
         </template>
     </el-table>
