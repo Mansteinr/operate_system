@@ -1,19 +1,17 @@
 <template>
-  <div>
+  <div class="table">
     <el-row :gutter="5" v-show="showSearch">
       <el-col :span="4" :offset="19"><el-input v-model.trim="search" size="mini" placeholder="请输入关键字"/></el-col>
-      <el-col :span="1">
-        <el-dropdown>
-          <el-button type="primary" size="mini">
-            <i class="el-icon-download"></i>
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="exportExcel('xlsx')">excel</el-dropdown-item>
-            <el-dropdown-item @click.native="exportExcel('xml')">xml</el-dropdown-item>
-            <el-dropdown-item @click.native="exportExcel('csv')">csv</el-dropdown-item>
-            <el-dropdown-item @click.native="exportExcel('txt')">txt</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+      <el-col :span="1" class='export-wrapper'>
+        <div class="select-dropdown m-input">
+          <div class="text-warp selected-value" @click.stop.prevent="toggleExport($event)"></div>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item text-warp" @click.self="exportExcel('xlsx',$event)">xlsx</li>
+            <li class="dropdown-item text-warp" @click.self="exportExcel('xml',$event)">xml</li>
+            <li class="dropdown-item text-warp" @click.self="exportExcel('csv',$event)">csv</li>
+            <li class="dropdown-item text-warp" @click.self="exportExcel('txt',$event)">txt</li>
+          </ul>
+        </div>
       </el-col>
     </el-row>
     
@@ -64,7 +62,7 @@
 
 <script>
   import Pagination from './Pagination'
-  import moment from 'moment'
+  import moment, { calendarFormat } from 'moment'
   import FileSaver from 'file-saver'
   import XLSX from 'xlsx'
   import { Loading } from 'element-ui'
@@ -77,9 +75,13 @@
         pageSize: 10,
         search: '',
         start:0,
+        selectValue: 'xlsx',
         end: 10,
         // dialogVisible: false,
+        Dom: null,
+        stopFlag: true,
         josn: {},
+        parentDom: [],
         spanArr: [] // 合并单元格时 统计需要合并单元格数量
       }
     },
@@ -264,20 +266,37 @@
           }
         }
       },
-      exportExcel (kind) { // 导出excel
+      toggleExport (e) {
+        let classNames = e.target.parentNode.className
+          if ( classNames.indexOf('active') < 0 ) { 
+            e.target.parentNode.className = e.target.parentNode.className + ' active'
+          } else {
+            e.target.parentNode.className = e.target.parentNode.className.replace(' active', '')
+          }
+      },
+      irateror (dom, e) { // 递归 寻找table父元素
+        this.parentDom.push(dom)
+        if (dom.className && dom.className.indexOf('table') < 0) {
+          this.irateror(dom.parentNode)
+        } else {
+          return dom
+        }
+      },
+      exportExcel (kind, e) { // 导出excel
+        this.parentDom = [] // 清空数据防止遗留数据影响
+        this.irateror(e.target)
         const loading = Loading.service({
           lock: true,
           text: '下载中…',
           background: 'rgba(0, 0, 0, 0.7)'
         })
         if (this.tableData.length > 10) {
-          let parentDOm = document.querySelector('.' + this.selector)
-          let ul = parentDOm.getElementsByClassName('el-select-dropdown__list')[0]
+          let ul = this.parentDom[this.parentDom.length-1].querySelector('.el-select-dropdown__list')
           let lis = ul.getElementsByTagName('li')
           lis[lis.length -1].click()
           this.$nextTick(() => {
             setTimeout(()=> {
-              var wb = XLSX.utils.table_to_book(document.querySelector('.' + this.selector))
+              var wb = XLSX.utils.table_to_book(this.parentDom[this.parentDom.length-1])
               var wbout = XLSX.write(wb, { bookType: kind, bookSST: true, type: 'array' })
               try {
                   FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'download.' + kind)
@@ -288,7 +307,7 @@
             }, 1000)
           })
         } else {
-          var wb = XLSX.utils.table_to_book(document.querySelector('.' + this.selector))
+          var wb = XLSX.utils.table_to_book(this.parentDom[this.parentDom.length-1])
           var wbout = XLSX.write(wb, { bookType: kind, bookSST: true, type: 'array' })
           try {
               FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'download.' + kind)
@@ -348,7 +367,20 @@
     }
   }
 </script>
-
-<style scoped lang="stylus" rel="stylesheet/stylus">
-
+<style lang="stylus">
+.export-wrapper
+  .selected-value
+    position relative
+    height 100%
+    padding-right 12px
+    &:after
+      content ''
+      font-family "element-icons" !important
+      font-size 12px
+      content "\E617"
+      color #999
+      position absolute
+      left 50%
+      margin-left -6px 
+      color white
 </style>
