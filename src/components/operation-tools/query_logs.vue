@@ -84,69 +84,8 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table table1" ref="table" :tableData="tableData" :showSummary="false" :tatalPage="tableData.length" v-show="tableData.length">
-          <el-table-column
-            label="用户名"
-            prop="loginName">
-          </el-table-column>
-          <el-table-column
-            label="guid"
-            width="260"
-            prop="guid">
-            <template slot-scope="scope">
-              <div class="link" @click="queryGuid(scope.row.guid)">{{scope.row.guid}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="请求时间"
-            sortable
-            width="160"
-            :formatter="formatterTime"
-            prop="beginTime">
-          </el-table-column>
-          <el-table-column
-            label="请求参数"
-            width="200"
-            prop="param">
-            <template slot-scope="scope">
-              <div v-html="formatterParams(scope.row.param)"></div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="耗时(ms)"
-            width="120"
-            sortable
-            prop="costTime_all">
-          </el-table-column>
-          <el-table-column
-            label="命中缓存"
-            :formatter="formatterCache"
-            prop="readCacheHit">
-          </el-table-column>
-          <el-table-column
-            label="RESULT"
-            sortable
-            width="100"
-            prop="rsp.RESULT">
-          </el-table-column>
-          <el-table-column
-            label="resultCode"
-            width="100"
-            prop="rsp.resultCode">
-          </el-table-column>
-          <el-table-column
-            label="IP地址"
-            width="120"
-            prop="ip">
-          </el-table-column>
-          <el-table-column
-            label="渠道"
-            width="180"
-            prop="srcQueryReturnList?className.split('.')[2]&invokeCostTime">
-              <template slot-scope="scope">
-                <div v-html="formatterSrc(scope.row.srcQueryReturnList)"></div>
-              </template>
-          </el-table-column>
+        <Table :columns="columns" ref="table" :tableData="tableData" :showSummary="false" :tatalPage="tableData.length" v-show="tableData.length">
+
         </Table>
       </div>
     </div>
@@ -172,7 +111,6 @@ import loginNameSelect from '../../base/Select'
 import serviceSelect from '../../base/Select'
 import Select from '../../base/Select'
 import { showModal, reset } from '../../utils'
-import moment from 'monent'
 export default {
   mixins: [switchMixin, businessType, loginName, services],
   data () {
@@ -194,21 +132,61 @@ export default {
       },
       columns: [{ // 定义table
         prop: 'loginName',
+        width: "160px",
         label: '用户名'
       }, { 
         prop: 'guid',
-        width="260",
-        label: 'guid'
-      }, { 
-        prop: 'guid',
-        width="260",
+        width: "270px",
         label: 'guid'
       }, { 
         prop: 'beginTime',
         sortble: true,
+        width: "150px",
         label: '请求时间',
         formatter: row => {
-          moment(val.beginTime).format('YYYY-MM-DD HH:mm:ss')
+         return this.$refs.table.formatterTime(row.beginTime)
+        }
+      }, { 
+        prop: 'param',
+        label: '请求参数',
+        width: '200px',
+        formatter: row => {
+          return this.$refs.table.formatterParams(row.param)
+        }
+      }, { 
+        prop: 'costTime_all',
+        sortble: true,
+        width: "80px",
+        label: '耗时(ms)'
+      }, { 
+        prop: 'readCacheHit',
+        label: '命中缓存',
+        width: "80px",
+        formatter: row => {
+          return row.readCacheHit ? '是' : '否'
+        }
+      }, { 
+        prop: 'rsp.RESULT',
+        label: 'RESULT',
+        width: "80px",
+        sortble: true
+      }, { 
+        prop: 'rsp',
+        label: 'resultCode',
+        width: "90px",
+        sortble: true,
+        formatter: row => {
+          return row.detail ? data.detail.resultCode : ''
+        }
+      }, { 
+        prop: 'ip',
+        width: "130px",
+        label: 'IP地址'
+      }, { 
+        prop: 'srcQueryReturnList',
+        label: '渠道',
+        formatter: row => {
+         return this.$refs.table.formatterSrc(row.srcQueryReturnList)
         }
       }],
       tableData: [],
@@ -258,15 +236,6 @@ export default {
         return 
       }
       this.logs(options)
-    },
-    formatterTime (val) {
-      return moment(val.beginTime).format('YYYY-MM-DD HH:mm:ss')
-    },
-    formatterCache(val) {
-      return val.readCacheHit ? '是' : '否'
-    },
-    formatterParams (val) { // 参数展示
-      return this.$refs.table.formatterParams(val)
     },
     formatterSrc (val) { // 渠道展示
       if (val && val.length) {

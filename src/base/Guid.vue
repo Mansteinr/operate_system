@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="guid"
+    title="guid详情"
     custom-class="guid-dialog"
     :visible.sync="dialogVisible"
     :before-close="handleClose">
@@ -36,7 +36,6 @@ import 'jsoneditor/dist/jsoneditor.css'
     },
     methods: {
       handleClose() {
-        console.log('guid.vue')
         this.$emit('changeDialog', false)
       },
       renderJson (val) {

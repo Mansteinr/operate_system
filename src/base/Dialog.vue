@@ -7,7 +7,7 @@
     :close-on-click-modal="isClickModal"
     :before-close="handleClose">
     <slot></slot>
-    <div class="dialog-button-group">
+    <div class="dialog-button-group" v-show="isShowButton">
       <el-button @click.native.stop="determine" size="small" type="primary">{{primaryText}}</el-button>
       <el-button @click.native="cancel" size="small">{{subText}}</el-button>
     </div>
@@ -17,7 +17,7 @@
 <script>
   export default {
     props: {
-      isClickModal: {
+      isClickModal: { // 点击背景是否关闭
         type: Boolean,
         default: true
       },
@@ -40,15 +40,17 @@
       width: {
         type: String,
         default: '50%'
+      },
+      isShowButton: {
+        type: Boolean,
+        default: false
       }
     },
     methods: {
       handleClose() {
-        console.log(0)
         this.$emit('handleClose', false)
       },
       determine () {
-        console.log(2)
         this.$emit('determine', false)
       },
       cancel () {

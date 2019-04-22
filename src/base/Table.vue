@@ -28,7 +28,7 @@
         <template  v-for="(v, k) in columns">
           <el-table-column
             :key="k"
-            v-if="v.label != '操作'&& v.label != 'guid'"
+            v-if="v.label != '操作' && v.label != 'guid' && v.label != '请求参数' && v.label != '渠道'"
             :label="v.label"
             :fixed="v.fixed"
             :width="v.width"
@@ -57,29 +57,45 @@
             :key="k"
             v-else-if="v.label == 'guid'"
             :prop="v.prop"
+            :width="v.width"
             :label="v.label"
           >
             <template slot-scope="scope">
               <div class="link" @click="queryGuid(scope.row.guid)">{{scope.row.guid}}</div>
-            <!-- <el-button
-              v-for="(v1, k1) in v.prop"
-              :key="k1"
-              plain
-              :type="v1.type?v1.type:'primary'"
-              :size="v1.size?v1.size:'mini'"
-              @click="handle(scope.row, v1.method)">{{v1.keyWord}}</el-button> -->
+            </template>
+          </el-table-column>
+          <el-table-column
+            :key="k"
+            v-else-if="v.label == '请求参数'"
+            :prop="v.prop"
+            :width="v.width"
+            :label="v.label"
+          >
+            <template slot-scope="scope">
+              <div v-html="formatterParams(scope.row.param)"></div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :key="k"
+            v-else-if="v.label == '渠道'"
+            :prop="v.prop"
+            :width="v.width"
+            :label="v.label"
+          >
+            <template slot-scope="scope">
+              <div v-html="formatterSrc(scope.row.srcQueryReturnList)"></div>
             </template>
           </el-table-column>
         </template>
     </el-table>
     <Pagination @changePage="changePage" :tatalPage="sidePagination === 'customer' ? total : tatalPage" v-show="tatalPage>1"></Pagination>
-    <!-- <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid> -->
+    <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid>
   </div>
 </template>
 
 <script>
   import Pagination from './Pagination'
-  import moment, { calendarFormat } from 'moment'
+  import moment from 'moment'
   import FileSaver from 'file-saver'
   import XLSX from 'xlsx'
   import { Loading } from 'element-ui'
@@ -94,7 +110,7 @@
         start:0,
         selectValue: 'xlsx',
         end: 10,
-        // dialogVisible: false,
+        dialogVisible: false,
         Dom: null,
         stopFlag: true,
         josn: {},
@@ -147,7 +163,6 @@
     methods: {
       handle(row, method) {
         this.$emit('handle', row, method)
-        this.dialogVisible = true
       },
       queryGuid (val) {
         $http(this.API.upApi.logDetail, {'guid': val}).then((res) => {
@@ -155,10 +170,9 @@
           this.josn = res.resData || {}
         })
       },
-      // changeDialog (val) {
-      //   console.log('guid table')
-      //   this.dialogVisible = val
-      // },
+      changeDialog (val) {
+        this.dialogVisible = val
+      },
       getSummaries (param) {
         const { columns } = param
         const sums = []
@@ -254,33 +268,34 @@
         this.start = this.pageSize * (this.currentPage - 1)
         this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
       },
-      objectSpanMethod({ row, column, rowIndex, columnIndex }) { // 合并单元格
-        if (columnIndex === 0) {
-          const _row = this.spanArr[rowIndex];
-           const _col = _row > 0 ? 1 : 0;
-          return {
-            rowspan: _row,
-            colspan: _col
-          }
-        }
+      objectSpanMethod({ row, column, rowIndex, columnIndex }) {  // 合并单元格
+        console.log(column, row)
+        if (columnIndex === 0) {
+            const _row = this.spanArr[rowIndex];
+            const _col = _row > 0 ? 1 : 0;
+          return {
+            rowspan: _row,
+            colspan: _col
+          }
+        }
       },
-      getSpanArr(data) {　// 统计需要合并的格数
+      getSpanArr(data) {  // 统计需要合并的格数
         if (data.length <= 0) return // 没数据时 直接返回
         this.spanArr = []
         for (var i = 0; i < data.length; i++) {
-          if (i === 0) {
-            this.spanArr.push(1);
-            this.pos = 0
-          } else {
-            // 判断当前元素与上一个元素是否相同
-          if (data[i][this.mergeCell] === data[i - 1][this.mergeCell]) {
-              this.spanArr[this.pos] += 1;
-              this.spanArr.push(0);
-            } else {
-              this.spanArr.push(1);
-              this.pos = i;
-            }
-          }
+          if (i === 0) {
+            this.spanArr.push(1);
+            this.pos = 0
+          } else {
+            // 判断当前元素与上一个元素是否相同
+            if (data[i][this.mergeCell] === data[i - 1][this.mergeCell]) {
+              this.spanArr[this.pos] += 1
+              this.spanArr.push(0)
+            } else {
+              this.spanArr.push(1)
+              this.pos = i
+            }
+          }
         }
       },
       toggleExport (e) {
@@ -291,12 +306,23 @@
             e.target.parentNode.className = e.target.parentNode.className.replace(' active', '')
           }
       },
-      irateror (dom, e) { // 递归 寻找table父元素
+      irateror (dom) { // 递归 寻找table父元素
         this.parentDom.push(dom)
         if (dom.className && dom.className.indexOf('table') < 0) {
           this.irateror(dom.parentNode)
         } else {
           return dom
+        }
+      },
+      formatterSrc (val) {
+        if (val && val.length) {
+          let html = ''
+          val.forEach(v => {
+            if (v.className) {
+              html += `<span class="param-item" title="渠道名称: ${v.className.split('.')[2]}  ${v["invokeCostTime"]}">渠道名称: ${v.className.split('.')[2]}  ${v["invokeCostTime"]}</span>`
+            }
+          })
+          return html
         }
       },
       exportExcel (kind, e) { // 导出excel
@@ -373,7 +399,7 @@
             })
           })
         }
-        if (!!this.mergeCell) {
+        if (this.mergeCell) {
           this.getSpanArr(this.tableData)
         }
         return this.tableData

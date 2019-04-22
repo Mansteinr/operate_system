@@ -82,6 +82,7 @@
           v-show="tableData2.length">
         </Table>
       </div>
+      <el-button type="text" @click="open">点击打开 Message Box</el-button>
     </div>
     <Dialog
       ref='dialog'
@@ -294,7 +295,7 @@ export default {
         }
       })
     },
-    handle(row, method) {
+    handle(row) {
       this.tableData3 = row.upDetail
       this.dialogShow = true
     },
@@ -303,6 +304,11 @@ export default {
     },
     determine (msg) { // 取消键关闭对话框
       this.dialogShow = msg
+    },
+    open() {
+      this.$alert('<strong>这是 <i>HTML</i> 片段</strong>', 'HTML 片段', {
+        dangerouslyUseHTMLString: true
+      })
     }
   }
 }
