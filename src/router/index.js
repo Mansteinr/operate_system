@@ -12,6 +12,7 @@ import downstreamCustomer from '../components/usage-statistics/down-service/down
 import downstreamService from '../components/usage-statistics/down-service/downstream_service'
 import QueryLog from '../components/operation-tools/query_logs'
 import queryQuality from '../components/operation-tools/query_quality'
+import queryNewQuality from '../components/operation-tools/query_newquality'
 import queryGuid from '../components/operation-tools/query_guid'
 import queryMvTrackId from '../components/operation-tools/query_mvTrackId'
 import operationCache from '../components/data-persistence/operation-cache'
@@ -90,6 +91,10 @@ const router = new Router({
       name: 'views/query_quality.html',
       component: queryQuality
     }, {
+      path: '/queryNewQuality',
+      name: 'views/query_newquality.html',
+      component: queryNewQuality
+    },  {
       path: '/queryGuid',
       name: 'views/query_guid.html',
       component: queryGuid
