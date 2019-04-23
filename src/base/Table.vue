@@ -61,7 +61,7 @@
             :label="v.label"
           >
             <template slot-scope="scope">
-              <div class="link" @click="queryGuid(scope.row.guid)">{{scope.row.guid}}</div>
+              <div class="link" @click="queryGuid(scope.row[v.prop])">{{scope.row[v.prop]}}</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -94,12 +94,12 @@
 </template>
 
 <script>
-  import Pagination from './Pagination'
+  import XLSX from 'xlsx'
+  import Guid from './Guid'
   import moment from 'moment'
   import FileSaver from 'file-saver'
-  import XLSX from 'xlsx'
   import { Loading } from 'element-ui'
-  import Guid from './Guid'
+  import Pagination from './Pagination'
   import { $http } from '../common/js/ajax'
   export default {
     data () {

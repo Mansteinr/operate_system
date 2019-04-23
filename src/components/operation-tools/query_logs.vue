@@ -110,14 +110,15 @@
  *    }
  * 
  */
-import { $http } from '../../common/js/ajax'
-import { switchMixin, businessType, loginName,services } from '../../common/js/mixin'
 import Table from '../../base/Table'
-import QueryButton from '../../base/QueryButton'
-import loginNameSelect from '../../base/Select'
-import serviceSelect from '../../base/Select'
 import Select from '../../base/Select'
+import { $http } from '../../common/js/ajax'
+import serviceSelect from '../../base/Select'
 import { showModal, reset } from '../../utils'
+import loginNameSelect from '../../base/Select'
+import QueryButton from '../../base/QueryButton'
+import { switchMixin, businessType, loginName, services } from '../../common/js/mixin'
+
 export default {
   mixins: [switchMixin, businessType, loginName, services],
   data () {
@@ -183,7 +184,7 @@ export default {
         width: "90px",
         sortble: true,
         formatter: row => {
-          return row.detail ? data.detail.resultCode : ''
+          return row.detail ? row.detail.resultCode : ''
         }
       }, { 
         prop: 'ip',

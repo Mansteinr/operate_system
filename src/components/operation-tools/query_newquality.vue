@@ -63,26 +63,6 @@
         <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
         <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
-          <!-- <el-table-column
-            label="使用日期"
-            sortable
-            prop="dayTime">
-          </el-table-column>
-          <el-table-column
-            label="共计使用量"
-            sortable
-            prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="计费使用量"
-            sortable
-            prop="downChargedCount">
-          </el-table-column>
-          <el-table-column
-            label="消费金额"
-            sortable
-            prop="downCost">
-          </el-table-column> -->
         </Table>
       </div>
     </div>
@@ -92,7 +72,6 @@
 <script>
 import { $http } from '../../common/js/ajax'
 import { setLineData, renderChart } from '../../common/js/myCharts'
-import echarts from 'echarts'
 import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
 import Table from '../../base/Table'
 import QueryButton from '../../base/QueryButton'

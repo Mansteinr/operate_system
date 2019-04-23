@@ -92,7 +92,6 @@
 <script>
 import { $http } from '../../common/js/ajax'
 import { setLineData, renderChart } from '../../common/js/myCharts'
-import echarts from 'echarts'
 import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
 import Table from '../../base/Table'
 import QueryButton from '../../base/QueryButton'
