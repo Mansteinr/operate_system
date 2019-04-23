@@ -99,6 +99,7 @@ import QueryButton from '../../base/QueryButton'
 import loginNameSelect from '../../base/Select'
 import serviceSelect from '../../base/Select'
 import Select from '../../base/Select'
+import { reset } from '../../utils'
 export default {
   mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
   data () {
@@ -146,6 +147,7 @@ export default {
   methods: {
     reset () {
       this.$refs.querForm.resetFields()
+      reset()
     },
     onSubmit () {
       let options = {}
