@@ -99,8 +99,15 @@
  *    参数中开始事件、结束时间、客户名称、接口类型必传项，其余参数通过接口查询获取，若客户填则填的参数必传，不填则不传
  *    若注意耗时大于 要大于 耗时小于  还有这两个参数不是通过后台接口获取的 是前台根据后台需要的字段写死的
  *    
- *   查询的参数要包裹在params里面
- * 
+ *    查询的参数要包裹在params里面
+ *    
+ *    参数格式
+ *    {
+ *      "serviceName":"VehicleLicenseNameCheck",
+ *      "params":{},
+ *      "start":"2019-04-23 12:42:52",
+ *      "end":"2019-04-23 13:42:52"
+ *    }
  * 
  */
 import { $http } from '../../common/js/ajax'
@@ -219,9 +226,9 @@ export default {
         document.querySelector('.query-hide').querySelectorAll('input').forEach(v => {
           if (v.name && v.value) {
             if (v.name === 'lowerCostTime' || v.name === 'upperCostTime') {
-              options[v.name] = v.value
+              options[v.name] = v.value.replace(/(^\s*)|(\s*$)/g, "")
             } else {
-              params[v.name] = v.value
+              params[v.name] = v.value.replace(/(^\s*)|(\s*$)/g, "") // 去除两端空格
             }
             
           }

@@ -75,7 +75,6 @@
         <keep-alive>
           <router-view/>
         </keep-alive>
-      
       </el-main>
     </el-container>
   </el-container>
@@ -219,31 +218,20 @@ export default {
     .el-main
       overflow-y scroll
       padding 0px 10px 20px 10px !important
+      .template-wrapper
+        margin-top 50px
       .el-tabs
-        height 51px !important
+        height 50px !important
         margin-left -10px
         margin-right -10px
+        position absolute
+        z-index 102
+        width 100%
+        background #ecf1f5
         .is-active
           background white
           border-top-left-radius 10px
           border-top-right-radius 10px
-          // &::before, &:after
-          //   content ''
-          //   display inline-block
-          //   position absolute
-          //   border-top solid 10px transparent
-          //   border-left solid 10px white
-          //   border-right solid 10px transparent
-          //   border-bottom solid 10px white
-          //   bottom -1px
-          //   border-radius 50%
-          //   z-index 199
-          // &::before
-          //   left -13px
-          //   transform rotate(-99deg)
-          // &:after
-          //   right -13px
-          //   transform rotate(4deg)
     .el-aside
       width: auto !important
       background $color-nave

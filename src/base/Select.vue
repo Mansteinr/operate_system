@@ -41,7 +41,8 @@ export default {
       selectedArr: [], // 多选时，存储已经选中的
       selectedDefaultArr: [], // 多选时，存储已经选中的
       isSelecltedAll: false, // 是否已经选中全部
-      localDataArr: [] // 防止计算过程污染源数据  故先将源数据进行拷贝至改数组中
+      localDataArr: [], // 防止计算过程污染源数据  故先将源数据进行拷贝至改数组中
+      searchDataArr: [], // 防止计算过程污染源数据  故先将源数据进行拷贝至改数组中
     }
   },
   props: {
@@ -112,6 +113,7 @@ export default {
         this.selectedDefault = this.localDataArr[0][this.defaultValue]?this.localDataArr[0][this.defaultValue]:this.localDataArr[0]
       }
       this.selectedIndex = 0
+      this.searchDataArr = [...this.originArr]
     },
     searchValue () {
       this.searchItem()
@@ -251,7 +253,7 @@ export default {
       }
     },
     objectSearch (searchItemArr) {
-      this.localDataArr.map(v => { // 检索
+      this.searchDataArr.map(v => { // 检索
         if (v[this.defaultLable].indexOf(this.searchValue) > -1 || pinyin.getFullChars(v[this.defaultValue]).toLowerCase().indexOf(this.searchValue) > -1 ||  pinyin.getFullChars(v[this.defaultLable]).toLowerCase().indexOf(this.searchValue) > -1 || pinyin.getCamelChars(v[this.defaultValue]).toLowerCase().indexOf(this.searchValue) > -1 || pinyin.getCamelChars(v[this.defaultLable]).toLowerCase().indexOf(this.searchValue) > -1) {
           searchItemArr.push(v)
         }
@@ -259,7 +261,7 @@ export default {
       this.localDataArr = [...searchItemArr]
     },
     notObjectSearch (searchItemArr) {
-      this.localDataArr.map(v => { // 检索
+      this.searchDataArr.map(v => { // 检索
         if (v.indexOf(this.searchValue) > -1 || pinyin.getFullChars(v).toLowerCase().indexOf(this.searchValue) > -1 ||  pinyin.getFullChars(v).toLowerCase().indexOf(this.searchValue) > -1 ) {
           searchItemArr.push(v)
         }
