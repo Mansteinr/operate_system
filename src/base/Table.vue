@@ -36,6 +36,7 @@
             :show-overflow-tooltip="v.showOverflow?v.showOverflow:true"
             :formatter="v.formatter"
             :sortable="v.sortable"
+            :type="v.type"
             :prop='v.prop'>
           </el-table-column>
           <el-table-column

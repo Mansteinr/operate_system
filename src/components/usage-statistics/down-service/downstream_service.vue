@@ -24,7 +24,7 @@
             :labelTitle="'接口类型'" 
             :originArr="services" 
             :defaultValue="'serviceName'" 
-            :searchInput=true
+            :searchInput="true"
             :defaultLable="'serviceNameZh'">
           </serviceSelect>
           <el-form-item label="统计维度：" prop="timesAndMoneyUsed">

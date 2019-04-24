@@ -6,19 +6,13 @@
       </div>
       <div class="card-container clearfix">
         <el-form :inline="true" ref="querForm" :model="queryParams" class="query-form">
-          <el-form-item label="接口类型：" prop="serviceName">
-            <el-select filterable v-model="queryParams.persistId" placeholder="请选择">
-              <el-option
-                v-for="v in persistArr"
-                v-show="v.persistId"
-                :key="v.persistId"
-                @click.native="selectService(v)"
-                :title="`${v.persistName}(${v.persistId})`"
-                :label="v.persistName"
-                :value="v.persistId">
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <Select
+            :labelTitle="'接口类型'"
+            :originArr="persistArr"
+            :defaultValue="'persistId'" 
+            @changeInputValue="changePersist"
+            :defaultLable="'persistName'"
+          ></Select>
           <div class="param-wrapper">
             <div class="param-middle" ref="paramMiddle">
               <div class="param-wrapper-box" v-for="(v, k) in paramsArr" :key="k">
@@ -28,9 +22,9 @@
             </div>
             <i v-show="paramsKey.length" class="el-icon-circle-plus-outline" @click="addItem"></i>
           </div>
-          <el-form-item class="query-item">
+          <el-form-item class="query-button-box">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
-           <el-button v-show="isShowDelFlag" class="query-button" type="danger" @click="deleteFun">删除</el-button>
+           <el-button v-show="isShowDelFlag" class="query-button" type="danger" key="button" @click="deleteFun">删除</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -41,69 +35,7 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length && !resTableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
-          <el-table-column
-            label="序号"
-            type="index"
-            width="50">
-          </el-table-column>
-          <el-table-column
-            v-for="(v, k) in paramsKey"
-            :key="k"
-            :width="v === 'name' ? '80' : '180'"
-            :label="formatterLabel(v)"
-            prop="params">
-             <template slot-scope="scope">{{scope.row.params[v]}}</template>
-          </el-table-column>
-          <el-table-column
-            label="guid"
-            width="260"
-            prop="guid">
-          </el-table-column>
-          <el-table-column
-            label="数据源"
-            title="dataSource"
-            prop="dataSource">
-          </el-table-column>
-          <el-table-column
-            label="缓存时间"
-            width="160"
-            :formatter="formatter"
-            prop="cacheTime">
-          </el-table-column>
-          <el-table-column
-            label="查询结果"
-            width="100"
-            prop="result">
-              <template slot-scope="scope">
-                <el-tag
-                  :type="scope.row.result !== 'T' ? 'danger' : 'success'"
-                  disable-transitions>{{scope.row.result | formatterResult}}</el-tag>
-              </template>
-          </el-table-column>
-        </Table>
-        <Table class="table" :showSummary="false" :tableData="resTableData" :tatalPage="resTableData.length" v-show="resTableData.length">
-          <el-table-column
-            label="序号"
-            type="index"
-            width="50">
-          </el-table-column>
-          <el-table-column
-            v-for="(v, k) in paramsKey"
-            :key="k"
-            :label="formatterLabel(v)"
-            prop="params">
-             <template slot-scope="scope">{{scope.row[v]}}</template>
-          </el-table-column>
-          <el-table-column
-            label="操作结果"
-            prop="responeMessage">
-              <template slot-scope="scope">
-                <el-tag
-                  :type="scope.row.responeMessage !== '成功' ? 'danger' : 'success'"
-                  disable-transitions>{{scope.row.responeMessage}}</el-tag>
-              </template>
-          </el-table-column>
+        <Table ref="table" :columns="column" :showSummary="false"  :key="index" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
         </Table>
       </div>
     </div>
@@ -111,8 +43,20 @@
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax'
+/**
+ * 后台对接 查询删除门淑敏  获取接口名称接口 由研发中心 张树形提供
+ * 要点：
+ *  后台删除接口不支持批量删除，故由前台讲参数存储在一个数组中，在利用循环遍历，逐个删除
+ *  
+ *  查询之后 只有查询结果中有一致的 才显示删除按钮
+ * 
+ *  删除成功之后 需要将参数也展示出来 但是后台没返回查询时的参数 需要前端自己组装 故导致前端生成table时 比较乱
+ * 
+ * 
+ */
 import Table from '../../base/Table'
+import Select from '../../base/Select'
+import { $http } from '../../common/js/ajax'
 import QueryButton from '../../base/QueryButton'
 import { checkIdCard, checkMoble, checkNumber, showModal } from '../../utils'
 export default {
@@ -126,19 +70,19 @@ export default {
       paramsArr: [], 
       paramsKey: [],
       persistArr: [],
-      columnArr: [],
+      column: [],
+      index: 1, // element table复用容易报错 故添加个动态的key即可
       isShowDelFlag: false
     }
   },
   components: {
     Table,
+    Select,
     QueryButton
   },
   mounted() {
-    setTimeout(()=>{
-      this.persistInfos()
-    })
-    document.addEventListener("change",(e) =>{
+    this.persistInfos()
+    document.addEventListener("change",(e) =>{ // 输入参数时  进行参数校验
       e.target.classList.remove('m-error')
       if (!e.target.value) {
         showModal(`${e.target.name}不能为空`,'error')
@@ -163,8 +107,8 @@ export default {
       }
     })
   },
-  filters: {
-    formatterResult(val) {
+  methods: {
+    formatterResult(val) { // 汉化
       let label = ''
       switch (val) {
         case 'D':
@@ -184,9 +128,7 @@ export default {
           break;
       }
       return label
-    }
-  },
-  methods: {
+    },
     reset () {
       this.tableData = []
       this.resTableData = []
@@ -194,52 +136,70 @@ export default {
       this.paramsKey = []
     },
     deleteFun () {
+      this.index += 1
       let tableArr = []
       tableArr = [...tableArr, ...this.tableData]
+      this.column = []
+      this.column = [...this.column, ...[{
+        label: '序号',
+        width: '50px',
+        type: 'index'
+      }]]
+      this.paramsKey.map(v => {
+        this.column = [...this.column, ...[{
+          label: this.formatterLabel(v),
+          prop: v
+        }]]
+      })
+
+      this.column = [...this.column, ...[{
+        label: '查询结果',
+        prop: 'responeMessage'
+      }]]
+
       tableArr.forEach(v => {
         let op = {
           persistId: v.persistId,
           params: v.params
         }
+        this.tableData = []
         $http(this.API.persistApi.persistDel, op).then((res)=>{
-          this.tableData = []
           this.isShowDelFlag = false
-          this.resTableData.push(Object.assign(v.params,{responeMessage: res.resMsg[0].msgText}))
+          this.tableData.push(Object.assign(v.params,{responeMessage: res.resMsg[0].msgText}))
         })
       })
     },
+    changePersist (v) {
+      this.paramsArr = []
+      this.paramsKey = []
+      this.paramsKey = v.keys
+      this.paramsArr.push(this.paramsKey)
+    },
     onSubmit () {
-      this.tableData = []
       let arr = [], isNullFlag = false
       Array.from(document.querySelectorAll('.param-wrapper-box')).forEach(v => {
         let options = {
-          persistId: this.queryParams.persistId
+          persistId: document.querySelector('[name="persistId"]').value
         }
         options.params = {}
         Array.from(v.getElementsByTagName('input')).forEach(v1 => {
-          if (!v1.value || v1.classList.contains('m-error')) {
+          if (!v1.value || v1.classList.contains('m-error')) { // 检测参数是否有错误
             isNullFlag = true
           } else {
-            options.params[v1.name] = v1.value
+            options.params[v1.name] = v1.value.replace(/(^\s*)|(\s*$)/g, "") // 组装参数 并去除两端空格
           }
         })
         arr.push(options)
       })
-
       if (arr.length && isNullFlag) {
         showModal('参数有空或者错误，请检查','error')
         return
       }
+      this.tableData = []
       this.resTableData = []
       arr.forEach(v => {
         this.persistQuery(v)
       })
-    },
-    selectService(val) {
-      this.paramsArr = []
-      this.paramsKey = []
-      this.paramsKey = val.keys
-      this.paramsArr.push(this.paramsKey)
     },
     addItem: function () {
       this.paramsArr.push(this.paramsKey)
@@ -247,10 +207,7 @@ export default {
     deleteItem (e,k) {
       e.target.parentNode.remove(true)
     },
-    formatter (val) {
-      return this.$refs.table.formatterTime(val.cacheTime)
-    },
-    formatterLabel (val) {
+    formatterLabel (val) { // 参数汉化
       let label = ''
       switch (val) {
         case 'accountNo':
@@ -278,17 +235,49 @@ export default {
      return label
     },
     persistInfos () {
+      this.paramsArr = []
       $http(this.API.persistApi.persistInfos, {}).then((res)=>{
-        this.persistArr = res.resData
+        this.persistArr = []
+        res.resData.forEach(v => {
+          if (v.persistId) {
+            this.persistArr.push(v)
+          }
+        })
+        this.paramsArr.push(this.persistArr[0].keys)
+        this.paramsKey = this.persistArr[0].keys
       })
     },
     persistQuery (op) {
       $http(this.API.persistApi.persistQuery, op).then((res) => {
+        this.index += 1
         let obj =JSON.parse(res.resData).tail? JSON.parse(JSON.parse(res.resData).tail) : JSON.parse(res.resData)
         obj.result = JSON.parse(res.resData).result
+        obj.formatterResult = this.formatterResult(obj.result)
+
         if (obj.result === 'T') {
           this.isShowDelFlag = true
         }
+        this.column = []
+        this.column = [...this.column, ...[{
+          label: '序号',
+          width: '50px',
+          type: 'index'
+        }, {
+          label: 'guid',
+          width: '270px',
+          prop: 'guid'
+        }]]
+        this.paramsKey.map(v => {
+          this.column = [...this.column, ...[{
+            label: this.formatterLabel(v),
+            prop: 'params' + '[' + v + ']'
+          }]]
+        })
+
+        this.column = [...this.column, ...[{
+          label: '查询结果',
+          prop: 'formatterResult'
+        }]]
         Object.assign(obj, op)
         this.tableData.push(obj)
       })
@@ -302,6 +291,7 @@ export default {
 .param-wrapper
   position relative
   padding-right 30px
+  width 60%
   .el-icon-circle-plus-outline
     position absolute
     right 0px
@@ -312,7 +302,7 @@ export default {
     overflow auto
     .param-wrapper-box
       display flex
-      margin-top 10px
+      margin-bottom 5px
       .el-input
         margin-right 5px
         flex 1
@@ -325,4 +315,7 @@ export default {
   align-items center    //垂直方向的居中
   justify-content center//水平方向的居中
   cursor pointer
+.query-button-box
+  display block
+  width 100%
 </style>

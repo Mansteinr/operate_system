@@ -44,10 +44,10 @@
 import moment from 'moment'
 import Table from '../../base/Table'
 import { $http } from '../../common/js/ajax'
+import serviceSelect from '../../base/Select'
+import DialogVue from '../../base/Dialog.vue'
 import { services } from '../../common/js/mixin'
 import QueryButton from '../../base/QueryButton'
-import serviceSelect from '../../base/Select'
-import DialogVue from '../../base/Dialog.vue';
 
 export default {
   mixins: [services],
