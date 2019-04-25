@@ -13,6 +13,7 @@
                 type="daterange"
                 align="right"
                 unlink-panels
+                :clearable="false"
                 range-separator="至"
                 :name="['start', 'end']"
                 start-placeholder="开始日期"

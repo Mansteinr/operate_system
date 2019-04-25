@@ -257,11 +257,31 @@ export function setOtherLineData (xAxisData, series) {
     series: series
   }
   if (xAxisData.length > 20) {
-    option.dataZoom = dataBar
-    option.dataZoom[0].bottom = 35
-    option.grid.bottom = 100
+    var dataZoom = [];
+    dataZoom.push({
+      "show": true,
+      "height": 20,
+      "bottom": 30,
+      "start": 95,
+      "end": 100,
+      handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
+      handleSize: '110%',
+      handleStyle: {
+        color: "#d3dee5",
+      },
+      textStyle: {
+        color: "#6f7479"
+      },
+      borderColor: "#90979c"
+    }, {
+        type: 'inside',
+        realtime: true,
+        start: 20,
+        end: 80
+      });
+    option.dataZoom = dataZoom;
   } else {
-    option.grid.bottom = 30
+    option.grid.bottom = 120;
   }
   return option
 }

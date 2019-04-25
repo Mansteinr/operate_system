@@ -13,6 +13,7 @@
                 unlink-panels
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                :clearable="false"
                 :name="['start', 'end']"
                 v-model="queryParams.time"
                 range-separator="至"

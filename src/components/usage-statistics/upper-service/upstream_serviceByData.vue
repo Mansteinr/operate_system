@@ -14,6 +14,7 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 :name="['start', 'end']"
+                :clearable="false"
                 v-model="queryParams.time"
                 range-separator="至"
                 :picker-options="pickerOptions2">

@@ -15,6 +15,7 @@
                 end-placeholder="结束日期"
                 :name="['start', 'end']"
                 v-model="queryParams.time"
+                :clearable="false"
                 range-separator="至"
                 :picker-options="pickerOptions2">
               </el-date-picker>

@@ -45,6 +45,7 @@ export function $http (url, data, method = 'post', responseType = 'json') {
 }
 
 export function $downFile (url, op, method = 'post', callback, typeFile="xlsx") {
+  showFullScreenLoading()
   var xhr = new XMLHttpRequest()
   if (method.toUpperCase() === 'POST') {
     xhr.open("POST", url, true)
@@ -72,6 +73,7 @@ export function $downFile (url, op, method = 'post', callback, typeFile="xlsx") 
       document.body.appendChild(a)
       a.click();
       document.body.removeChild(a)
+      tryHideFullScreenLoading()
       if (callback) {
         callback()
       }

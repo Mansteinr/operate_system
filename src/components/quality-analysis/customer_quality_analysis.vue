@@ -97,15 +97,26 @@
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax' 
-import { mockTime } from '../../utils'
+/**
+ * 后台接口对接 李志明
+ * 
+ * 供应商名称、供应商服务名称、通道名称后台接口均是研发中心提供，后台对接 张树形
+ * 
+ * 
+ */
 import moment from 'moment'
-import { setOtherLineData, renderChart, setColumnData } from '../../common/js/myCharts'
-import {switchMixin, services, hotKeyTime } from '../../common/js/mixin'
-import QueryButton from '../../base/QueryButton'
 import Table from '../../base/Table'
+import { mockTime } from '../../utils'
+import supSelect from '../../base/Select' // 供应商名称
+import pipeSelect from '../../base/Select' // 通道名称
+import { $http } from '../../common/js/ajax' 
+import QueryButton from '../../base/QueryButton'
+import supServiceSelect from '../../base/Select' // 供应商服务名称
+import {switchMixin, hotKeyTime } from '../../common/js/mixin'
+import { setOtherLineData, renderChart, setColumnData } from '../../common/js/myCharts'
+
 export default {
-  mixins: [switchMixin, services, hotKeyTime ],
+  mixins: [switchMixin, hotKeyTime ],
   data () {
     return {
       queryParams: {
@@ -147,7 +158,10 @@ export default {
   },
   components: {
     Table,
-    QueryButton
+    supSelect,
+    pipeSelect,
+    QueryButton,
+    supServiceSelect
   },
   beforeDestroy() {
     clearInterval(this.timeId)

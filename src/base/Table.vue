@@ -95,6 +95,9 @@
 </template>
 
 <script>
+/**
+ * 支持多选 单选 搜索 前端分页 后端分页 前端导出excel txt等格式 单元格合并
+ */
   import XLSX from 'xlsx'
   import Guid from './Guid'
   import moment from 'moment'
@@ -270,7 +273,6 @@
         this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
       },
       objectSpanMethod({ row, column, rowIndex, columnIndex }) {  // 合并单元格
-        console.log(column, row)
         if (columnIndex === 0) {
             const _row = this.spanArr[rowIndex];
             const _col = _row > 0 ? 1 : 0;

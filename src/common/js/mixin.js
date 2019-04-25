@@ -174,7 +174,6 @@ export const company = { // 供应商
       $http(this.API.upApi.companys, {}).then((res) => {
         this.companys = []
         this.companys = res.resData
-        this.queryParams.companyName = this.companys[0]
       })
     }
   }
@@ -196,12 +195,11 @@ export const querySupInfo = {
       $http(this.API.supplierApi.querySupInfoList, {}).then((res) => {
         this.querySupInfoList = []
         this.querySupInfoList = res.resData.supInfos
-        this.supId = this.querySupInfoList[0].supId
-        this.changeSupInfo()
+        this.changeSupInfo(this.querySupInfoList[0])
       })
     },
-    changeSupInfo () {
-      this.querySupService({supId: this.supId})
+    changeSupInfo (option) {
+      this.querySupService({supId: option.supId})
     }
   }
 }
@@ -217,12 +215,11 @@ export const querySupService = {
       $http(this.API.supplierApi.querySupServiceList, op).then((res) => {
         this.querySupServiceList = []
         this.querySupServiceList = res.resData.supServiceInfos
-        this.supServiceId = this.querySupServiceList[0].supServiceId
-        this.changeSupService()
+        this.changeSupService(this.querySupServiceList[0])
       })
     },
-    changeSupService () {
-      this.queryPipe()
+    changeSupService (options) {
+      this.queryPipe({supServiceId: options.supServiceId})
     }
   }
 }
@@ -230,41 +227,15 @@ export const queryPipe = {
    // 通道名称
   data () {
     return {
-      queryPipeList: [],
-      queryPipeOriList: []
+      queryPipeList: []
     }
   },
   methods: {
-    queryPipe () {
-      $http(this.API.supplierApi.queryPipeList, {supServiceId: this.supServiceId}).then((res) => {
+    queryPipe (option) {
+      $http(this.API.supplierApi.queryPipeList, option).then((res) => {
         this.queryPipeList = []
-        this.queryPipeOriList = res.resData.simplePipeInfos
-        this.queryPipeList = [...[{
-          pipeId: '432423',
-          pipeName: '全部'
-        }], ...res.resData.simplePipeInfos]
-        this.queryParams.classNames = []
-        this.queryParams.classNames.push(this.queryPipeList[0].pipeName)
-        this.selectPipe(this.queryPipeList[0])
+        this.queryPipeList = res.resData.simplePipeInfos
       })
-    },
-    selectPipe (v) {
-      if (v.pipeName === '全部') {
-        this.queryParams.classNames = []
-        this.queryParams.classNames.push('全部')
-        this.classNames = []
-        this.queryPipeOriList.forEach(v => {
-          this.classNames.push(v.pipeName)
-        })
-      } else {
-        let index = this.queryParams.classNames.findIndex(value => {
-          return value ==='全部'
-        })
-        if (index > -1) {
-          this.queryParams.classNames.splice(index,1)
-        }
-        this.classNames = this.queryParams.classNames
-      }
     }
   }
 }
