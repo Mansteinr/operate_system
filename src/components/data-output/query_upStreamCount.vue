@@ -65,7 +65,7 @@ import QueryButton from '../../base/QueryButton'
 import { $http, $downFile } from '../../common/js/ajax'
 import {  hotKeyTime, services } from '../../common/js/mixin'
 
-let isNull = false
+
 export default {
   mixins: [hotKeyTime, services],
   data () {
