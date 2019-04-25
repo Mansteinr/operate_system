@@ -204,7 +204,7 @@ export default {
     addItem: function () {
       this.paramsArr.push(this.paramsKey)
     },
-    deleteItem (e,k) {
+    deleteItem (e) {
       e.target.parentNode.remove(true)
     },
     formatterLabel (val) { // 参数汉化

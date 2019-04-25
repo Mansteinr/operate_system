@@ -182,6 +182,9 @@ export function mockTime() {
  */
  export function reset () {
   for (let k = 0; k < document.querySelectorAll('.search-item').length; k++) {
-    document.querySelectorAll('.search-item')[k].querySelector('.dropdown-item.text-warp').click()
+    let li = document.querySelectorAll('.search-item')[k].querySelector('.dropdown-item.text-warp')
+    if (li.className.indexOf('active')<=-1) {
+      document.querySelectorAll('.search-item')[k].querySelector('.dropdown-item.text-warp').click()
+    }
   }
  }

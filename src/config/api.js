@@ -118,7 +118,8 @@ const api = {
     query: apiFormat('operator/redis/query', 'upapi')
   },
   financeApi: {
-    upStreamCount: apiFormat('operator/finance/upStreamCount', 'upapi'),  /* 供应商（上游）质量分析  实时数据 */
+    upStreamCount: apiFormat('operator/finance/upStreamCount', 'upapi'),  /* 组合服务上游调用量 */
+    upStreamDetail: apiFormat('operator/finance/upStreamDetail', 'upapi'),  /* 下游客户调用明细 */
     trackDetail: apiFormat('operator/finance/trackDetail', 'upapi'), 
     mobileOperator: apiFormat('operator/finance/mobileOperator', 'upapi')
   },

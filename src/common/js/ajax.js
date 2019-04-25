@@ -44,9 +44,9 @@ export function $http (url, data, method = 'post', responseType = 'json') {
   })
 }
 
-export function $downFile (url, op, method = 'post', callback, typeFile="xlxs") {
+export function $downFile (url, op, method = 'post', callback, typeFile="xlsx") {
   var xhr = new XMLHttpRequest()
-  if (method.toUpperCase === 'POST') {
+  if (method.toUpperCase() === 'POST') {
     xhr.open("POST", url, true)
     xhr.setRequestHeader('mtk', localStorage.getItem('mtk') || '909090')
     xhr.setRequestHeader('Content-Type', 'application/json')
@@ -72,7 +72,9 @@ export function $downFile (url, op, method = 'post', callback, typeFile="xlxs") 
       document.body.appendChild(a)
       a.click();
       document.body.removeChild(a)
-      callback()
+      if (callback) {
+        callback()
+      }
     }
   }
   

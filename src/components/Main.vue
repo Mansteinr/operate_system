@@ -218,6 +218,7 @@ export default {
     .el-main
       overflow-y scroll
       padding 0px 10px 20px 10px !important
+      margin-bottom 60px
       .template-wrapper
         margin-top 50px
       .el-tabs

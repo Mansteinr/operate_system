@@ -40,7 +40,7 @@
               :originArr="businessType" 
               :defaultValue="'typeId'" 
               :defaultLable="'typeName'"
-              :isAll = true
+              :isAll="true"
               @changeInputValue="changeType"> 
             </Select>
             <loginNameSelect 
@@ -49,15 +49,15 @@
               :defaultValue="'loginName'" 
               :defaultLable="'customerName'"
               :needValue="'customerId'"
-              :searchInput=true
-              :isAll=true
+              :searchInput="true"
+              :isAll="true"
               @changeInputValue="changeCustomer">
             </loginNameSelect>
             <serviceSelect 
               :labelTitle="'接口类型'" 
               :originArr="services" 
               :defaultValue="'serviceName'" 
-              :searchInput = true
+              :searchInput = "true"
               :defaultLable="'serviceNameZh'">
             </serviceSelect>
           </div>
