@@ -14,37 +14,30 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 v-model="queryParams.time"
+                :name="['start', 'end']"
                 range-separator="至"
                 :picker-options="pickerOptions2">
               </el-date-picker>
             </div>
           </el-form-item>
-          <el-form-item label="客户名称：" prop="loginName">
-            <el-select filterable v-model="queryParams.loginName" placeholder="请选择">
-              <el-option
-                v-for="v in loginName"
-                @click.native.stop="changeCustomer(v)"
-                :key="v.customerId"
-                :title="`${v.customerName}(${v.loginName})`"
-                :data-customerid="v.customerId"
-                :label="v.customerName"
-                :value="v.loginName">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="接口类型：" prop="serviceName">
-            <el-select filterable v-model="queryParams.serviceName" placeholder="请选择">
-              <el-option
-                v-for="v in services"
-                :key="v.serviceId"
-                :title="`${v.serviceNameZh}(${v.serviceName})`"
-                :label="v.serviceNameZh"
-                :value="v.serviceName">
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <loginNameSelect 
+            :labelTitle="'客户名称'" 
+            :originArr="loginName" 
+            :defaultValue="'loginName'" 
+            :defaultLable="'customerName'"
+            :needValue="'customerId'"
+            :searchInput="true"
+            @changeInputValue="changeCustomer">
+          </loginNameSelect>
+          <serviceSelect 
+            :labelTitle="'接口类型'" 
+            :originArr="services" 
+            :defaultValue="'serviceName'" 
+            :searchInput = "true"
+            :defaultLable="'serviceNameZh'">
+          </serviceSelect>
           <div class="demo-wrapper">
-            <el-form-item :label="`${v.label}${k+1}：`" prop="serviceName" class="demo-input-suffix" v-for="(v, k) in tableHeader">
+            <el-form-item :label="`${v.label}${k+1}：`" :key="k" prop="serviceName" class="demo-input-suffix" v-for="(v, k) in tableHeader">
               <el-input
                 :placeholder="`${v.placeholder1}`"
               >
@@ -54,7 +47,7 @@
               </el-input>
             </el-form-item>
           </div>
-          <el-form-item class="query-item"> 
+          <el-form-item class="query-button-box"> 
             <query-button @reset="reset" @submit="onSubmit"></query-button>
             <el-button class="query-button" @click="addHeader"  type="primary" plain>新增</el-button>
           </el-form-item>
@@ -73,10 +66,12 @@
 </template>
 
 <script>
-import { $downFile } from '../../common/js/ajax'
-import { hotKeyTime, loginName, services } from '../../common/js/mixin'
-import QueryButton from '../../base/QueryButton'
 import { trim } from '../../utils'
+import serviceSelect from '../../base/Select'
+import loginNameSelect from '../../base/Select'
+import { $downFile } from '../../common/js/ajax'
+import QueryButton from '../../base/QueryButton'
+import { hotKeyTime, loginName, services } from '../../common/js/mixin'
 export default {
   mixins: [hotKeyTime,loginName, services],
   data () {
@@ -87,29 +82,37 @@ export default {
         serviceName: '',
         options: {}
       },
-      noAllLogin: true,
       tableData: [],
       tableHeader: []
     }
   },
   components: {
-    QueryButton
+    QueryButton,
+    serviceSelect,
+    loginNameSelect
   },
   methods: {
     reset () {
-
+      this.$refs.querForm.resetFields()
+      this.tableHeader = []
     },
     onSubmit () {
-      let divs = Array.from(document.getElementsByClassName('demo-input-suffix'))
+      let divs = Array.from(document.getElementsByClassName('demo-input-suffix')), opt = {} // 组装参数
+      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
+        if (v.name) {
+          opt[v.name] = v.value
+        }
+      })
       if (divs.length) {
         Array.from(document.getElementsByClassName('demo-input-suffix')).forEach(v => {
-          let params = v.getElementsByTagName('input')
+          let params = v.getElementsByTagName('input'), options = {}
           if (trim(params[0].value) && trim(params[1].value)) {
-            this.queryParams.options[params[0].value] = params[1].value
+            options[params[0].value] = params[1].value
           }
+          opt.options = options
         })
       }
-      this.trackDetail(this.queryParams)
+      this.trackDetail(opt)
     },
     addHeader () {
       this.tableHeader.push({
@@ -128,8 +131,12 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus" rel="stylesheet/stylus">
 .demo-input-suffix
+  margin-bottom 10px !important
   .el-form-item__content
     display flex
     .el-input
       width calc(50% - 6px)
+.query-button-box,.demo-wrapper
+  display block
+  width 100%
 </style>
