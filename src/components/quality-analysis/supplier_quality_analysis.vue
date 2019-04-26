@@ -6,7 +6,7 @@
       </div>
       <div class="card-container clearfix">
         <el-form :inline="true"  ref="querForm" class="query-form">
-          <supSelect 
+          <Select 
             :labelTitle="'供应商'" 
             :originArr="querySupInfoList" 
             :needValue="'supId'" 
@@ -14,8 +14,8 @@
             :defaultLable="'supShortName'"
             :searchInput="true"
             @changeInputValue="changeSupInfo"> 
-          </supSelect>
-          <supServiceSelect 
+          </Select>
+          <Select 
             :labelTitle="'服务名称'" 
             :originArr="querySupServiceList" 
             :needValue="'supServiceId'" 
@@ -23,8 +23,8 @@
             :defaultLable="'supServiceNameCn'"
             :searchInput="true"
             @changeInputValue="changeSupService"> 
-          </supServiceSelect>
-          <pipeSelect 
+          </Select>
+          <Select 
             :labelTitle="'通道名称'" 
             :originArr="queryPipeList" 
             :needValue="'pipeId'" 
@@ -33,7 +33,7 @@
             :isMultiple="true"
             :isAll="true"
             :searchInput="true"> 
-          </pipeSelect>
+          </Select>
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
@@ -67,7 +67,7 @@
       <div class="card-container">
         <div v-show="!realTimeFlag" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="realTimeFlag" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table v-show="realTimeFlag" :tableData="tableData" :columns="columns" :tatalPage="tableData.length"></Table>
+        <Table v-show="radio?true:false" :tableData="tableData" :columns="columns" :tatalPage="tableData.length"></Table>
       </div>
     </div>
       <div class="card-wrapper card-content" v-show="showRadio&&!showPicker">
@@ -123,26 +123,24 @@
 import moment from 'moment' 
 import Table from '../../base/Table'
 import { mockTime } from '../../utils'
-import supSelect from '../../base/Select' // 供应商名称
-import pipeSelect from '../../base/Select' // 通道名称
-import QueryButton from '../../base/QueryButton'
-import supServiceSelect from '../../base/Select' // 供应商服务名称
+import Select from '../../base/Select' // 下拉框
 import { $http } from '../../common/js/ajax'
+import QueryButton from '../../base/QueryButton'
 import { setOtherLineData, renderChart, setColumnData } from '../../common/js/myCharts'
 import {switchMixin, querySupInfo, querySupService, queryPipe, hotKeyTime } from '../../common/js/mixin'
 export default {
   mixins: [switchMixin, querySupInfo, querySupService, queryPipe, hotKeyTime ],
   data () {
     return {
-      tableData: [],
-      tableData2: [],
-      realTimeFlag: false,
       radio: 0,
-      responseData: null,
-      showRadio: false,
-      showPicker: false,
       columns:[],
       columns1: [],
+      tableData: [],
+      tableData2: [],
+      showRadio: false,
+      showPicker: false,
+      responseData: null,
+      realTimeFlag: false,
       keys: {
         item0: '0-0.05s',
         item1: '0.05-0.1s',
@@ -168,16 +166,14 @@ export default {
   },
   components: {
     Table,
-    supSelect,
-    pipeSelect,
-    QueryButton,
-    supServiceSelect
+    Select,
+    QueryButton
   },
   methods: {
     changeHistoryTime () {
       this.detailSupplierData()
     },
-    changeDateTime(val) {
+    changeDateTime() {
       this.supplierHistory()
     },
     changeRadio (val) { // 切换单选框时
@@ -312,7 +308,7 @@ export default {
       }, _this = this
       $http(this.API.qualityanalyApi.supplierHistory, options).then((res) => {
         let data = res.resData, optionsObj = {},series = [], seriesObj = {}, xFiled = [], flagTime = true
-
+        
         optionsObj.data = []
         this.tableData = data
         if (data && data.length) {
@@ -422,7 +418,6 @@ export default {
         sortable: true
       }]
       // 组装yOptionsCall 方便后面数据出理
-      // originData.forEach(v => {
       for (let k1 in data) {
         switch(true) {
           case data[k1] <= 50:
@@ -592,6 +587,7 @@ export default {
   .radio-box,.mv-picker
     position absolute
     top 0px
+    left 95px
   .radio-box
     left 95px
   .mv-picker

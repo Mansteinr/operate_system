@@ -83,6 +83,15 @@ export default {
       default: () => []
     }
   },
+  // mounted () {
+  //   debugger
+  //   if (!this.originArr.length) { // 没有数据 直接返回 防止报错
+  //     this.localDataArr = []
+  //     this.selectedValue = '暂无数据'
+  //     this.selectedValue = '暂无数据'
+  //     return
+  //   } 
+  // },
   watch: {
     originArr() {
       if (!this.originArr.length) { // 没有数据 直接返回 防止报错

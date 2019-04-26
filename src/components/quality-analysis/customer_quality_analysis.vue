@@ -5,43 +5,24 @@
         查询条件
       </div>
       <div class="card-container clearfix">
-        <el-form :inline="true"  ref="querForm" :model="queryParams" class="query-form">
-          <el-form-item label="服务名称：">
-            <el-select v-model="queryParams.serviceName"  filterable  placeholder="请选择">
-              <el-option
-                v-for="v in services"
-                @click.native="changeServiceName(v)"
-                :key="v.serviceId"
-                :label="v.serviceNameZh"
-                :value="v.serviceName">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="客户名称：">
-            <el-select  v-model="queryParams.loginNames" multiple collapse-tags filterable  placeholder="请选择">
-              <el-option
-                v-for="v in customerArr"
-                :key="v.customerId"
-                @click.native="selectLoginName(v)"
-                :label="v.customerName"
-                :value="v.loginName">
-              </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="选择时间：" prop="time">
-            <div class="block">
-              <el-date-picker
-                v-model="time"
-                type="daterange"
-                align="right"
-                unlink-panels
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :picker-options="pickerOptions2">
-              </el-date-picker>
-            </div>
-          </el-form-item>
+        <el-form :inline="true"  ref="querForm" class="query-form">
+          <Select 
+            :labelTitle="'服务名称'" 
+            :originArr="services" 
+            :defaultValue="'serviceName'" 
+            :defaultLable="'serviceNameZh'"
+            :searchInput="true"
+            @changeInputValue="changeServiceName"> 
+          </Select>
+          <Select 
+            :labelTitle="'客户名称'" 
+            :originArr="customerArr" 
+            :defaultValue="'loginName'" 
+            :defaultLable="'customerName'"
+            :isAll="true"
+            :isMultiple="true"
+            :searchInput="true"> 
+          </Select>
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
@@ -50,25 +31,63 @@
     </div>
     <div class="card-wrapper card-content">
       <div class="card-title">
-        实时数据
+        当天数据
+        <div v-show="showRadio" class="radio-box">
+          <el-radio-group v-model="radio" @change="changeRadio">
+            <el-radio :label="0">实时数据监控</el-radio>
+            <el-radio :label="1">历史数据分析</el-radio>
+          </el-radio-group>
+          <div class="mv-picker" v-show="showPicker">
+            <el-date-picker
+              v-model="time"
+              type="daterange"
+              align="right"
+              unlink-panels
+              :clearable="false"
+              @change="changeDateTime"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions2">
+            </el-date-picker>
+          </div>
+        </div>
       </div>
       <div class="card-container">
         <div v-show="!realTimeFlag" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
         <div v-show="realTimeFlag" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        </div>
+        <Table v-show="radio?true:false" :tableData="tableData" :columns="columns" :tatalPage="tableData.length"></Table>
       </div>
-      <div class="card-wrapper card-content">
+    </div>
+      <div class="card-wrapper card-content"  v-show="showRadio&&!showPicker">
         <div class="card-title">
           历史数据
+          <div  class="radio-box">
+            <div class="mv-picker">
+              <el-date-picker
+                v-model="time"
+                type="datetimerange"
+                align="right"
+                unlink-panels
+                :clearable="false"
+                @change="changeHistoryTime"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :name="['start2', 'end2']"
+                :picker-options="pickerOptions2">
+              </el-date-picker>
+            </div>
+          </div>
           <el-button-group>
             <el-button :type="tabFlag?'':'primary'" :class="tabFlag?'':'active'" @click="switchTab(false)">图表</el-button>
             <el-button :type="tabFlag?'primary':''" :class="tabFlag?'active':''"  @click="switchTab(true)">数据</el-button>
           </el-button-group>
         </div>
         <div class="card-container">
-          <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-          <div v-show="!tabFlag && tableData.length" class="charts" ref="charts2"  style="height:450px;width:100%; margin-bottom:10px;"></div>
-          <Table v-show="tabFlag" ref="table" class="table" :tableData="tableData" :tatalPage="tableData.length">
+          <div v-show="!tabFlag && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
+          <div v-show="!tabFlag && tableData2.length" class="charts" ref="charts2"  style="height:450px;width:100%; margin-bottom:10px;"></div>
+          <Table v-show="tabFlag" ref="table" :columns="columns1" :tableData="tableData2" :tatalPage="tableData2.length">
             <el-table-column
               label="调用时间"
               sortable
@@ -107,32 +126,28 @@
 import moment from 'moment'
 import Table from '../../base/Table'
 import { mockTime } from '../../utils'
-import supSelect from '../../base/Select' // 供应商名称
-import pipeSelect from '../../base/Select' // 通道名称
+import Select from '../../base/Select' // 下拉框
 import { $http } from '../../common/js/ajax' 
 import QueryButton from '../../base/QueryButton'
-import supServiceSelect from '../../base/Select' // 供应商服务名称
-import {switchMixin, hotKeyTime } from '../../common/js/mixin'
+import {switchMixin, hotKeyTime, services} from '../../common/js/mixin'
 import { setOtherLineData, renderChart, setColumnData } from '../../common/js/myCharts'
 
 export default {
-  mixins: [switchMixin, hotKeyTime ],
+  mixins: [switchMixin, hotKeyTime, services],
   data () {
     return {
-      queryParams: {
-        serviceName: '',
-        loginNames: []
-      },
+      radio: 0,
+      columns:[],
+      columns1: [],
       tableData: [],
-      customerArr: [],
-      customerOriArr: [],
-      supId: '',
-      supServiceId: '',
-      realTimeFlag: false,
-      count: 0,
-      tiemId: null,
-      serviceNames: [],
+      tableData2: [],
       loginNames: [],
+      customerArr: [],
+      serviceNames: [],
+      showRadio: false,
+      showPicker: false,
+      responseData: null,
+      realTimeFlag: false,
       keys: {
         item0: '0-0.05s',
         item1: '0.05-0.1s',
@@ -158,96 +173,295 @@ export default {
   },
   components: {
     Table,
-    supSelect,
-    pipeSelect,
-    QueryButton,
-    supServiceSelect
+    Select,
+    QueryButton
   },
-  beforeDestroy() {
-    clearInterval(this.timeId)
-  },
-  mounted() {
-    setTimeout(() => {
-      this.changeServiceName(this.queryParams)
-    },1000)
+  watch: {
+    services () {
+      this.changeServiceName(this.services[0]) // 第一次请求客户名称 
+    }
   },
   methods: {
+    changeRadio (val) { // 切换单选框时
+      if (val) {
+        this.customerHistory() // 调用历史数据
+      } else {
+        this.customerRealTime() // 调用实时数据
+      }
+      this.showPicker = val?true:false
+    },
+    changeHistoryTime () {
+      this.detailSupplierData()
+    },
+    changeDateTime () {
+      this.customerHistory()
+    },
     reset () {
       this.$refs.querForm.resetFields()
     },
     onSubmit () {
-      this.customerHistory()
-      this.setIntervalFun()
+      this.customerRealTime()
     },
     substrTime (params) {
       return params.substr(params.length - 4).substr(0, 2) + ':' + params.substr(params.length - 4).substr(2, 4)
     },
-    selectLoginName (v) {
-      if (v.customerName === '全部') {
-        this.queryParams.loginNames = []
-        this.queryParams.loginNames.push('全部')
-        this.loginNames = []
-        this.customerOriArr.forEach(v => {
-          this.loginNames.push(v.loginName)
-        })
-      } else {
-        let index = this.queryParams.loginNames.findIndex((value) => {
-          console.log(value)
-          return value = '全部'
-        })
-        if (index > -1) {
-          this.queryParams.loginNames.splice(index,1)
-        }
-        this.loginNames = this.queryParams.loginNames
-      }
-    },
     changeServiceName (op) {
+      this.customerArr = []
+      if (!op) return
       let options = {}
       options.serviceNames = [op.serviceName]
-      this.queryParams.loginNames = []
       $http(this.API.upApi.getCustomersByWebServiceNames, options).then((res) => {
-        this.customerOriArr = res.resData
-        this.customerArr = [...[{
-          customerName: '全部',
-          loginName: '全部',
-          customerId: 'lkjk54478787'
-        }], ...res.resData]
-        this.queryParams.loginNames.push(this.customerArr[0].loginName)
-        this.selectLoginName(this.customerArr[0])
+        this.customerArr = res.resData
       })
     },
-    playerInterVal () {
-      this.count++
-      if (this.count > 20) { /* 执行20次以后清除定时器 */
-        this.count = 0
-        this.setIntervalFun()
-      } else {
-        this.customerRealTime()
+     detailSupplierData () {
+      let originData = this.responseData
+      // 将2019-02-02 14:12:25转为20190202141225形式 去除秒 并转为Number类型
+      let startDayTime = document.querySelector('[name="start2"]').value.replace(/-/g, '').replace(/:/g,'').replace(/ /g, '').substring(0, 12) / 1 
+      let endDayTime = document.querySelector('[name="end2"]').value.replace(/-/g, '').replace(/:/g,'').replace(/ /g, '').substring(0, 12) / 1
+      let data = {}, dataCall = {}, dataNeed = {}
+      for(let k1 in originData.avgCallTime) { // 筛选数据 并重构数据结构
+        if ((k1/1) >= startDayTime && (k1/1) <= endDayTime) {
+          data[k1] =  originData.avgCallTime[k1]
+          dataCall[k1] = originData.callNum[k1]
+          dataNeed[k1] = originData.needChargeCallNum[k1]
+        }
       }
-    },
-    setIntervalFun () {
-      if (this.timeId) {
-        clearInterval(this.timeId) /* 每次调用定时器 先清除定时器 */
+
+      let xBarFiled = [], yOptionsCall = {}, yOptionsNeed = {}
+      this.columns1  = []
+
+      this.columns1 = [{
+        prop: 'callTime',
+        label: '耗时',
+        fixed: true,
+        sortable: true
+      }, {
+        prop: 'callNum',
+        label: '调用总量',
+        sortable: true
+      }, {
+        prop: 'needChargeCallNum',
+        label: '计费调用量',
+        sortable: true
+      }]
+      // 组装yOptionsCall 方便后面数据出理
+      for (let k1 in data) {
+        switch(true) {
+          case data[k1] <= 50:
+            if(yOptionsCall.item0) {
+              yOptionsCall.item0 += dataCall[k1]
+              yOptionsNeed.item0 += dataNeed[k1]
+            } else {
+              yOptionsCall.item0 = dataCall[k1] || 0
+              yOptionsNeed.item0 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 100:
+            if(yOptionsCall.item1) {
+              yOptionsCall.item1 += dataCall[k1]
+              yOptionsNeed.item1 += dataNeed[k1]
+            } else {
+              yOptionsCall.item1 = dataCall[k1] || 0
+              yOptionsNeed.item1 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 200:
+            if(yOptionsCall.item2) {
+              yOptionsCall.item2 += dataCall[k1]
+              yOptionsNeed.item2 += dataNeed[k1]
+            } else {
+              yOptionsCall.item2 = dataCall[k1] || 0
+              yOptionsNeed.item2 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 300:
+            if(yOptionsCall.item3) {
+              yOptionsCall.item3 += dataCall[k1]
+              yOptionsNeed.item3 += dataNeed[k1]
+            } else {
+              yOptionsCall.item3 = dataCall[k1] || 0
+              yOptionsNeed.item3 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 500:
+            if(yOptionsCall.item4) {
+              yOptionsCall.item4 += dataCall[k1]
+              yOptionsNeed.item4 += dataNeed[k1]
+            } else {
+              yOptionsCall.item4 = dataCall[k1] || 0
+              yOptionsNeed.item4 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 800:
+            if(yOptionsCall.item5) {
+              yOptionsCall.item5 += dataCall[k1]
+              yOptionsNeed.item5 += dataNeed[k1]
+            } else {
+              yOptionsCall.item5 = dataCall[k1] || 0
+              yOptionsNeed.item5 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 1000:
+            if(yOptionsCall.item6) {
+              yOptionsCall.item6 += dataCall[k1]
+              yOptionsNeed.item6 += dataNeed[k1]
+            } else {
+              yOptionsCall.item6 = dataCall[k1] || 0
+              yOptionsNeed.item6 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 1500:
+            if(yOptionsCall.item7) {
+              yOptionsCall.item7 += dataCall[k1]
+              yOptionsNeed.item7 += dataNeed[k1]
+            } else {
+              yOptionsCall.item7 = dataCall[k1] || 0
+              yOptionsNeed.item7 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 2000:
+            if(yOptionsCall.item8) {
+              yOptionsCall.item8 += dataCall[k1]
+              yOptionsNeed.item8 += dataNeed[k1]
+            } else {
+              yOptionsCall.item8 = dataCall[k1] || 0
+              yOptionsNeed.item8 += dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 2500:
+            if(yOptionsCall.item9) {
+              yOptionsCall.item9 += dataCall[k1]
+              yOptionsNeed.item9 += dataNeed[k1]
+            } else {
+              yOptionsCall.item9 = dataCall[k1] || 0
+              yOptionsNeed.item9 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 3000:
+            if(yOptionsCall.item10) {
+              yOptionsCall.item10 += dataCall[k1]
+              yOptionsNeed.item10 += dataNeed[k1]
+            } else {
+              yOptionsCall.item10 = dataCall[k1] || 0
+              yOptionsNeed.item10 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 4000:
+            if(yOptionsCall.item11) {
+              yOptionsCall.item11 += dataCall[k1]
+              yOptionsNeed.item11 += dataNeed[k1]
+            } else {
+              yOptionsCall.item11 = dataCall[k1] || 0
+              yOptionsNeed.item11 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 5000:
+            if(yOptionsCall.item12) {
+              yOptionsCall.item12 += dataCall[k1]
+              yOptionsNeed.item12 += dataNeed[k1]
+            } else {
+              yOptionsCall.item12 = dataCall[k1] || 0
+              yOptionsNeed.item12 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 8000:
+            if(yOptionsCall.item13) {
+              yOptionsCall.item13 += dataCall[k1]
+              yOptionsNeed.item13 += dataNeed[k1]
+            } else {
+              yOptionsCall.item13 = dataCall[k1] || 0
+              yOptionsNeed.item13 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 10000:
+            if(yOptionsCall.item14) {
+              yOptionsCall.item14 += dataCall[k1]
+              yOptionsNeed.item14 += dataNeed[k1]
+            } else {
+              yOptionsCall.item14 = dataCall[k1] || 0
+              yOptionsNeed.item14 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 15000:
+            if(yOptionsCall.item15) {
+              yOptionsCall.item15 += dataCall[k1]
+              yOptionsNeed.item15 += dataNeed[k1]
+            } else {
+              yOptionsCall.item15 = dataCall[k1] || 0
+              yOptionsNeed.item15 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] <= 20000:
+            if(yOptionsCall.item16) {
+              yOptionsCall.item16 += dataCall[k1]
+              yOptionsNeed.item16 += dataNeed[k1]
+            } else {
+              yOptionsCall.item16 = dataCall[k1] || 0
+              yOptionsNeed.item16 = dataNeed[k1] || 0
+            }
+            break;
+          case data[k1] > 20000:
+            if(yOptionsCall.item17) {
+              yOptionsCall.item17 += dataCall[k1]
+              yOptionsNeed.item17 += dataNeed[k1]
+            } else {
+              yOptionsCall.item17 = dataCall[k1] || 0
+              yOptionsNeed.item17 = dataNeed[k1] || 0
+            }
+            break;
+          default :
+            break;
+        }
       }
-      this.customerRealTime() /* 第一次调用 */
-      this.timeId = setInterval(this.playerInterVal, 1000 * 60)
+      let yOptionsCallArr = []
+      this.tableData2 = []
+
+      for (let k in this.keys) {
+        xBarFiled.push(this.keys[k]) // 柱状图的x轴
+        if (!yOptionsCall[k]) {
+          yOptionsCall[k] = 0
+        }
+
+        yOptionsCallArr.push(yOptionsCall[k])
+        this.tableData2.push({
+          callTime: this.keys[k],
+          callNum: yOptionsCall[k]
+        })
+
+      }
+       var series1 = [{
+        name: '调用总量',
+        type: 'bar',
+        data: yOptionsCallArr
+      }]
+      renderChart(this.$refs.charts2, setColumnData('', xBarFiled, series1))
     },
     customerRealTime () {
-      if (!this.loginNames.length) {
-        this.selectLoginName(this.customerArr[0])
+      let loginNames = document.querySelector('[name="loginName"]').value.split(',')
+      let postLoginNames = []
+      if (loginNames[0] === '' && this.customerArr.length) {
+        this.customerArr.map(v => {
+          postLoginNames.push(v.loginName)
+        })
+      } else {
+        postLoginNames = loginNames
       }
       let options = {
         date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-        loginNames: this.loginNames,
-        serviceNames: [this.queryParams.serviceName]
+        loginNames: postLoginNames,
+        serviceNames: [document.querySelector('[name="serviceName"]').value]
       }
       let _this = this
       $http(this.API.qualityanalyApi.customerRealTime, options).then((res) => {
         // 提取后台传送的key
         let dataArr = Object.keys(res.resData.avgCallTime)
         if (dataArr && dataArr.length > 0) {
+          this.showRadio = true
           this.realTimeFlag = true
-
+          this.responseData = []
+          this.responseData = res.resData
+          this.detailSupplierData()
           let data = res.resData.avgCallTime, //实时响应时间
             dataCall = res.resData.callNum, //调用量
             dataNeed = res.resData.needChargeCallNum, //计费调用量
@@ -353,17 +567,27 @@ export default {
       })
     },
     customerHistory () {
+      let loginNames = document.querySelector('[name="loginName"]').value.split(',')
+      let postLoginNames = []
+      if (loginNames[0] === '' && this.customerArr.length) {
+        this.customerArr.map(v => {
+          postLoginNames.push(v.loginName)
+        })
+      } else {
+        postLoginNames = loginNames
+      }
       let options = {
         endTime: moment(this.time[1]).format('YYYY-MM-DD') + ' 23:59:59',
         startTime: moment(this.time[0]).format('YYYY-MM-DD') + ' 00:00:00',
-        serviceNames: [this.queryParams.serviceName],
-        loginNames: this.loginNames
+        serviceNames: [document.querySelector('[name="serviceName"]').value],
+        loginNames: postLoginNames
       }, _this = this
       $http(this.API.qualityanalyApi.customerHistory, options).then((res) => {
         let data = res.resData, series = [], seriesObj = {}, xFiled = [], flagTime = true
 
         this.tableData = data
         if (data && data.length) {
+          this.showRadio = true
           Object.keys(this.keys).forEach((k) => {
             data.forEach(v1 => {
               if(flagTime) {
@@ -415,7 +639,32 @@ export default {
           })
           percent = Math.round((total3s / total) * 10000) / 100
           let subTitle = `${options.startTime}至${options.endTime}共调用${total}条，3s内${total3s}条，占比${percent}%` /* 因为副标题需要时间参数 */
-          renderChart(_this.$refs.charts2, setColumnData('历史调用耗时分析', xFiled, series, subTitle))
+          renderChart(_this.$refs.charts, setColumnData('历史调用耗时分析', xFiled, series, subTitle))
+
+          this.columns = []
+          this.columns = [{
+            prop: 'dateTime',
+            minWidth: '105px',
+            fixed: true,
+            sortable: true,
+            label: '调用时间'
+          }, {
+            prop: 'callSum',
+            sortable: true,
+            fixed: true,
+            minWidth: '105px',
+            label: '调用总量'
+          }]
+          for (let k in this.keys) {
+            this.columns.push({
+              prop: k,
+              minWidth: '105px',
+              sortable: true,
+              label: this.keys[k]
+            })
+          }
+
+
         }
       })
     }
@@ -425,9 +674,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus" rel="stylesheet/stylus">
-  .card-wrapper
-    .el-button
-      padding 10px
-      font-size 14px
-      font-family '微软雅黑'
+.card-wrapper
+  .el-button
+    padding 10px
+    font-size 14px
+    font-family '微软雅黑'
+.radio-box,.mv-picker
+  position absolute
+  top 0px
+  left 95px
+  .radio-box
+    left 95px
+  .mv-picker
+    left 280px
 </style>

@@ -112,7 +112,6 @@ export default {
       }
     },
     getAllOutServiceChargeInfo (options) { // 下载excelc
-      var start = options.start.replace(/-/g, ''), end = options.end.replace(/-/g, '');
       if ((Date.parse(options.end) - Date.parse(options.start)) / (1000 * 24 * 3600) > 31) {
         this.$message({
           type: 'warnning',

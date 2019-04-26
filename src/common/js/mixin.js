@@ -143,8 +143,7 @@ export const loginName = { // 客户登陆名称
 export const services = { // 接口类型
   data () {
     return {
-      services: [],
-      servicesOrigin: []
+      services: []
     }
   },
   mounted () {
@@ -153,8 +152,8 @@ export const services = { // 接口类型
   methods: {
     getAllServices () {
       $http(this.API.upApi.services, {}).then((res) => {
-        this.services = [], this.servicesOrigin = res.resData
-        this.services = this.servicesOrigin 
+        this.services = []
+        this.services = res.resData
       })
     }
   }

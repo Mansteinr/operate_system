@@ -96,7 +96,7 @@ let color = ['rgba(44,181,171, 1)', 'rgba(44,181,171,.3)', 'rgba(145,191,93,1)',
   grid = {
     orient: 'horizontal',
     bottom: 70,
-    left: "7%",
+    left: "5%",
     right: '3%',
     itemGap: 20,
     textStyle: {
