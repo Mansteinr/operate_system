@@ -28,7 +28,7 @@
         <template  v-for="(v, k) in columns">
           <el-table-column
             :key="k"
-            v-if="v.label != '操作' && v.label != 'guid' && v.label != '请求参数' && v.label != '渠道'"
+            v-if="v.label != '操作' && v.label != 'guid' && v.label != '参数' && v.label != '渠道'"
             :label="v.label"
             :fixed="v.fixed"
             :width="v.width"
@@ -42,6 +42,7 @@
           <el-table-column
             :key="k"
             v-else-if="v.label == '操作'"
+            :width="v.width"
             :label="v.label"
           >
             <template slot-scope="scope">
@@ -67,13 +68,13 @@
           </el-table-column>
           <el-table-column
             :key="k"
-            v-else-if="v.label == '请求参数'"
+            v-else-if="v.label == '参数'"
             :prop="v.prop"
             :width="v.width"
             :label="v.label"
           >
             <template slot-scope="scope">
-              <div v-html="formatterParams(scope.row.param)"></div>
+              <div v-html="scope.row.param?formatterParams(scope.row.param):formatterParamsArrobj(scope.row.paramNameBeans)"></div>
             </template>
           </el-table-column>
           <el-table-column

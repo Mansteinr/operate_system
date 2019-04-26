@@ -7,156 +7,167 @@
       <div class="card-container">
         <el-button type="primary" icon="el-icon-plus" size="small" @click.native="addItem">新增</el-button>
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length">
-          <el-table-column
-            label="服务名"
-            prop="serviceName">
-            <template slot-scope="scope">
-              <span :class="scope.row.paramNameBeans.length > 4 ? 'link':''">{{scope.row.serviceNameCh}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="服务名(中文)"
-            prop="serviceNameCh">
-          </el-table-column>
-          <el-table-column
-            label="参数"
-            prop="paramNameBeans">
-            <template slot-scope="scope">
-              <div v-html="formatterParamsArrobj(scope.row.paramNameBeans)"></div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            width="100">
-            <template slot-scope="scope">
-              <el-button @click="handleDelete(scope.row)" type="text" size="small" class="oprator">删除</el-button>
-            </template>
-          </el-table-column>
+        <Table 
+          :columns="columns" 
+          :showSummary="false" 
+          :tableData="tableData" 
+          @handle="handle"
+          :tatalPage="tableData.length" 
+          v-show="tableData.length">
         </Table>
       </div>
     </div>
-    <Dialog :dialogVisible="dialogVisible" @closeDialog="closeDialog" @determine="determine" :isClickModal="false">
-      <el-form  :model="queryParams">
-        <el-form-item label="接口类型：" >
-          <el-select  filterable placeholder="请选择" :filter-method="filterServiceName" v-model="queryParams.serviceName">
-            <el-option
-              v-for="(v, index) in services"
-              :key="index"
-              @click.native="selecteService(v)"
-              :title="`${v.serviceNameZh}(${v.serviceName})`"
-              :label="v.serviceNameZh"
-              :value="v.serviceName">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="参数：" >
-          <el-select  filterable multiple collapse-tags placeholder="请选择" v-model="queryParams.paramNameBeans">
-            <el-option
-              v-for="(v, index) in allParams"
-              :key="index"
-              :title="`${v.paramNameCn}(${v.paramNameEn})`"
-              :label="v.paramNameCn"
-              :value="v.paramNameEn">
-            </el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
+    <Dialog
+      ref='dialog'
+      :dialogShow="dialogShow" 
+      @handleClose="handleClose" 
+      @determine="determine" 
+      :isShowButton="true"
+      :isClickModal="false">
+      <Select 
+        v-if="dialogShow"
+        :labelTitle="'接口类型'" 
+        :originArr="serviceArr" 
+        :defaultValue="'serviceName'" 
+        :defaultLable="'serviceNameZh'"
+        :searchInput="true"
+        @changeInputValue="changeServiceName"> 
+      </Select>
+      <Select 
+        :labelTitle="'参数'" 
+        v-if="dialogShow"
+        :originArr="allParamsArr" 
+        :defaultValue="'paramNameEn'" 
+        :defaultLable="'paramNameCn'"
+        :searchInput="true"
+        :isMultiple="true"> 
+      </Select>
     </Dialog>
   </div>
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax'
+/**
+ * 后台接口对接人 李志明
+ * 
+ * 没有修改 若想修改 直接重复添加即可
+ */
 import Table from '../../base/Table'
+import Select from '../../base/Select' // 下拉框
 import Dialog from '../../base/Dialog'
-import { services, getParam } from '../../common/js/mixin'
 import { showModal } from '../../utils'
+import { $http } from '../../common/js/ajax'
+import { services, getParam } from '../../common/js/mixin'
 export default {
   mixins: [ services, getParam ],
   data () {
     return {
-      queryParams: {
-        serviceName: '',
-        paramNameBeans: []
-      },
-      dialogVisible: false,
       tableData: [],
+      serviceArr: [],
+      allParamsArr: [],
+      dialogShow: false,
       paramNameBeans: [],
-      options: {}
+      selectedService: {},
+      columns: [{
+        prop: 'serviceName',
+        label: '服务名'
+      }, {
+        prop: 'serviceNameCh',
+        label: '服务名(中文)'
+      }, {
+        prop: 'paramNameBeans',
+        label: '参数'
+      }, {
+        prop: [{keyWord: '删除', method: 'delete'}],
+        width: '160px',
+        label: '操作'
+      }]
     }
   },
   components: {
     Table,
+    Select,
     Dialog
   },
   mounted() {
     this.getAll()
   },
   methods: {
-    initFun () {
-      this.addServiceNameAndParams()
+    changeServiceName (value) {
+      this.selectedService = value
     },
-    closeDialog (val) {
-      this.dialogVisible = val
+    handle (row, method) { // 删除操作
+      this.$confirm('确定该操作？', '提示', { //提示客户是否确定删除
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this[method](row)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     },
-    formatter (val) {
-      return this.$refs.table.formatter(val)
-    },
-    formatterParamsArrobj (val) { // 参数展示
-      return this.$refs.table.formatterParamsArrobj(val)
+    handleClose (val) { // 隐藏对话框
+      this.dialogShow = val
     },
     addItem () {
-      this.dialogVisible = true
+      this.dialogShow = true
+      this.serviceArr = []
+      this.allParamsArr = []
+      setTimeout(() => {
+        this.serviceArr = [...this.serviceArr,...this.services]
+        this.allParamsArr = [...this.allParamsArr,...this.allParams]
+      }, 100)
     },
-    handleDelete(row) {
-      let options = {}
+    delete(options) { // 删除
       $http(this.API.paramsApi.deleteByServiceNameAndParamName, options).then((res) => {
-        showModal(res.resMsg[0].msgText)
+        this.$message({
+          type: 'success',
+          message: res.resMsg[0].msgText
+        })
         this.getAll()
       })
     },
-    determine () {
-      if (!this.queryParams.paramNameBeans.length) {
-        showModal('请选择参数', 'warning')
-        return
-      }
-      this.paramNameBeans = []
-      this.queryParams.paramNameBeans.forEach(v => {
+    determine (msg) { // 确定增加
+      let paramNameArr = document.querySelector('[name="paramNameEn"]').value.split(','), postParamsArr = [], options = {}
+      if (!paramNameArr.length) return
+      paramNameArr.forEach(v => {
+        let findFlag = false // 防止多余的循环
         this.allParams.forEach(v1 => {
+          if (findFlag) return // 对比成功 跳出内层循环
           if (v === v1.paramNameEn) {
-            this.paramNameBeans.push({
+            findFlag = true
+            postParamsArr.push({
               paramNameCh: v1.paramNameCn,
               paramName: v1.paramNameEn
             })
           }
         })
       })
-      this.addServiceNameAndParams()
-    },
-    selecteService (val) {
-      this.options = {
-        serviceNameCh: val.serviceNameZh,
-        serviceName: val.serviceName
+      options.serviceNameCh = this.selectedService.serviceNameZh
+      options.serviceName = this.selectedService.serviceName
+      options.paramNameBeans = postParamsArr
+      if (!options.paramNameBeans.length) {
+        showModal('请选择参数')
+        return
       }
+      this.addServiceNameAndParams(options)
+      this.dialogShow = msg
     },
-    addServiceNameAndParams () {
-      let options = {}
-      if (!this.options.serviceName || !this.options.serviceNameCh) {
-        this.selecteService(this.services[0])
-      }
-      Object.assign(options, this.options)
-      options.paramNameBeans = []
-      options.paramNameBeans = [...options.paramNameBeans, ...this.paramNameBeans]
+    addServiceNameAndParams (options) { // 增加参数
       if (!options.paramNameBeans.length) {
         showModal('请选择参数', 'warning')
         return
       }
       $http(this.API.paramsApi.addServiceNameAndParams, options).then((res) => {
         showModal(res.resMsg[0].msgText)
+        this.getAll()
       })
     },
-    getAll () {
+    getAll () { // 获取所有的参数
       $http(this.API.paramsApi.getAll, {}).then((res) => {
         this.tableData = res.resData
       })
@@ -167,4 +178,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus" rel="stylesheet/stylus">
+  .el-dialog__body
+    height calc(100% - 54px) !important
+    background red
+    .search-item
+      width calc(100% - 125px) !important
+      margin-bottom 10px
+      margin-top 10px
+      float none
+    .dialog-button-group
+      bottom 10px
 </style>

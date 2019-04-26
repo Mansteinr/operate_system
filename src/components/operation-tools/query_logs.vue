@@ -156,7 +156,7 @@ export default {
         }
       }, { 
         prop: 'param',
-        label: '请求参数',
+        label: '参数',
         width: '200px',
         formatter: row => {
           return this.$refs.table.formatterParams(row.param)

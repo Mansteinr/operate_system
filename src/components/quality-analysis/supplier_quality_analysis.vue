@@ -391,7 +391,7 @@ export default {
         }
       })
     },
-    detailSupplierData () {
+    detailSupplierData () { // 当拉取实时数据时  前端将数据安装相应时间分类 展示
       let originData = this.responseData
       // 将2019-02-02 14:12:25转为20190202141225形式 去除秒 并转为Number类型
       let startDayTime = document.querySelector('[name="start2"]').value.replace(/-/g, '').replace(/:/g,'').replace(/ /g, '').substring(0, 12) / 1 

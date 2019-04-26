@@ -95,10 +95,8 @@
     >
       <Table 
         :columns="columns3" 
-        class="table3" 
         :showSummary="true" 
-        :tableData="tableData3" 
-        :selector="'table3'"
+        :tableData="tableData3"
         :tatalPage="tableData3.length">
       </Table>
     </Dialog>

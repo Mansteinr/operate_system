@@ -208,6 +208,7 @@ export default {
               for (let k in v) {
                 obj.name = v['company']
                 obj.value = v[paramKey]
+                console.log(k)
               }
               legend.push(v.company)
               costs.push(obj)

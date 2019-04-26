@@ -154,6 +154,9 @@ export const services = { // 接口类型
       $http(this.API.upApi.services, {}).then((res) => {
         this.services = []
         this.services = res.resData
+        if (this.selectedService) {
+          this.selectedService = this.services[0]
+        }
       })
     }
   }
