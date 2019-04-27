@@ -4,7 +4,6 @@ import { Loading } from 'element-ui'
 import { showModal } from '../../utils'
 let loading
 export function $http (url, data, method = 'post', responseType = 'json') {
-  console.log(data)
   showFullScreenLoading()
   let options = {
     method: method,

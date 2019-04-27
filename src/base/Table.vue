@@ -28,7 +28,7 @@
         <template  v-for="(v, k) in columns">
           <el-table-column
             :key="k"
-            v-if="v.label != '操作' && v.label != 'guid' && v.label != '参数' && v.label != '渠道'"
+            v-if="v.label != '操作' && v.label != 'guid' && v.label != '参数' && v.label != '渠道' && v.label !='车保报告'"
             :label="v.label"
             :fixed="v.fixed"
             :width="v.width"
@@ -41,7 +41,7 @@
           </el-table-column>
           <el-table-column
             :key="k"
-            v-else-if="v.label == '操作'"
+            v-else-if="v.label == '操作' || v.label == '车保报告'"
             :width="v.width"
             :label="v.label"
           >
@@ -50,6 +50,7 @@
               v-for="(v1, k1) in v.prop"
               :key="k1"
               plain
+              :disabled="v.disabled"
               :type="v1.type?v1.type:'primary'"
               :size="v1.size?v1.size:'mini'"
               @click="handle(scope.row, v1.method)">{{v1.keyWord}}</el-button>
@@ -109,17 +110,17 @@
   export default {
     data () {
       return {
-        currentPage: 1,
-        pageSize: 10,
-        search: '',
-        start:0,
-        selectValue: 'xlsx',
         end: 10,
-        dialogVisible: false,
-        Dom: null,
-        stopFlag: true,
+        start:0,
         josn: {},
+        Dom: null,
+        search: '',
+        pageSize: 10,
         parentDom: [],
+        currentPage: 1,
+        stopFlag: true,
+        selectValue: 'xlsx',
+        dialogVisible: false,
         spanArr: [] // 合并单元格时 统计需要合并单元格数量
       }
     },
