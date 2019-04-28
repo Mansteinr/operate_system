@@ -32,6 +32,7 @@
             :label="v.label"
             :fixed="v.fixed"
             :width="v.width"
+            :align="v.align||'center'"
             :min-width="v.minWidth"
             :show-overflow-tooltip="v.showOverflow?v.showOverflow:true"
             :formatter="v.formatter"
@@ -426,7 +427,7 @@
       content ''
       font-family "element-icons" !important
       font-size 12px
-      content "\E617"
+      content "\e77c"
       color #999
       position absolute
       left 50%

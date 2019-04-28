@@ -49,6 +49,18 @@
                   @click="handle(scope.row, scope.$index)">
                   {{scope.row.forbiddenFlag === '0' ? '禁止':'开启'}}
                 </el-button>
+                <el-button 
+                  class="mv-button"
+                  size="mini"
+                  @click="upPriority(scope.row, scope.$index)"
+                  :disabled="scope.$index===0?true:false"
+                  icon="el-icon-top" circle></el-button>
+                <el-button 
+                  class="mv-button"
+                  size="mini"
+                  @click="downPriority(scope.row, scope.$index)"
+                  :disabled="scope.$index===tableData.length-1?true:false"
+                  icon="el-icon-bottom" circle></el-button>
               </template>
             </el-table-column>
           </Table>
@@ -61,7 +73,7 @@
 import { $http } from '../../common/js/ajax'
 import Table from '../../base/Table'
 import QueryButton from '../../base/QueryButton'
-import { showModal } from '../../utils'
+import { drapDom } from '../../utils'
 export default {
   data () {
     return {
@@ -74,8 +86,11 @@ export default {
       services: [],
       params: {},
       columns: [{
+        label: '序号',
+        type: 'index'
+      }, {
         prop: 'supplierChannelName',
-        label: '通道名称',
+        label: '通道名称'
       }, {
         prop: 'forbiddenFlag',
         label: '状态',
@@ -91,8 +106,34 @@ export default {
   },
   mounted () {
     this.getAllAbilityInfo()
+    document.querySelector('.el-table__body-wrapper table').addEventListener('click', e => {
+      drapDom(e.target.parentNode.parentNode.parentNode)
+    })
   },
   methods: {
+    upPriority (row,index) { // 上移动
+      let data = [...this.tableData], options = {...this.params}
+      options.forbiddenFlag = this.queryParams.forbiddenFlag?'0':'1'
+
+      options.supplierServiceInfos[index-1] = row
+      options.supplierServiceInfos[index-1].priority = index-1
+
+      options.supplierServiceInfos[index] = data[index-1]
+      options.supplierServiceInfos[index].priority = index+1
+      this.alterAbilitySupplilerInfo(options)
+    },
+    downPriority (row,index) { // 下移
+      let data = [...this.tableData], options = {...this.params}
+      options.forbiddenFlag = this.queryParams.forbiddenFlag?'0':'1'
+
+      options.supplierServiceInfos[index+1] = row
+      options.supplierServiceInfos[index+1].priority = index+1
+
+      options.supplierServiceInfos[index] = data[index+1]
+      options.supplierServiceInfos[index].priority = index-1
+      
+      this.alterAbilitySupplilerInfo(options)
+    },
     handle (row, index) {
       this.$confirm(`确认${row.forbiddenFlag==='1'?'开启':'禁止'}此通道`, '提示', {
         confirmButtonText: '确定',
@@ -137,13 +178,17 @@ export default {
         })
         this.getAbilitySupplilerInfo()
       })
+    },
+    saveChannle () { // 调顺序
+
     }
   }
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" scoped rel="stylesheet/stylus">
   .mvTrackId
     label
       padding-right 0 !important
+  // .mv-button
 </style>

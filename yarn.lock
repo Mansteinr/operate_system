@@ -2774,10 +2774,10 @@ electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.82:
   resolved "http://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.84.tgz#2e55df59e818f150a9f61b53471ebf4f0feecc65"
   integrity sha1-LlXfWegY8VCp9htTRx6/Tw/uzGU=
 
-element-ui@^2.4.9:
-  version "2.4.9"
-  resolved "http://registry.npm.taobao.org/element-ui/download/element-ui-2.4.9.tgz#b7c9c96da06f182c6a4fe7f508b8c8ef1a516732"
-  integrity sha1-t8nJbaBvGCxqT+f1CLjI7xpRZzI=
+element-ui@^2.8.2:
+  version "2.8.2"
+  resolved "https://registry.yarnpkg.com/element-ui/-/element-ui-2.8.2.tgz#21a7a4cb92616b0f8b75d4d4e637d3a1cd8c09de"
+  integrity sha512-LABKHKGUyewFNvpf9BQLecB659Wq0XYvyP1tBveZ4RWpdlPSylDfGW/RLvDYU7zuCBoRasdZAz7ryjOwq1lLNg==
   dependencies:
     async-validator "~1.8.1"
     babel-helper-vue-jsx-merge-props "^2.0.0"
@@ -7706,13 +7706,6 @@ vue-i18n@^8.3.2:
   resolved "http://registry.npm.taobao.org/vue-i18n/download/vue-i18n-8.3.2.tgz#8878a622858060a1723fca1e735053854accdd52"
   integrity sha1-iHimIoWAYKFyP8oec1BThUrM3VI=
 
-vue-json-editor@^1.2.3:
-  version "1.2.3"
-  resolved "http://registry.npm.taobao.org/vue-json-editor/download/vue-json-editor-1.2.3.tgz#b928415640af335490d41a4061136e25394f36f6"
-  integrity sha1-uShBVkCvM1SQ1BpAYRNuJTlPNvY=
-  dependencies:
-    vue "^2.2.6"
-
 vue-loader@^15.4.2:
   version "15.4.2"
   resolved "http://registry.npm.taobao.org/vue-loader/download/vue-loader-15.4.2.tgz#812bb26e447dd3b84c485eb634190d914ce125e2"
@@ -7749,11 +7742,6 @@ vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "http://registry.npm.taobao.org/vue-template-es2015-compiler/download/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
   integrity sha1-3EJpcTMwLOMBdSQ1amxht7abShg=
-
-vue@^2.2.6:
-  version "2.5.21"
-  resolved "http://registry.npm.taobao.org/vue/download/vue-2.5.21.tgz#3d33dcd03bb813912ce894a8303ab553699c4a85"
-  integrity sha1-PTPc0Du4E5Es6JSoMDq1U2mcSoU=
 
 vue@^2.5.11, vue@^2.5.17:
   version "2.5.17"
