@@ -45,7 +45,7 @@
             :width="v.width"
             :label="v.label"
           >
-            <template slot-scope="scope">
+          <template slot-scope="scope">
             <el-button
               v-for="(v1, k1) in v.prop"
               :key="k1"
@@ -90,6 +90,7 @@
             </template>
           </el-table-column>
         </template>
+        <slot></slot>
     </el-table>
     <Pagination @changePage="changePage" :tatalPage="sidePagination === 'customer' ? total : tatalPage" v-show="tatalPage>1"></Pagination>
     <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid>

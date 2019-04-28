@@ -153,7 +153,8 @@ export default {
         width: '120px',
         label: '报告状态',
         formatter: row => {
-          this.disabledFlag = row.dataFrom / 1 ? true : false
+          // row.dataFrom = 0
+          // this.disabledFlag = row.dataFrom / 1 ? false : true
           return row.dataFrom / 1 ? '已生成报告' : '未生成报告'
         }
       }, {
@@ -228,6 +229,7 @@ export default {
       $http(this.API.callbackServiceApi.getOrderInfoById, options).then((res) => {
         this.tableData = []
         this.tableData.push(res.resData)
+        this.columns[11].disabled = res.resData.dataFrom / 1 ? false : true
       })
     },
     getOrderInfoByVin () {

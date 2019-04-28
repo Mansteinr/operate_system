@@ -33,12 +33,25 @@
         查询结果
       </div>
       <div class="card-container">
-        <Table ref="table" class="table" :tableData="tableData" :tatalPage="tableData.length" :showSummary="false">
-          <el-table-column
-            label="客户名称"
-            prop="loginname">
-          </el-table-column>
-        </Table>
+        <Table 
+          ref="table" 
+          :columns="columns" 
+          :tableData="tableData" 
+          :tatalPage="tableData.length" :showSummary="false">
+            <el-table-column
+              prop="forbiddenFlag"
+              label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  type="primary"
+                  size="mini"
+                  plain
+                  @click="handle(scope.row, scope.$index)">
+                  {{scope.row.forbiddenFlag === '0' ? '禁止':'开启'}}
+                </el-button>
+              </template>
+            </el-table-column>
+          </Table>
       </div>
     </div>
   </div>
@@ -57,7 +70,19 @@ export default {
         forbiddenFlag: true
       },
       tableData: [],
-      services: []
+      forbiddenFlag: '',
+      services: [],
+      params: {},
+      columns: [{
+        prop: 'supplierChannelName',
+        label: '通道名称',
+      }, {
+        prop: 'forbiddenFlag',
+        label: '状态',
+        formatter: row => {
+          return row.forbiddenFlag / 1 ? '禁止中' : '使用中'
+        }
+      }]
     }
   },
   components: {
@@ -68,10 +93,28 @@ export default {
     this.getAllAbilityInfo()
   },
   methods: {
+    handle (row, index) {
+      this.$confirm(`确认${row.forbiddenFlag==='1'?'开启':'禁止'}此通道`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        let options = {...this.params}
+        options.supplierServiceInfos[index].forbiddenFlag = (row.forbiddenFlag === '1' ? '0' : '1')
+        this.alterAbilitySupplilerInfo(options)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
     reset () {
       this.$refs.querForm.resetFields()
     },
     onSubmit () {
+      this.getAbilitySupplilerInfo()
     },
     getAllAbilityInfo () {
       $http(this.API.callbackServiceApi.getAllAbilityInfo, {}, 'get').then((res) => {
@@ -81,7 +124,18 @@ export default {
     },
     getAbilitySupplilerInfo () {
        $http(this.API.callbackServiceApi.getAbilitySupplilerInfo, {serviceId: this.queryParams.serviceId}).then((res) => {
+        this.tableData = []
         this.tableData = res.resData.supplierServiceInfos
+        this.params = JSON.parse(JSON.stringify(res.resData))
+      })
+    },
+    alterAbilitySupplilerInfo (options) {
+      $http(this.API.callbackServiceApi.alterAbilitySupplilerInfo, options).then((res) => {
+        this.$message({
+          type: 'success',
+          message: res.resMsg[0].msgText
+        })
+        this.getAbilitySupplilerInfo()
       })
     }
   }
