@@ -25,9 +25,9 @@
             :labelTitle="'接口类型'" 
             :originArr="services" 
             :defaultValue="'serviceName'" 
-            :searchInput=true
-            :isMultiple=true
-            :isAll=true
+            :searchInput="true"
+            :isMultiple="true"
+            :isAll="true"
             :defaultLable="'serviceNameZh'">
           </serviceSelect>
           <el-form-item class="query-item">

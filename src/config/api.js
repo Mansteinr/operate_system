@@ -33,7 +33,7 @@ const baseConfig = {
     upapi: '192.168.109.171:7000/',	/* ! 上游服务有关接口 */
     vehicleapi: '120.55.241.117:9089/',	/* ! 车辆维保 */
     qualityanalyzeapi: '114.55.36.16:9999/',	/* ! 质量分析 */
-    safaCenterapi: '121.196.226.17:7200/',	/* ! 安全中心 */
+    safaCenterapi: '120.55.241.117:9191/',	/* ! 安全中心 */
     imageapi: 'http://120.55.241.117:10777/file/show'	/* ! 图片接口 */
   },
   /*测试环境*/
@@ -49,15 +49,15 @@ const baseConfig = {
 }
 /*设置api转换*/
 // let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
-let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.prod[hostkey] + api
+let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.dev[hostkey] + api
 const api = {
   base: {
-    login: apiFormat('login/doLogin', 'rbacapi', 'https'),
-    loginout: apiFormat('logout/ajaxLogout', 'rbacapi', 'https'),
-    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', 'https'),
-    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', 'https'),
-    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', 'https'),
-    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', 'https'),
+    login: apiFormat('login/doLogin', 'rbacapi', 'http'),
+    loginout: apiFormat('logout/ajaxLogout', 'rbacapi', 'http'),
+    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', 'http'),
+    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', 'http'),
+    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', 'http'),
+    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', 'http'),
     imageapi: baseConfig.prod.imageapi
   },
   upApi: {

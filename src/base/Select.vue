@@ -12,6 +12,7 @@
         <template v-if="localDataArr.length">
           <li class="dropdown-item text-warp" v-for="(v, k) in localDataArr" 
             :key="k"
+            :data-value="v.defaultValue"
             :title="`${v[defaultLable] ? v[defaultLable] : v} (${v[defaultValue] ? v[defaultValue] : v})`" 
             @click.stop.prevent="searchClick($event,v,k)" 
             :class="isMultiple ? '': (k === selectedIndex?'active': '')"
@@ -85,7 +86,6 @@ export default {
   },
   watch: {
     originArr() {
-      console.log('wathc')
       if (!this.originArr.length) { // 没有数据 直接返回 防止报错
         this.localDataArr = []
         this.selectedValue = '暂无数据'
@@ -121,7 +121,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.originArr)
     window.addEventListener('click', e => { // 当点击其他部位时  则将select收回
       if (e.target.className.indexOf('search-input') >= 0) {
         return false
@@ -132,6 +131,11 @@ export default {
         }
       })
     }, false)
+
+    if (!this.originArr.length) {
+      this.selectedValue = '暂无数据'
+      this.selectedValue = '暂无数据'
+    }
   },
   methods: {
     toggleExp(e) { // 展开折叠下拉框
@@ -256,7 +260,13 @@ export default {
     },
     objectSearch (searchItemArr) {
       this.searchDataArr.map(v => { // 检索
-        if (v[this.defaultLable].indexOf(this.searchValue) > -1 || pinyin.getFullChars(v[this.defaultValue]).toLowerCase().indexOf(this.searchValue) > -1 ||  pinyin.getFullChars(v[this.defaultLable]).toLowerCase().indexOf(this.searchValue) > -1 || pinyin.getCamelChars(v[this.defaultValue]).toLowerCase().indexOf(this.searchValue) > -1 || pinyin.getCamelChars(v[this.defaultLable]).toLowerCase().indexOf(this.searchValue) > -1) {
+        if (
+          v[this.defaultLable].indexOf(this.searchValue) > -1 || 
+          v[this.defaultValue].indexOf(this.searchValue) > -1 || 
+          pinyin.getFullChars(v[this.defaultValue]).toLowerCase().indexOf(this.searchValue) > -1 ||  
+          pinyin.getFullChars(v[this.defaultLable]).toLowerCase().indexOf(this.searchValue) > -1 || 
+          pinyin.getCamelChars(v[this.defaultValue]).toLowerCase().indexOf(this.searchValue) > -1 || 
+          pinyin.getCamelChars(v[this.defaultLable]).toLowerCase().indexOf(this.searchValue) > -1) {
           searchItemArr.push(v)
         }
       })

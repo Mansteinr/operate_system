@@ -72,10 +72,9 @@
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax'
 import Table from '../../base/Table'
+import { $http } from '../../common/js/ajax'
 import QueryButton from '../../base/QueryButton'
-import { drapDom } from '../../utils'
 export default {
   data () {
     return {
@@ -108,9 +107,6 @@ export default {
   },
   mounted () {
     this.getAllAbilityInfo()
-    document.querySelector('.el-table__body-wrapper table').addEventListener('click', e => {
-      drapDom(e.target.parentNode.parentNode.parentNode)
-    })
   },
   methods: {
     upPriority (row,index) { // 上移动

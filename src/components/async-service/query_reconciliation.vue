@@ -94,6 +94,7 @@
  * 当选择利数据源时  显示的条件为开始结束时间  接口类型  数据源
  */
 import Table from '../../base/Table'
+import { showModal } from '../../utils'
 import Select from '../../base/Select'
 import QueryButton from '../../base/QueryButton'
 import { $http, $downFile } from '../../common/js/ajax.js'
@@ -232,7 +233,10 @@ export default {
         }
       })
       if (options.recondition === 'margin') {
-        return
+        if(options.loginName === '') {
+          showModal('请选择客户名称', 'warning')
+          return
+        }
       }
       $downFile(this.API.callbackServiceApi[options.recondition+'Detail'], options)
 
