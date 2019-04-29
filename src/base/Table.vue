@@ -32,7 +32,7 @@
             :label="v.label"
             :fixed="v.fixed"
             :width="v.width"
-            :align="v.align||'center'"
+            :align="v.align"
             :min-width="v.minWidth"
             :show-overflow-tooltip="v.showOverflow?v.showOverflow:true"
             :formatter="v.formatter"

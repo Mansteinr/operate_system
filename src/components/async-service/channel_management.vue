@@ -52,12 +52,14 @@
                 <el-button 
                   class="mv-button"
                   size="mini"
+                  title="上移"
                   @click="upPriority(scope.row, scope.$index)"
                   :disabled="scope.$index===0?true:false"
                   icon="el-icon-top" circle></el-button>
                 <el-button 
                   class="mv-button"
                   size="mini"
+                  title="下移"
                   @click="downPriority(scope.row, scope.$index)"
                   :disabled="scope.$index===tableData.length-1?true:false"
                   icon="el-icon-bottom" circle></el-button>
@@ -131,7 +133,7 @@ export default {
 
       options.supplierServiceInfos[index] = data[index+1]
       options.supplierServiceInfos[index].priority = index-1
-      
+
       this.alterAbilitySupplilerInfo(options)
     },
     handle (row, index) {

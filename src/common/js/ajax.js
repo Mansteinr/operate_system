@@ -67,8 +67,9 @@ export function $downFile (url, op, method = 'post', callback, typeFile="xlsx") 
   xhr.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       var response = this.response;
-      var a = document.createElement('a');
-      a.download = op.start + '/' + op.end + "数据统计." + typeFile
+      var a = document.createElement('a')
+      let fileName = this.getResponseHeader('content-disposition') ? this.getResponseHeader('content-disposition').split('=')[1] : options.start + '/' + options.end + "数据统计"
+      a.download =this.getResponseHeader('content-disposition') ? fileName : fileName + typeFile
       a.href = window.URL.createObjectURL(response);
       document.body.appendChild(a)
       a.click();

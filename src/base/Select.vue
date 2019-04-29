@@ -83,17 +83,9 @@ export default {
       default: () => []
     }
   },
-  // mounted () {
-  //   debugger
-  //   if (!this.originArr.length) { // 没有数据 直接返回 防止报错
-  //     this.localDataArr = []
-  //     this.selectedValue = '暂无数据'
-  //     this.selectedValue = '暂无数据'
-  //     return
-  //   } 
-  // },
   watch: {
     originArr() {
+      console.log('wathc')
       if (!this.originArr.length) { // 没有数据 直接返回 防止报错
         this.localDataArr = []
         this.selectedValue = '暂无数据'
@@ -129,6 +121,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.originArr)
     window.addEventListener('click', e => { // 当点击其他部位时  则将select收回
       if (e.target.className.indexOf('search-input') >= 0) {
         return false

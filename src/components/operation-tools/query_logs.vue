@@ -293,6 +293,7 @@ export default {
     },
     logs (options) {
       $http(this.API.upApi.logs, options).then((res) => {
+        this.tableData = []
         this.tableData = res.resData
       })
     }

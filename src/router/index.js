@@ -1,34 +1,52 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+// 总量统计
 import QueryIndex from '../components/query-index'
+
+// 用量统计
 import QueryUsage from '../components/usage-statistics/query_usage'
-import QueryFinance from '../components/usage-statistics/query_finance' // 余额快照
 import QueryProfit from '../components/usage-statistics/query_profit' // 利润分析
-import upstreamSupplier from '../components/usage-statistics/upper-service/upstream_supplier'
-import upstreamCustomer from '../components/usage-statistics/upper-service/upstream_customer'
+import QueryFinance from '../components/usage-statistics/query_finance' // 余额快照
 import upstreamService from '../components/usage-statistics/upper-service/upstream_service'
-import upstreamServiceByData from '../components/usage-statistics/upper-service/upstream_serviceByData'
-import downstreamCustomer from '../components/usage-statistics/down-service/downstream_customer'
+import upstreamCustomer from '../components/usage-statistics/upper-service/upstream_customer'
+import upstreamSupplier from '../components/usage-statistics/upper-service/upstream_supplier'
 import downstreamService from '../components/usage-statistics/down-service/downstream_service'
+import downstreamCustomer from '../components/usage-statistics/down-service/downstream_customer'
+import upstreamServiceByData from '../components/usage-statistics/upper-service/upstream_serviceByData'
+
+// y运维工具
 import QueryLog from '../components/operation-tools/query_logs'
-import queryQuality from '../components/operation-tools/query_quality'
-import queryNewQuality from '../components/operation-tools/query_newquality'
 import queryGuid from '../components/operation-tools/query_guid'
+import queryQuality from '../components/operation-tools/query_quality'
 import queryMvTrackId from '../components/operation-tools/query_mvTrackId'
-import operationCache from '../components/data-persistence/operation-cache'
+import queryNewQuality from '../components/operation-tools/query_newquality'
+
+// 数据持久化
 import dataReset from '../components/data-persistence/data-reset'
+import operationCache from '../components/data-persistence/operation-cache'
+
+// 数据导出
 import upStreamCount from '../components/data-output/query_upStreamCount'
-import mobileOperator from '../components/data-output/query_mobileOperator'
 import queryTrackDetail from '../components/data-output/query_trackDetail'
+import mobileOperator from '../components/data-output/query_mobileOperator'
+
+// 平台治理分析
 import supplierAnalysis from '../components/quality-analysis/supplier_quality_analysis'
 import customerAnalysis from '../components/quality-analysis/customer_quality_analysis'
+
+/* 异步服务 */
 import queryOrder from '../components/async-service/query_order'
 import channelManagement from '../components/async-service/channel_management'
-import parameterMaintenance from '../components/config-management/interface_parameter_maintenance'
-import sensitiveWord from '../components/security-center/sensitive_word'
-import serviceRegular from '../components/security-center/service_regular'
+import queryReconciliation from '../components/async-service/query_reconciliation'
+
+/** 安全中心 */
 import paramRecord from '../components/security-center/param_record'
 import ruleInstance from '../components/security-center/rule_instance'
+import sensitiveWord from '../components/security-center/sensitive_word'
+import serviceRegular from '../components/security-center/service_regular'
+import parameterMaintenance from '../components/config-management/interface_parameter_maintenance'
+
+// 登陆
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import Main from '../components/Main'
@@ -138,6 +156,10 @@ const router = new Router({
       path: '/channelManagement',
       name: 'views/vehicle/channel_management.html',
       component: channelManagement    
+    },  {
+      path: '/queryReconciliation',
+      name: 'views/vehicle/query_reconciliation.html',
+      component: queryReconciliation    
     }, {
       path: '/parameterMaintenance',
       name: 'views/interface_parameter_maintenance.html',

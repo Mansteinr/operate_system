@@ -30,7 +30,7 @@ const baseConfig = {
   dev: {
     rbacweb: '172.16.9.216:8020/',	/* ! 系统权限管理web页面地址 */
     rbacapi: '192.168.109.173:7000/',	/* ! 系统权限管理api服务器地址 */
-    upapi: '120.55.241.117:9089/',	/* ! 上游服务有关接口 */
+    upapi: '192.168.109.171:7000/',	/* ! 上游服务有关接口 */
     vehicleapi: '120.55.241.117:9089/',	/* ! 车辆维保 */
     qualityanalyzeapi: '114.55.36.16:9999/',	/* ! 质量分析 */
     safaCenterapi: '121.196.226.17:7200/',	/* ! 安全中心 */
@@ -49,15 +49,15 @@ const baseConfig = {
 }
 /*设置api转换*/
 // let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
-let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.dev[hostkey] + api
+let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.prod[hostkey] + api
 const api = {
   base: {
-    login: apiFormat('login/doLogin', 'rbacapi', 'http'),
-    loginout: apiFormat('logout/ajaxLogout', 'rbacapi', 'http'),
-    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', 'http'),
-    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', 'http'),
-    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', 'http'),
-    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', 'http'),
+    login: apiFormat('login/doLogin', 'rbacapi', 'https'),
+    loginout: apiFormat('logout/ajaxLogout', 'rbacapi', 'https'),
+    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', 'https'),
+    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', 'https'),
+    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', 'https'),
+    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', 'https'),
     imageapi: baseConfig.prod.imageapi
   },
   upApi: {
@@ -142,12 +142,18 @@ const api = {
     addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams', 'upapi') /*配置管理新增的服务名*/
   },
   callbackServiceApi: {
-    getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById', 'upapi'),  /* 订单号查看订单状态 */
-    getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin', 'upapi'),  /* vin查询符合条件的订单信息 */
-    getDecryptData: apiFormat('callbackService/operator/getDecryptData', 'upapi'), /* 订单号查询车保报告 */
-    getAllAbilityInfo: apiFormat('callbackService/operator/getAllAbilityInfo', 'upapi'), /* 订单号查询车保报告 */
-    getAbilitySupplilerInfo: apiFormat('callbackService/operator/getAbilitySupplilerInfo', 'upapi'), /* 订单号查询车保报告 */
-    alterAbilitySupplilerInfo: apiFormat('callbackService/operator/alterAbilitySupplilerInfo', 'upapi') /* 订单号查询车保报告 */
+    getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById', 'vehicleapi'),  /* 订单号查看订单状态 */
+    getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin', 'vehicleapi'),  /* vin查询符合条件的订单信息 */
+    getDecryptData: apiFormat('callbackService/operator/getDecryptData', 'vehicleapi'), /* 订单号查询车保报告 */
+    getAllAbilityInfo: apiFormat('callbackService/operator/getAllAbilityInfo', 'vehicleapi'), /* 订单号查询车保报告 */
+    getAbilitySupplilerInfo: apiFormat('callbackService/operator/getAbilitySupplilerInfo', 'vehicleapi'), /* 订单号查询车保报告 */
+    alterAbilitySupplilerInfo: apiFormat('callbackService/operator/alterAbilitySupplilerInfo', 'vehicleapi'), /* 订单号查询车保报告 */
+    customerCount: apiFormat('callbackService/operator/bill/customerCount', 'vehicleapi'), /* 数据源账单 */
+    upCount: apiFormat('callbackService/operator/bill/upCount', 'vehicleapi'), /* 数据源账单 */
+    marginCount: apiFormat('callbackService/operator/bill/marginCount', 'vehicleapi'), /*  利润查询 */
+    customerDetail: apiFormat('callbackService/operator/bill/customerDetail', 'vehicleapi'), /* 利润查询 */
+    upDetail: apiFormat('callbackService/operator/bill/upDetail', 'vehicleapi'), /* 利润查询 */
+    marginDetail: apiFormat('callbackService/operator/bill/marginDetail', 'vehicleapi') /* 利润查询 */
   }
 }
 export default api
