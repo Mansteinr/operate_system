@@ -10,7 +10,7 @@
           <input type="text" placeholder="输入搜索" v-model.trim="searchValue" class="search-input m-input">
         </li>
         <template v-if="localDataArr.length">
-          <li class="dropdown-item text-warp" v-for="(v, k) in localDataArr" 
+          <li class="dropdown-item text-warp li-text" v-for="(v, k) in localDataArr" 
             :key="k"
             :data-value="v.defaultValue"
             :title="`${v[defaultLable] ? v[defaultLable] : v} (${v[defaultValue] ? v[defaultValue] : v})`" 

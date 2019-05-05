@@ -8,7 +8,7 @@
     :before-close="handleClose">
     <slot></slot>
     <div class="dialog-button-group" v-show="isShowButton">
-      <el-button @click.native.stop="determine" size="small" type="primary">{{primaryText}}</el-button>
+      <el-button @click.native.stop="determine" v-show="showDetermine" size="small" type="primary">{{primaryText}}</el-button>
       <el-button @click.native="cancel" size="small">{{subText}}</el-button>
     </div>
   </el-dialog>
@@ -44,6 +44,10 @@
       isShowButton: {
         type: Boolean,
         default: false
+      },
+      showDetermine: {
+        type: Boolean,
+        default: true
       }
     },
     methods: {

@@ -89,8 +89,14 @@
         </Table>
       </div>
     </div>
-    <Dialog :dialogVisible="dialogVisible" @closeDialog="closeDialog" @determine="determine" :isClickModal="false">
-      <el-form v-show="tabFlag" :rules="rules" :model="queryParams" ref="ruleForm">
+    <Dialog
+      :title="title"
+      :dialogShow="dialogShow"
+      @handleClose="handleClose"
+      @determine="determine" 
+      :showDetermine="showDetermine"
+      :isShowButton="true" :isClickModal="false">
+      <el-form v-show="!lookFlag&&tabFlag" :rules="rules" :model="queryParams" ref="ruleForm">
         <el-form-item label="规则名称：" prop="regularName">
           <el-input v-model.trim="queryParams.regularName" placeholder="请输入规则名称"></el-input>
         </el-form-item>
@@ -101,53 +107,67 @@
           <el-input v-model.trim="queryParams.alarmMsg" placeholder="请输入告警描述"></el-input>
         </el-form-item>
       </el-form>
-      <el-form v-show="!tabFlag" :model="queryParamsAdd" ref="ruleFormAdd">
+      <el-form v-show="!lookFlag&&!tabFlag" :model="queryParamsAdd" ref="ruleFormAdd">
         <el-form-item label="组合服务：" prop="combine" class="is-required">
           <el-radio-group v-model="queryParamsAdd.combine" :disabled="isServiceUpdate">
             <el-radio :label="false">否</el-radio>
             <el-radio :label="true">是</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="接口类型：" class="is-required" v-show="!queryParamsAdd.combine">
-          <el-select filterable placeholder="请选择" v-model="queryParamsAdd.serviceId" prop="serviceId">
-            <el-option
-              v-for="(v, index) in services"
-              :key="index"
-              @click.native="selecteService(v)"
-              :title="`${v.serviceNameZh}(${v.serviceName})`"
-              :label="v.serviceNameZh"
-              :value="v.serviceId">
-            </el-option>
-          </el-select>
-        </el-form-item>
+        <Select 
+          v-if="dialogShow&&!queryParamsAdd.combine" 
+          :labelTitle="'接口类型'" 
+          :originArr="services" 
+          :defaultValue="'serviceName'" 
+          :defaultLable="'serviceNameZh'"
+          :searchInput="true"
+          @changeInputValue="changeService"> 
+        </Select>
         <el-form-item label="服务名称：" class="is-required" v-show="queryParamsAdd.combine">
-          <el-input v-model.trim="queryParamsAdd.serviceName" :disabled="isServiceUpdate"></el-input>
+          <el-input v-model.trim="queryParamsAdd.serviceName" :disabled="isServiceUpdate" placeholder="输入服务名称"></el-input>
         </el-form-item>
         <el-form-item label="中文名称：" class="is-required" v-show="queryParamsAdd.combine">
-          <el-input v-model.trim="queryParamsAdd.serviceNameZh" :disabled="isServiceUpdate"></el-input>
+          <el-input v-model.trim="queryParamsAdd.serviceNameZh" :disabled="isServiceUpdate" placeholder="输入中文名称"></el-input>
         </el-form-item>
-        <el-form-item label="子服务：" class="is-required" v-show="queryParamsAdd.combine">
-          <el-select filterable placeholder="请选择" multiple v-model="queryParamsAdd.subService" prop="subService">
-            <el-option
-              v-for="(v, index) in directServices"
-              :key="index"
-              :title="`${v.serviceNameZh}(${v.serviceName})`"
-              :label="v.serviceNameZh"
-              :value="v.serviceId">
-            </el-option>
-          </el-select>
-        </el-form-item>
+        <Select 
+          v-if="dialogShow&&queryParamsAdd.combine" 
+          :labelTitle="'子服务'" 
+          :needValue="'serviceId'"
+          :originArr="directServices" 
+          :defaultValue="'serviceId'" 
+          :defaultLable="'serviceNameZh'"
+          :isMultiple="true"
+          :searchInput="true"
+          @changeInputValue="changeService"> 
+        </Select>
       </el-form>
+      <div v-show="lookFlag" style="max-height:300px;overflow:auto;">
+        <el-alert
+          v-for="(v, k) in subServices"
+          :key="v.serviceId"
+          :closable="false"
+          :title="`${k+1} ${v.serviceNameZh} : ${v.serviceName}`"
+          type="info">
+        </el-alert>
+      </div>
     </Dialog>
   </div>
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax'
+/**
+ * 后台对接人马超众
+ * 
+ * 服务
+ *    当时组合服务时 可以更新 否则不能更新 并且时组合服务时 应该有预览效果 可以让操作者看到具体的组合服务
+ *    修改服务时 不允许修改为单个服务 也不允许修改服务名称和服务中文名称
+ */
 import Table from '../../base/Table'
 import Dialog from '../../base/Dialog'
-import { services, switchMixin } from '../../common/js/mixin'
 import { showModal } from '../../utils'
+import Select from '../../base/Select'
+import { $http } from '../../common/js/ajax'
+import { services, switchMixin } from '../../common/js/mixin'
 export default {
   mixins: [ services, switchMixin ],
   data () {
@@ -170,24 +190,29 @@ export default {
       },
       queryParamsAdd: {
         combine: false,
-        serviceId: '',
         subService: [],
         serviceNameZh: '',
         serviceName: ''
       },
-      dialogVisible: false,
+      title: '新增服务',
       tableData: [],
       tableData2: [],
+      lookFlag: false,
       selectedObj: {},
-      directServices: [],
-      isServiceFlag: true,
-      isServiceUpdate: false,
-      isRegularUpdate: false,
+      subServices: [], // 某个组合服务对应的自服务
+      dialogShow: false,
+      isHasParams: false, // 服务名是否有参数
+      directServices: [], // 所有的子服务
+      showDetermine: true,
+      isServiceFlag: true, // 是否是服务
+      isServiceUpdate: false, // 服务跟新
+      isRegularUpdate: false, // 规则更新
     }
   },
   components: {
     Table,
-    Dialog
+    Dialog,
+    Select
   },
   mounted() {
     this.allService()
@@ -195,11 +220,11 @@ export default {
     this.allRegulars()
   },
   methods: {
+    handleClose (val) { // 隐藏对话框
+      this.dialogShow = val
+    },
     resetTable() {
       this.$refs.ruleForm.resetFields()
-    },
-    closeDialog (val) {
-      this.dialogVisible = val
     },
     formatterParams (val) { // 参数展示
       var html = ''
@@ -210,15 +235,36 @@ export default {
       return html
     },
     addItem () {
-      this.queryParamsAdd.serviceId = this.services[0].serviceId
-      this.dialogVisible = true
+      this.lookFlag = false
+      this.dialogShow = true
+      this.showDetermine = true
       this.isServiceUpdate = false
       this.isRegularUpdate = false
+      this.queryParamsAdd.combine = false
+      this.queryParamsAdd.serviceName = ''
+      this.queryParamsAdd.serviceNameZh = ''
+      setTimeout(() => {
+        this.services = [...[],...this.services]
+        this.queryParamsByServiceName({
+          serviceName: this.services[0].serviceName,
+          serviceNameZh: this.services[0].serviceNameZh
+        })
+      }, 100)
+
+    },
+    queryParamsByServiceName (v) {
+      $http(this.API.paramsApi.queryParamsByServiceName, v).then((res) => {
+        this.isHasParams = (res.resData.paramNameBeans&&res.resData.paramNameBeans.length)
+      })
     },
     // 预览自服务
     handleLook (row) {
       if (!row.combine) return
-      this.dialogVisible = true
+      this.lookFlag = true
+      this.dialogShow = true
+      this.title = '预览'
+      this.showDetermine = false
+      this.subService({serviceId: row.serviceId})
     },
     // 删除服务
     handleServiceDelete(row) {
@@ -235,17 +281,29 @@ export default {
           showModal(res.resMsg[0].msgText)
           this.allService()
         })
+      }).catch(() => {
+        console.log(90)
       })
     },
     // 更新服务
     handleServiceUpdate (row) {
-      this.dialogVisible = true
+      this.title = '更新服务'
+      /**
+       * 服务更新的时候  只能更新子服务
+       * 更具服务id查询该组合服务下 各个自服务
+       * 
+       * 应该先分别查询 所有的子服务 和该组合服务所对应的子服务
+       */
+      this.dialogShow = true
       this.isServiceUpdate = true
       this.queryParamsAdd.combine = row.combine
       this.queryParamsAdd.serviceName = row.serviceName
       this.queryParamsAdd.serviceNameZh = row.serviceNameZh
       this.queryParamsAdd.serviceId = row.serviceId
-      this.subService({serviceId: row.serviceId})
+      this.lookFlag = false
+
+      
+      this.directService({serviceId: row.serviceId})
     },
     // 确定
     determine (val) {
@@ -255,6 +313,10 @@ export default {
               if (this.isServiceUpdate) {
                 this.updateService(val) //  跟新
               } else {
+                if (!this.isHasParams) {
+                  showModal('该服务未配置参数,请先配置参数', 'warning')
+                  return
+                }
                 this.insertService(val) //  新增
               }
           } else {
@@ -276,11 +338,11 @@ export default {
       }
       
     },
-    selecteService (v) {
-      this.selectedObj = {
-        serviceName: v.serviceName,
-        serviceNameZh: v.serviceNameZh
-      }
+    changeService (value) {
+      this.queryParamsByServiceName({
+        serviceName: value.serviceName,
+        serviceNameZh: value.serviceNameZh
+      })
     },
     // 新增服务
     insertService (val) {
@@ -293,19 +355,20 @@ export default {
       } else {
         options.serviceName = this.queryParamsAdd.serviceName || this.services[0].serviceName
         options.serviceNameZh = this.queryParamsAdd.serviceNameZh || this.services[0].serviceNameZh
-        options.subService = this.queryParamsAdd.subService
+        options.subService = document.querySelector('[name="serviceId"]').value.split(',')
       }
       $http(this.API.secureApi.insertService, options).then((res) => {
         showModal(res.resMsg[0].msgText)
-        this.dialogVisible = val
+        this.dialogShow = val
         this.allService()
       })
     },
     // 更新服务
     updateService (val) {
+      this.queryParamsAdd.subService = document.querySelector('[name="serviceId"]').value.split(',')
       $http(this.API.secureApi.updateService, this.queryParamsAdd).then((res) => {
         showModal(res.resMsg[0].msgText)
-        this.dialogVisible = val
+        this.dialogShow = val
         this.allService()
       })
     },
@@ -316,25 +379,38 @@ export default {
       })
     },
     // 所有的子服务
-    directService () {
+    directService (op) {
+      /**
+       * 选择已经选中的自服务
+       */
       $http(this.API.secureApi.directService, {}).then((res) => {
-        this.directServices = res.resData
-        this.queryParamsAdd.subService.push(this.directServices[0].serviceId)
+        this.directServices = [...[], ...res.resData]
+        if (!op) return
+        $http(this.API.secureApi.subService, op).then((res) => {
+          if (res.resData.length) {
+             if (this.isServiceUpdate) {
+              document.querySelectorAll('.dropdown-item.text-warp.li-text').forEach(v => {
+                res.resData.forEach(v1 => {
+                  if (v.title.indexOf(v1.serviceId) >= 0) {
+                    v.click()
+                  }
+                })
+              })
+            }
+          }
+        })
       })
     },
     // 服务直接子服务
     subService (op) {
       $http(this.API.secureApi.subService, op).then((res) => {
-        this.queryParamsAdd.subService = []
         if (res.resData.length) {
-          res.resData.forEach(v => {
-            this.queryParamsAdd.subService.push(v.serviceId)
-          })
+          this.subServices = [...res.resData]
         }
       })
     },
     // 所有的规则
-    allRegulars (op) {
+    allRegulars () {
       $http(this.API.secureApi.allRegulars, {}).then((res) => {
         this.tableData2 = res.resData
       })
@@ -343,7 +419,7 @@ export default {
     insertRegulars (val) {
       $http(this.API.secureApi.insertRegulars, this.queryParams).then((res) => {
         showModal(res.resMsg[0].msgText)
-        this.dialogVisible = val
+        this.dialogShow = val
         this.allRegulars()
       })
     },
@@ -362,18 +438,27 @@ export default {
       })
     },
     handleRegularUpdate (row) {
-      this.dialogVisible = true
+      this.dialogShow = true
       this.isRegularUpdate = true
+      this.title = '更新规则'
       this.queryParams.regularId = row.regularId
       for (let k in this.queryParams) {
         this.queryParams[k] = row[k]
       }
     },
     updateRegulars (val) {
+      this.lookFlag = false
+      this.dialogShow = true
+      this.showDetermine = false
+      this.isServiceUpdate = false
+      this.isRegularUpdate = false
+      this.queryParamsAdd.combine = false
+      this.queryParamsAdd.serviceName = ''
+      this.queryParamsAdd.serviceNameZh = ''
       $http(this.API.secureApi.updateRegulars, this.queryParams).then((res) => {
         showModal(res.resMsg[0].msgText)
         this.allRegulars()
-        this.dialogVisible = val
+        this.dialogShow = val
         delete this.queryParams.regularId
       })
     }
@@ -383,4 +468,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus" rel="stylesheet/stylus">
+  .el-dialog__body
+    height calc(100% - 54px) !important
+    background red
+    .search-item
+      width calc(100% - 145px) !important
+      margin-bottom 10px
+      margin-top 10px
+      float none
+      padding: 0 20px 0 125px
+    .el-alert 
+      margin-bottom 5px
 </style>

@@ -92,6 +92,7 @@
  * 后台对接人 马超重
  * 
  * 新增修改敏感词时 可以一个敏感词对应多个服务 但是每个服务只能对应一个参数
+ * 修改的时候 敏感不允许修改
  */
 import Table from '../../base/Table'
 import Select from '../../base/Select'
@@ -162,12 +163,16 @@ export default {
       })
       return html
     },
-    addItem () {
+    addItem () { // 新增敏感词
       this.dialogShow = true
       this.isAddFlg = true
+      // 清空数据 防止干扰
       this.serviceArr = []
       this.serviceParams = []
       this.selectedObj = {}
+      this.queryParams.wordKey = ''
+      this.queryParams.wordDes = ''
+      this.queryParams.wordId = ''
       setTimeout(() => {
         this.serviceArr = [...this.serviceArr,...this.services]
         this.queryParamsByServiceName({
@@ -215,7 +220,7 @@ export default {
       }, 100)
     },
     // 确定
-    determine (val) {
+    determine () {
       let options = {}, serviceParams = []// 组装参数
       for (let k in this.selectedObj) {
         serviceParams.push({
