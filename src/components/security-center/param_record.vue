@@ -5,8 +5,8 @@
         查询条件
       </div>
       <div class="card-container clearfix">
-        <el-form :inline="true" :rules="rules"  ref="querForm" :model="queryParams" class="query-form">
-          <div class="show-query">
+        <el-form :inline="true" :rules="rules"  ref="querForm" :model="queryParams">
+          <div class="show-query query-form">
             <el-form-item label="开始时间：" prop="beginTime">
               <div class="block">
                 <el-date-picker
@@ -27,7 +27,15 @@
                 </el-date-picker>
               </div>
             </el-form-item>
-            <el-form-item label="客户名称：" prop="loginName">
+            <Select 
+              :labelTitle="'客户名称'" 
+              :originArr="loginName" 
+              :defaultValue="'customerId'" 
+              :defaultLable="'customerName'"
+              @changeInputValue='changeCustomer'
+              :searchInput="true"> 
+            </Select>
+            <!-- <el-form-item label="客户名称：" prop="loginName">
               <el-select filterable v-model="queryParams.loginName" placeholder="请选择">
                 <el-option
                   v-for="v in loginName"
@@ -39,8 +47,16 @@
                   :value="v.loginName">
                 </el-option>
               </el-select>
-            </el-form-item>
-            <el-form-item label="接口类型：" prop="serviceName">
+            </el-form-item> -->
+            <Select 
+              :labelTitle="'接口类型'" 
+              :originArr="services" 
+              :defaultValue="'serviceName'" 
+              :defaultLable="'serviceNameZh'"
+              @changeInputValue='changeCustomer'
+              :searchInput="true"> 
+            </Select>
+            <!-- <el-form-item label="接口类型：" prop="serviceName">
               <el-select filterable v-model="queryParams.serviceName" placeholder="请选择">
                 <el-option
                   v-for="v in services"
@@ -51,7 +67,7 @@
                   :value="v.serviceName">
                 </el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="guid：" prop="guid">
               <el-input v-model="queryParams.guid"></el-input>
             </el-form-item>
@@ -153,12 +169,13 @@
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax'
+import moment from 'moment'
 import Table from '../../base/Table'
+import Select from '../../base/Select'
+import { showModal } from '../../utils'
+import { $http } from '../../common/js/ajax'
 import QueryButton from '../../base/QueryButton'
 import { loginName, services } from '../../common/js/mixin'
-import { showModal } from '../../utils'
-import moment from 'moment'
 export default {
   mixins: [ loginName, services ],
   data () {
@@ -197,6 +214,7 @@ export default {
   },
   components: {
     Table,
+    Select,
     QueryButton
   },
   mounted() {

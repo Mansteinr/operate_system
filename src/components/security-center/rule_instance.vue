@@ -16,6 +16,9 @@
             label="服务名称"
             width="200"
             prop="service.serviceNameZh">
+            <template slot-scope="scope">
+               <div @click="handleLook(scope.row)" :class="{'link':scope.row.service.combine, '': !scope.row.service.combine}">{{scope.row.service.serviceNameZh}}</div>
+            </template>
           </el-table-column>
           <el-table-column
             label="服务参数"
@@ -74,42 +77,35 @@
         </Table>
       </div>
     </div>
-    <Dialog :dialogVisible="dialogVisible"  @closeDialog="closeDialog" @determine="determine" :isClickModal="false">
-      <el-form :rules="rules" :model="queryParams" ref="ruleForm">
-        <el-form-item label="规则名称：" class="has-norequire">
-          <el-select  filterable placeholder="请选择" v-model="queryParams.regularId" prop="serviceName">
-            <el-option
-              v-for="(v, index) in allRegularsArr"
-              :key="index"
-              :title="`${v.regularName}`"
-              :label="v.regularName"
-              :value="v.regularId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="接口类型：" class="has-norequire">
-          <el-select  filterable placeholder="请选择" v-model="queryParams.serviceId" prop="serviceId">
-            <el-option
-              v-for="(v, index) in allServiceArr"
-              :key="index"
-              @click.native="selectedService(v)"
-              :title="`${v.serviceNameZh}(${v.serviceName})`"
-              :label="v.serviceNameZh"
-              :value="v.serviceId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="参数：" prop="params">
-          <el-select  filterable multiple placeholder="请选择" collapse-tags v-model="queryParams.params">
-            <el-option
-              v-for="(v, index) in serviceParams"
-              :key="index"
-              :title="`${v.paramNameCh}(${v.paramName})`"
-              :label="v.paramNameCh"
-              :value="v.paramName">
-            </el-option>
-          </el-select>
-        </el-form-item>
+    <Dialog :dialogShow="dialogShow" @determine="determine"
+      @handleClose="handleClose"
+      :isShowButton="true"
+      :title="title"
+     :isClickModal="false">
+      <el-form :rules="rules"  v-show="!lookFlag" :model="queryParams" ref="ruleForm">
+         <Select 
+          :labelTitle="'规则名称'" 
+          :originArr="allRegularsArr" 
+          :defaultValue="'regularId'" 
+          :defaultLable="'regularName'"
+          :searchInput="true"> 
+        </Select>
+        <Select 
+          :labelTitle="'接口类型'" 
+          :originArr="allServiceArr" 
+          :defaultValue="'serviceId'" 
+          :defaultLable="'serviceNameZh'"
+          @changeInputValue='selectedService'
+          :searchInput="true"> 
+        </Select>
+        <Select 
+          :labelTitle="'参数'" 
+          :originArr="serviceParams" 
+          :defaultValue="'paramName'" 
+          :defaultLable="'paramNameCh'"
+          :isMultiple="true"
+          :searchInput="true"> 
+        </Select>
         <el-form-item label="计数周期：" prop="callPeriod">
           <el-input v-model.number="queryParams.callPeriod"></el-input>
         </el-form-item>
@@ -147,15 +143,26 @@
    
     
       </el-form>
+
+      <div v-show="lookFlag" style="max-height:300px;overflow:auto;">
+        <el-alert
+          v-for="(v, k) in subServices"
+          :key="v.serviceId"
+          :closable="false"
+          :title="`${k+1} ${v.serviceNameZh} : ${v.serviceName}`"
+          type="info">
+        </el-alert>
+      </div>
     </Dialog>
   </div>
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax'
 import Table from '../../base/Table'
+import Select from '../../base/Select'
 import Dialog from '../../base/Dialog'
 import { showModal } from '../../utils'
+import { $http } from '../../common/js/ajax'
 export default {
   data () {
     let numberRule = (rule, value, callback) => {
@@ -198,17 +205,21 @@ export default {
         serviceId: '',
         params: []
       },
-      dialogVisible: false,
+      dialogShow: false,
       tableData: [],
       serviceParams: [],
       isAddFlg: true,
       allRegularsArr: [],
-      allServiceArr: []
+      allServiceArr: [],
+      lookFlag: false,
+      subServices: [],
+      title: '新增'
     }
   },
   components: {
     Table,
-    Dialog
+    Dialog,
+    Select
   },
   mounted() {
     this.allRegIns()
@@ -216,28 +227,40 @@ export default {
     this.allService()
   },
   methods: {
+    handleClose (val) { // 隐藏对话框
+      this.dialogShow = val
+    },
     resetTable() {
       this.$refs.ruleForm.resetFields()
     },
-    closeDialog (val) {
-      this.dialogVisible = val
+    handleLook (row) {
+      this.dialogShow = true
+      this.lookFlag = true
+      this.title = '预览子服务'
+      this.subService({serviceId: row.service.serviceId})
     },
-   formatterParams (val) { // 参数展示
+    formatterParams (val) { // 参数展示
       return this.$refs.table.formatterParamsArr(val)
     },
     formattercallPeriod (val) {
       let html = ''
-       html += 
+        html += 
         `<span class="param-item" title="">计数周期（s）: ${val.callPeriod}</span>
         <span class="param-item" title="">锁定时长（s）: ${val.lockTime}</span>
         <span class="param-item" title="">最大调用次数: ${val.maxCount}</span>
         `
-       return html
+        return html
     },
     addItem () {
       this.isAddFlg = true
-      this.dialogVisible = true
-      this.selectedService(this.allServiceArr[0])
+      this.dialogShow = true
+      this.lookFlag = false
+      this.title = '新增'
+      setTimeout(() => {
+        this.allRegularsArr = [...[], ...this.allRegularsArr]
+        this.allServiceArr = [...[], ...this.allServiceArr]
+        this.selectedService(this.allServiceArr[0])
+      }, 120)
     },
     selectedService (v) {
       this.serviceParams = []
@@ -255,31 +278,65 @@ export default {
             this.queryParams.params.push(this.serviceParams[0].paramName)
           }
         })
-      } else { // 组合服务，先查询所有的子服务，在查询子服务的参数，在取这些参数并集 在去重
-        let arr = []
+      } else { // 组合服务，先查询所有的子服务，在查询子服务的参数，在取这些参数交集 在去重
         $http(this.API.secureApi.subService, {serviceId: v.serviceId}).then((res) => {
           if (res.resData.length) {
-            res.resData.forEach(v => {
+            let isFirst = true, arr = [], intersect = [] , len = res.resData.length, i = 0
+            res.resData.forEach((v, k) => {
               options = {
                 serviceId: v.serviceId,
                 serviceName: v.serviceName,
                 serviceNameZh: v.serviceNameZh
               }
-              $http(this.API.paramsApi.queryParamsByServiceName, options).then((res) => {
-                if (res.resData.paramNameBeans && res.resData.paramNameBeans.length) {
-                  arr = [...arr, ...res.resData.paramNameBeans]
-                  let hash = {}
-                  this.serviceParams = arr.reduce(function(item, next) {
-                    hash[next.paramName] ? '' : hash[next.paramName] = true && item.push(next);
-                    return item
-                  }, [])
-                  if (!this.queryParams.params.length) {
-                    this.queryParams.params.push(this.serviceParams[0].paramName)
+              let isFirst = true, // 判断是否是第一次
+               intersect = [], allHasParams = true
+              $http(this.API.paramsApi.queryParamsByServiceName, options).then((res1) => {
+              i++
+                if (!allHasParams) return
+                if (res1.resData.paramNameBeans && res1.resData.paramNameBeans.length) {
+                  let subServiceArr = []
+                  res1.resData.paramNameBeans.forEach(v2 => {
+                      if (isFirst) { // 判断是否是第一次 若是第一次
+                        v2[v2.paramName] = v2.paramNameCh
+                        intersect.push(v2.paramName)
+                      } else {
+                        subServiceArr.push(v2.paramName)
+                        v2[v2.paramName] = v2.paramNameCh
+                      }
+                  })
+
+                  if (!isFirst) { // 判断是否是第一次 不需要操作，反之需要找出参数的交集
+                    intersect = new Set([...subServiceArr].filter(x => new Set(intersect).has(x)))
                   }
+                  isFirst = false
+                  // debugger
+                  console.log(i, len)
+                if (i === len) { // 判断是否是最后一个请求 因为请求是异步 所以利用该方法
+                  console.log(intersect)
+                  let lastArr = []
+                  lastArr = [...intersect] // 将Set对象解构为数组
+                  if (!lastArr.length) { // 判断数组是否为空 为空提示客户重新配置服务
+                    showModal('改组合服务没有公共参数，请重新配置服务', 'warning')
+                    return
+                  }
+                  this.serviceParams = []
+                  res1.resData.paramNameBeans.forEach(v2 => {
+                    lastArr.forEach(v3 => {
+                      if (v2.paramName === v3) {
+                        this.serviceParams.push(v2)
+                      }
+                    })
+                  })
+                }
+
+                } else {
+                  showModal('该组合服务未配置子服务', 'warning')
+                  console.log(90, '该组合服务未配置子服务')
+                  allHasParams = false
                 }
               })
             })
-          }
+          } 
         })
       }
     },
@@ -303,21 +360,19 @@ export default {
     },
     allRegulars () { // 所有的规则
       $http(this.API.secureApi.allRegulars, {}).then((res) => {
-        this.allRegularsArr = res.resData
-        this.queryParams.regularId = this.allRegularsArr[0].regularId
+        this.allRegularsArr = [...[], ...res.resData]
       })
     },
     allService () { // 所有的服务
       $http(this.API.secureApi.allService, {}).then((res) => {
-        this.allServiceArr = res.resData
-        this.queryParams.serviceId = this.allServiceArr[0].serviceId
+        this.allServiceArr = [...[], ...res.resData]
       })
     },
     insertRegIns () { // 新增实列
       $http(this.API.secureApi.insertRegIns, this.queryParams).then((res) => {
         showModal(res.resMsg[0].msgText)
         this.allRegIns()
-        this.dialogVisible = false
+        this.dialogShow = false
       })
     },
     updateRegIns () { //更新实列
@@ -325,7 +380,7 @@ export default {
         showModal(res.resMsg[0].msgText)
         delete this.queryParams.regInsId
         this.allRegIns()
-        this.dialogVisible = false
+        this.dialogShow = false
       })
     },
     handleDelete (row) { // 删除
@@ -342,8 +397,9 @@ export default {
       })
     },
     handleEditor (row) { // 更新
+      this.title = '更新'
       this.selectedService(this.allServiceArr[0])
-      this.dialogVisible = true
+      this.dialogShow = true
       this.isAddFlg = false
       for (let k in this.queryParams) {
         this.queryParams[k] = row[k]
@@ -351,6 +407,15 @@ export default {
       this.queryParams.regularId = row.regular.regularId
       this.queryParams.serviceId = row.service.serviceId
       this.queryParams.regInsId = row.regInsId
+    },
+        // 服务直接子服务
+    subService (op) {
+      console.log(op)
+      $http(this.API.secureApi.subService, op).then((res) => {
+        if (res.resData.length) {
+          this.subServices = [...res.resData]
+        }
+      })
     }
   }
 }
@@ -358,4 +423,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus" rel="stylesheet/stylus">
+.el-dialog__body
+  height calc(100% - 54px) !important
+  background red
+  .search-item
+    width calc(100% - 145px) !important
+    margin-bottom 10px
+    margin-top 10px
+    float none
+    padding: 0 20px 0 125px
+  .el-alert 
+    margin-bottom 5px
 </style>

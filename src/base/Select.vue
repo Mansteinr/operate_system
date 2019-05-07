@@ -339,7 +339,7 @@ export default {
         box-shadow 0 4px 8px rgba(0, 0, 0, .1)
         max-height 300px
         overflow-y auto
-        z-index 49
+        z-index 102
         .dropdown-input
           padding 0 20px
           height 40px

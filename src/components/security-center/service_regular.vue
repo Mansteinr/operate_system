@@ -163,9 +163,9 @@
  *    修改服务时 不允许修改为单个服务 也不允许修改服务名称和服务中文名称
  */
 import Table from '../../base/Table'
+import Select from '../../base/Select'
 import Dialog from '../../base/Dialog'
 import { showModal } from '../../utils'
-import Select from '../../base/Select'
 import { $http } from '../../common/js/ajax'
 import { services, switchMixin } from '../../common/js/mixin'
 export default {
@@ -262,7 +262,7 @@ export default {
       if (!row.combine) return
       this.lookFlag = true
       this.dialogShow = true
-      this.title = '预览'
+      this.title = '预览子服务'
       this.showDetermine = false
       this.subService({serviceId: row.serviceId})
     },
