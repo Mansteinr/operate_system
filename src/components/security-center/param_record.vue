@@ -35,47 +35,29 @@
               @changeInputValue='changeCustomer'
               :searchInput="true"> 
             </Select>
-            <!-- <el-form-item label="客户名称：" prop="loginName">
-              <el-select filterable v-model="queryParams.loginName" placeholder="请选择">
-                <el-option
-                  v-for="v in loginName"
-                  @click.native.stop="changeCustomer(v)"
-                  :key="v.customerId"
-                  :title="`${v.customerName}(${v.loginName})`"
-                  :data-customerid="v.customerId"
-                  :label="v.customerName"
-                  :value="v.loginName">
-                </el-option>
-              </el-select>
-            </el-form-item> -->
             <Select 
               :labelTitle="'接口类型'" 
               :originArr="services" 
               :defaultValue="'serviceName'" 
               :defaultLable="'serviceNameZh'"
-              @changeInputValue='changeCustomer'
+              @changeInputValue='changeService'
               :searchInput="true"> 
             </Select>
-            <!-- <el-form-item label="接口类型：" prop="serviceName">
-              <el-select filterable v-model="queryParams.serviceName" placeholder="请选择">
-                <el-option
-                  v-for="v in services"
-                  :key="v.serviceId"
-                  @click.native="selectService(v)"
-                  :title="`${v.serviceNameZh}(${v.serviceName})`"
-                  :label="v.serviceNameZh"
-                  :value="v.serviceName">
-                </el-option>
-              </el-select>
-            </el-form-item> -->
             <el-form-item label="guid：" prop="guid">
               <el-input v-model="queryParams.guid"></el-input>
+            </el-form-item>
+            <el-form-item class="query-item">
+            <query-button @reset="reset" @submit="onSubmit"></query-button>
             </el-form-item>
           </div>
           <div class="qurey-btn" style="margin: 10px 0 0 10px;">
             <el-button class="query-button" size="small" @click="showHideToggle">{{showHideFlag?"显示":"隐藏"}}</el-button>
           </div>
           <div class="query-hide" ref="paramsBox">
+            <el-form-item label="统计维度：" prop="timesAndMoneyUsed">
+              <el-radio v-model="queryParams.timesAndMoneyUsed" label="customer">按客户</el-radio>
+              <el-radio v-model="queryParams.timesAndMoneyUsed" label="business">按行业</el-radio>
+            </el-form-item>
             <el-form-item v-for="(v, key) in paramsArr" :label="`${v.paramNameCh}：`" :key="key">
               <el-input
                 :placeholder="`请选${v.paramNameCh}`"
@@ -83,9 +65,6 @@
               </el-input>
             </el-form-item>
           </div>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
         </el-form>
       </div>
     </div>
@@ -222,6 +201,13 @@ export default {
     this.queryParams.endTime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
   },
   methods: {
+    changeService (val) {
+      this.selectService({
+        serviceId: val.serviceId,
+        serviceName: val.serviceName,
+        serviceNameZh: val.serviceNameZh
+      })
+    },
     reset () {
       this.$refs.querForm.resetFields()
       this.queryParams.loginName = this.loginName[0]
@@ -303,9 +289,10 @@ export default {
       if (!v.serviceName) return
       let _this = this
       $http(this.API.paramsApi.queryParamsByServiceName, v).then((res) => {
-        res.resData.paramNameBeans.forEach(v => {
-          _this.queryParams.params[v.paramName] = ''
-        })
+        // debugger
+        // res.resData.paramNameBeans.forEach(v => {
+        //   _this.queryParams.params[v.paramName] = ''
+        // })
         this.paramsArr = res.resData.paramNameBeans
       })
     },
@@ -364,5 +351,11 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus">
+.query-hide 
+  .el-form-item
+    width 32%
+    margin-bottom 10px !important
+    .el-form-item__content
+      width: calc(100% - 85px)
 </style>

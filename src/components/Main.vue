@@ -63,15 +63,17 @@
         </el-menu>
       </el-aside>
       <el-main>
-        <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab" @tab-click="clickTabs">
-          <el-tab-pane
-            v-for="item in editableTabs"
-            :key="item.name"
-            :label="item.title"
-            :name="item.url"
-          >
-          </el-tab-pane>
-        </el-tabs>
+        <div class="tab-wrapper">
+          <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab" @tab-click="clickTabs">
+            <el-tab-pane
+              v-for="item in editableTabs"
+              :key="item.name"
+              :label="item.title"
+              :name="item.url"
+            >
+            </el-tab-pane>
+          </el-tabs>
+        </div>
         <keep-alive>
           <router-view/>
         </keep-alive>
@@ -255,4 +257,13 @@ export default {
       width 220px !important
       .icon-tubiaozhizuomoban
         transform rotate(-90deg)
+.tab-wrapper
+  position relative
+  height 40px
+  overflow hidden
+  background #fff
+  padding 0 10px
+  box-shadow 0 5px 10px #ddd
+  margin-left -10px
+  margin-right -10px
 </style>

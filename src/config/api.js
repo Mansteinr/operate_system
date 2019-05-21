@@ -1,6 +1,6 @@
 
 /*默认使用协议*/
-const protocol = 'http'
+const protocol = 'http',  mode = 'prod'
 const baseConfig = {
   protocols: {
     http: 'http://',
@@ -40,24 +40,25 @@ const baseConfig = {
   test: {
     rbacweb: '172.16.9.216:8020/',	/* ! 系统权限管理web页面地址 */
     rbacapi: '172.16.6.83:58080/',	/* ! 系统权限管理api服务器地址 */
-    upapi: '192.168.109.171:7000/',	/* ! 上游服务有关接口 */
-    vehicleapi: '120.55.241.117:9089/',	/* ! 车辆维保 */
-    qualityanalyzeapi: '121.196.226.17:7200/',	/* ! 质量分析 */
-    safaCenterapi: '120.55.241.117:9191/',	/* ! 安全中心 */
+    upapi: '10.30.20.77:30002/',	/* ! 上游服务有关接口 */
+    vehicleapi: '10.30.20.77:9089/',	/* ! 车辆维保 */
+    qualityanalyzeapi: '10.30.20.77:30002/',	/* ! 质量分析 */
+    safaCenterapi: '10.30.20.77:9191/',	/* ! 安全中心 */
+    lightSignInapi: '10.30.20.77:30002/',	/* ! 一键登录 */
     imageapi: 'http://120.55.241.117:10777/file/show'	/* ! 图片接口 */
   }
 }
 /*设置api转换*/
-// let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
-let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.dev[hostkey] + api
+let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
+// let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.prod[hostkey] + api
 const api = {
   base: {
-    login: apiFormat('login/doLogin', 'rbacapi', 'http'),
-    loginout: apiFormat('logout/ajaxLogout', 'rbacapi', 'http'),
-    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', 'http'),
-    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', 'http'),
-    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', 'http'),
-    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', 'http'),
+    login: apiFormat('login/doLogin', 'rbacapi', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
+    loginout: apiFormat('logout/ajaxLogout', 'rbacapi', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
+    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
+    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
+    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
+    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
     imageapi: baseConfig.prod.imageapi
   },
   upApi: {
