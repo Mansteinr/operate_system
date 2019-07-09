@@ -1,6 +1,6 @@
 
 /*默认使用协议*/
-const protocol = 'http',  mode = 'prod'
+const protocol = 'http',  mode = 'test'
 const baseConfig = {
   protocols: {
     http: 'http://',
@@ -14,6 +14,7 @@ const baseConfig = {
     vehicleapi: '121.196.226.17:7200/',	/* ! 车辆维保 */
     qualityanalyzeapi: '121.196.226.17:7200/',	/* ! 质量分析 */
     safaCenterapi: '121.196.226.17:7200/',	/* ! 安全中心 */
+    lightSignInapi: '121.196.226.17:7200/',	/* ! 安全中心 */
     imageapi: 'http://101.37.108.12:10777/file/show'	/* ! 图片接口 */
   },
   /*生产环境*/
@@ -24,6 +25,7 @@ const baseConfig = {
     vehicleapi: 'crecds.cn:7202/',	/* ! 车辆维保 */
     qualityanalyzeapi: 'crecds.cn:7301/',	/* ! 质量分析 */
     safaCenterapi: 'crecds.cn:9090/',	/* ! 安全中心 */
+    lightSignInapi: 'crecds.cn:9090/',	/* ! 安全中心 */
     imageapi: 'http://101.37.108.12:10777/file/show'	/* ! 图片接口 */
   },
   /*开发环境*/
@@ -34,12 +36,13 @@ const baseConfig = {
     vehicleapi: '120.55.241.117:9089/',	/* ! 车辆维保 */
     qualityanalyzeapi: '114.55.36.16:9999/',	/* ! 质量分析 */
     safaCenterapi: '120.55.241.117:9191/',	/* ! 安全中心 */
+    lightSignInapi: '120.55.241.117:9191/',	/* ! 安全中心 */
     imageapi: 'http://120.55.241.117:10777/file/show'	/* ! 图片接口 */
   },
   /*测试环境*/
   test: {
     rbacweb: '172.16.9.216:8020/',	/* ! 系统权限管理web页面地址 */
-    rbacapi: '172.16.6.83:58080/',	/* ! 系统权限管理api服务器地址 */
+    rbacapi: '192.168.109.173:7000/',	/* ! 系统权限管理api服务器地址 */
     upapi: '10.30.20.77:30002/',	/* ! 上游服务有关接口 */
     vehicleapi: '10.30.20.77:9089/',	/* ! 车辆维保 */
     qualityanalyzeapi: '10.30.20.77:30002/',	/* ! 质量分析 */
@@ -49,16 +52,18 @@ const baseConfig = {
   }
 }
 /*设置api转换*/
-let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
+console.log( mode === 'prod' ? 'https' : 'http')
+// mode = process.env.NODE_ENV
+let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig[mode][hostkey] + api
 // let apiFormat = (api = '', hostkey = 'base', pt = protocol) => baseConfig.protocols[pt] + baseConfig.prod[hostkey] + api
 const api = {
   base: {
-    login: apiFormat('login/doLogin', 'rbacapi', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
-    loginout: apiFormat('logout/ajaxLogout', 'rbacapi', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
-    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
-    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
-    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
-    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', process.env.NODE_ENV === 'prod' ? 'https' : 'http'),
+    login: apiFormat('login/doLogin', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
+    loginout: apiFormat('logout/ajaxLogout', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
+    querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
+    projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', mode === 'prod' ? 'https' : 'http'),
+    loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', mode === 'prod' ? 'https' : 'http'),
+    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
     imageapi: baseConfig.prod.imageapi
   },
   upApi: {
@@ -142,7 +147,7 @@ const api = {
     deleteByServiceNameAndParamName: apiFormat('operator/ServiceNameParams/deleteByServiceNameAndParamName', 'upapi'), /*配置管理删除的服务名*/
     addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams', 'upapi') /*配置管理新增的服务名*/
   },
-  callbackServiceApi: {
+  callbackServiceApi: { // 异步服务
     getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById', 'vehicleapi'),  /* 订单号查看订单状态 */
     getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin', 'vehicleapi'),  /* vin查询符合条件的订单信息 */
     getDecryptData: apiFormat('callbackService/operator/getDecryptData', 'vehicleapi'), /* 订单号查询车保报告 */
@@ -155,6 +160,11 @@ const api = {
     customerDetail: apiFormat('callbackService/operator/bill/customerDetail', 'vehicleapi'), /* 利润查询 */
     upDetail: apiFormat('callbackService/operator/bill/upDetail', 'vehicleapi'), /* 利润查询 */
     marginDetail: apiFormat('callbackService/operator/bill/marginDetail', 'vehicleapi') /* 利润查询 */
+  },
+  lightSignIn: { // 一键登录
+    customers: apiFormat('operator/lightSignIn/customers', 'lightSignInapi'),  // 获取一键登录所有的客户
+    appInfo: apiFormat('operator/lightSignIn/appInfo', 'lightSignInapi'),  /* app信息 */
+    secret: apiFormat('operator/lightSignIn/secret', 'lightSignInapi'),  /* 查看appKey */
   }
 }
 export default api

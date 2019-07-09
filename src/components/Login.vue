@@ -19,11 +19,11 @@
 </template>
 
 <script>
+import md5 from 'js-md5'
 import axios from 'axios'
-import { $http } from '../common/js/ajax'
 import { showModal } from '../utils'
 import { mapMutations } from 'vuex' // 引入mapMutations函数
-import md5 from 'js-md5'
+import { $http } from '../common/js/ajax'
 export default {
   data () {
     return {

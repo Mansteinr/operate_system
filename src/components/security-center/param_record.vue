@@ -12,6 +12,7 @@
                 <el-date-picker
                   v-model="queryParams.beginTime"
                   type="datetime"
+                  name="beginTime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择开始时间">
                 </el-date-picker>
@@ -29,8 +30,9 @@
             </el-form-item>
             <Select 
               :labelTitle="'客户名称'" 
-              :originArr="loginName" 
-              :defaultValue="'customerId'" 
+              :originArr="loginName"
+              :isAll="true"
+              :defaultValue="'loginName'" 
               :defaultLable="'customerName'"
               @changeInputValue='changeCustomer'
               :searchInput="true"> 
@@ -38,13 +40,14 @@
             <Select 
               :labelTitle="'接口类型'" 
               :originArr="services" 
+              :isAll="true"
               :defaultValue="'serviceName'" 
               :defaultLable="'serviceNameZh'"
               @changeInputValue='changeService'
               :searchInput="true"> 
             </Select>
             <el-form-item label="guid：" prop="guid">
-              <el-input v-model="queryParams.guid"></el-input>
+              <el-input name="guid"></el-input>
             </el-form-item>
             <el-form-item class="query-item">
             <query-button @reset="reset" @submit="onSubmit"></query-button>
@@ -53,17 +56,15 @@
           <div class="qurey-btn" style="margin: 10px 0 0 10px;">
             <el-button class="query-button" size="small" @click="showHideToggle">{{showHideFlag?"显示":"隐藏"}}</el-button>
           </div>
-          <div class="query-hide" ref="paramsBox">
-            <el-form-item label="统计维度：" prop="timesAndMoneyUsed">
-              <el-radio v-model="queryParams.timesAndMoneyUsed" label="customer">按客户</el-radio>
-              <el-radio v-model="queryParams.timesAndMoneyUsed" label="business">按行业</el-radio>
+          <div class="query-hide" ref="paramsBox" :class="showHideFlag?'active':''">
+            <el-form-item class="search-item" label="是否密文：" prop="enParam" style="padding-left: 0px;width: 32%;width: calc(32% - 20px);">
+              <el-radio v-model="queryParams.enParam" label="false">否</el-radio>
+              <el-radio v-model="queryParams.enParam" label="true">是</el-radio>
             </el-form-item>
-            <el-form-item v-for="(v, key) in paramsArr" :label="`${v.paramNameCh}：`" :key="key">
-              <el-input
-                :placeholder="`请选${v.paramNameCh}`"
-                :name="v.paramName">
-              </el-input>
-            </el-form-item>
+            <div class="search-item" v-for="(v, key) in paramsArr" :key="key">
+              <label style="white-space: nowrap;overflow: hidden;" :title="`${v.paramNameCh}`" class="input-label">{{v.paramNameCh}}：</label>
+              <input type="text" :name="v.paramName" class="m-input form-input" :placeholder="`请输入${v.paramNameCh}`">
+            </div>
           </div>
         </el-form>
       </div>
@@ -74,7 +75,15 @@
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table @changePage="changePage" ref="table" class="table" :showSearch="false" :showSummary="false" :tableData="tableData" :tatalPage="tatalPage" :sidePagination="'server'" v-show="tableData.length">
+        <Table 
+          @changePage="changePage" 
+          ref="table" class="table" 
+          :showSearch="false" 
+          :showSummary="false" 
+          :tableData="tableData" 
+          :tatalPage="tatalPage" 
+          :sidePagination="'server'" 
+          v-show="tableData.length">
           <el-table-column
             label="客户名称"
             width="120"
@@ -138,7 +147,7 @@
             fixed="right"
             width="100">
             <template slot-scope="scope">
-              <div @click="handleRestore(scope.row)" class="link">恢复</div>
+              <div @click="handleRestore(scope.row)" :class="+new Date(scope.row.expireTime) < +new Date() ?'no-link':'link'">{{+new Date(scope.row.expireTime) < +new Date() ? '已恢复' : '恢复'}}</div>
             </template>
           </el-table-column>
         </Table>
@@ -148,6 +157,16 @@
 </template>
 
 <script>
+/**
+ * 后台对接马超众
+ * 
+ * 1、若果用elenment中的input框 则必须使用数据双向绑定，不合适 故用该方法展示参数
+ * 
+ * 2、若没有参数 则也要穿个空param:{}
+ * 
+ * 3、不支持跨越查询, 故开始时间默认为当月1号零时零点零秒  结束时间为当前时间
+ *
+ */
 import moment from 'moment'
 import Table from '../../base/Table'
 import Select from '../../base/Select'
@@ -171,13 +190,11 @@ export default {
         endTime: [{ validator: timeRule, trigger: 'change' }],
       },
       queryParams: {
-        serviceName: '',
-        beginTime: '',
-        loginName: '',
+        beginTime: moment(new Date(new Date().getFullYear(), new Date().getMonth(), 1)).format('YYYY-MM-DD HH:mm:ss'),
         limitNum: 10,
         skipNum: 0,
-        endTime: '',
-        guid: '',
+        endTime: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        enParam: false,
         param: {}
       },
       tableData: [],
@@ -188,17 +205,14 @@ export default {
       paramsArr: [],
       allServiceNameFlag: true,
       tatalPage: 0,
-      nowPage: 1
+      nowPage: 1,
+      isRestore: '恢复'
     }
   },
   components: {
     Table,
     Select,
     QueryButton
-  },
-  mounted() {
-    this.queryParams.beginTime = moment(new Date(+new Date() - 3600 * 1000 * 7 * 90)).format('YYYY-MM-DD HH:mm:ss')
-    this.queryParams.endTime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
   },
   methods: {
     changeService (val) {
@@ -210,7 +224,6 @@ export default {
     },
     reset () {
       this.$refs.querForm.resetFields()
-      this.queryParams.loginName = this.loginName[0]
     },
     onSubmit () {
       this.$refs.querForm.validate((valid) => {
@@ -272,32 +285,19 @@ export default {
     },
     showHideToggle() {
       this.showHideFlag = !this.showHideFlag
-      let op = {
-        serviceId: this.services[0].serviceId,
-        serviceName: this.services[0].serviceName,
-        serviceNameZh: this.services[0].serviceNameZh
-      }
-      if (this.showHideFlag) {
-        this.selectService(op) 
-      } else {
-        this.paramsArr = []
-      }
-     
+      this.queryParams.enParam = 'false'
     },
     selectService (v) {
       if (!this.showHideFlag) return
       if (!v.serviceName) return
       let _this = this
       $http(this.API.paramsApi.queryParamsByServiceName, v).then((res) => {
-        // debugger
-        // res.resData.paramNameBeans.forEach(v => {
-        //   _this.queryParams.params[v.paramName] = ''
-        // })
         this.paramsArr = res.resData.paramNameBeans
       })
     },
     // 恢复
     handleRestore(row) {
+      if (+new Date(row.expireTime) < +new Date()) return
       let options = {
         paramRecordId: row.paramRecordId,
         insertTime: row.insertTime
@@ -312,17 +312,39 @@ export default {
           showModal(res.resMsg[0].msgText)
           this.paramRecord()
         })
+      }).catch(() => {
+        
       })
     },
     // 获取所有的拦截记录
     paramRecord () {
-      let options = {}
-      for (let k in this.queryParams) {
-        if (this.queryParams[k]) {
-          options[k] = this.queryParams[k]
-        }
+      if (document.querySelector('[name="loginName"]').value) {
+        this.queryParams.loginName = document.querySelector('[name="loginName"]').value.replace(/(^\s*)|(\s*$)/g, "")
       }
-      $http(this.API.secureApi.paramRecord, options).then((res) => {
+      if (document.querySelector('[name="serviceName"]').value) {
+        this.queryParams.serviceName = document.querySelector('[name="serviceName"]').value.replace(/(^\s*)|(\s*$)/g, "")
+      }
+      if (document.querySelector('[name="guid"]').value) {
+        this.queryParams.guid = document.querySelector('[name="guid"]').value.replace(/(^\s*)|(\s*$)/g, "")
+      }
+      
+
+      let options = {}
+
+      if (this.showHideFlag && document.querySelector('.query-hide .mv-input')) {
+        document.querySelectorAll('.query-hide .mv-input input').forEach((v, k) => {
+          if (v.name && v.value && v.value.replace(/(^\s*)|(\s*$)/g, "")) {
+            options[v.name] =v.value.replace(/(^\s*)|(\s*$)/g, "")
+          }
+        })
+      }
+      this.queryParams.param = options
+      let start = this.queryParams.beginTime.split('-')[1], end = this.queryParams.endTime.split('-')[1]
+      if (start !== end) {
+        showModal('不支持跨月查询', 'warning')
+        return
+      }
+      $http(this.API.secureApi.paramRecord, this.queryParams).then((res) => {
         this.tableData = res.resData.result.slice(0,res.resData.result.length)
         this.tatalPage = res.resData.total
       })
@@ -353,9 +375,12 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus" rel="stylesheet/stylus">
 .query-hide 
-  .el-form-item
-    width 32%
-    margin-bottom 10px !important
-    .el-form-item__content
-      width: calc(100% - 85px)
+  transition height .3s
+  height 0px
+  overflow hidden
+  &.active
+    height 150px
+  .search-item
+    margin-bottom 10px
+
 </style>

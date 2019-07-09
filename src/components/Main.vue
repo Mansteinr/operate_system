@@ -82,6 +82,7 @@
   </el-container>
 </template>
 <script>
+// import { mapGetters } from 'vuex' // 获取state里面的数据
 import { $http } from '../common/js/ajax'
 export default {
   data () {
@@ -96,6 +97,11 @@ export default {
       tabIndex: 1
     }
   },
+  // computed: {
+  //   ...mapGetters([
+  //     'addMenu' // 这个menu对应的是getters里面的menu 这样就拿到state中的菜单信息
+  //   ])
+  // },
   methods: {
     clickTabs (tab) { // 点击选项卡
       this.menuActive = tab.name
@@ -168,6 +174,7 @@ export default {
     }
   },
   mounted() {
+    console.log(9090909)
     this.userName = localStorage.getItem('accountName')
     this.querySubSystemMenuList()
   }
@@ -222,7 +229,7 @@ export default {
       padding 0px 10px 20px 10px !important
       margin-bottom 60px
       .template-wrapper
-        margin-top 50px
+        margin-top 20px
       .el-tabs
         height 50px !important
         margin-left -10px

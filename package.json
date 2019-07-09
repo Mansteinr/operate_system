@@ -18,6 +18,7 @@
     "js-pinyin": "^0.1.9",
     "jsoneditor": "^5.26.3",
     "moment": "^2.22.2",
+    "nested-json-to-table": "^0.1.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "v-jsoneditor": "^1.1.2",

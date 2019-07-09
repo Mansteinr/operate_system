@@ -5116,6 +5116,13 @@ neo-async@^2.5.0:
   resolved "http://registry.npm.taobao.org/neo-async/download/neo-async-2.6.0.tgz#b9d15e4d71c6762908654b5183ed38b753340835"
   integrity sha1-udFeTXHGdikIZUtRg+04t1M0CDU=
 
+nested-json-to-table@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/nested-json-to-table/-/nested-json-to-table-0.1.1.tgz#e59f54807328f4ae5328917451d6173cabe4fe62"
+  integrity sha512-82Q+MkgCG9+UqyNkZ698Wfa4C1/CGHVU9xM7no838f1mMNC9/qqKT/G8QVh3wz+qkuCjRSw41kBmcsoiUPrMVw==
+  dependencies:
+    xmlbuilder "^10.0.0"
+
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "http://registry.npm.taobao.org/nice-try/download/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
@@ -7987,6 +7994,11 @@ xlsx@^0.14.1:
     crc-32 "~1.2.0"
     exit-on-epipe "~1.0.1"
     ssf "~0.10.2"
+
+xmlbuilder@^10.0.0:
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-10.1.1.tgz#8cae6688cc9b38d850b7c8d3c0a4161dcaf475b0"
+  integrity sha512-OyzrcFLL/nb6fMGHbiRDuPup9ljBycsdCypwuyg5AAHvyWzGfChJpCXMG88AGTIMFhGZ9RccFN1e6lhg3hkwKg==
 
 xregexp@4.0.0:
   version "4.0.0"
