@@ -3,11 +3,16 @@
     <label class="input-label">{{labelTitle}}：</label>
     <div class="select-dropdown m-input" :class="defaultValue">
       <div class="text-warp selected-value" @click.stop="toggleExp($event)" :title="`${selectedValue} (${selectedDefault})`">{{selectedValue}}</div>
-      <input type="hidden" :name="defaultValue" :value="selectedDefault">
-      <!-- <input type="hidden" :name="defaultValue"  @change="op" v-model="selectedDefault"> -->
+      <input type="hidden" 
+        :name="defaultValue" 
+        v-model="selectedDefault">
       <ul class="dropdown-menu" :class="isMultiple ? 'multiple' : ''">
         <li class="dropdown-input" v-show="searchInput">
-          <input type="text" placeholder="输入搜索" v-model.trim="searchValue" class="search-input m-input">
+          <input 
+          type="text" 
+          placeholder="输入搜索" 
+          v-model.trim="searchValue" 
+          class="search-input m-input">
         </li>
         <template v-if="localDataArr.length">
           <li class="dropdown-item text-warp li-text" v-for="(v, k) in localDataArr" 
@@ -82,6 +87,10 @@ export default {
     loginNames: {
       type: Array,
       default: () => []
+    },
+    vModel: {
+      type: String,
+      default: ''
     }
   },
   watch: {
@@ -134,7 +143,7 @@ export default {
 
     if (!this.originArr.length) {
       this.selectedValue = '暂无数据'
-      this.selectedValue = '暂无数据'
+      this.selectedDefault = '暂无数据'
     }
   },
   methods: {
@@ -198,7 +207,7 @@ export default {
           this.selectedDefault = v[this.defaultValue]?v[this.defaultValue]:v
         }
         this.toggleExp(e.target.parentNode.parentNode)
-        this.$emit('changeInputValue', v)
+        this.$emit('changeSelect', this.selectedDefault)
       } else { // 多选
         if (judge) { // 选择的不是 '全部'
           if (this.isSelecltedAll && lis.length === this.selectedArr.length) { // 单击时 取消全部按钮的选中状态，并将相应数组中的字段去掉

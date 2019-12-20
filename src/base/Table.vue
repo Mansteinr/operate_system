@@ -1,7 +1,8 @@
 <template>
   <div class="table">
     <el-row :gutter="5" v-show="showSearch">
-      <el-col :span="4" :offset="19"><el-input v-model.trim="search" size="mini" placeholder="请输入关键字"/></el-col>
+      <el-col :span="1" v-show="showPlusIcon"><el-button @click="addFun" type="primary" icon="el-icon-plus" size="mini"></el-button></el-col>
+      <el-col :span="4" :offset="showPlusIcon?18:19"><el-input v-model.trim="search" size="mini" placeholder="请输入关键字"/></el-col>
       <el-col :span="1" class='export-wrapper'>
         <el-dropdown>
           <el-button size="mini" type="primary" icon="el-icon-share"></el-button>
@@ -93,8 +94,14 @@
         </template>
         <slot></slot>
     </el-table>
-    <Pagination @changePage="changePage" :tatalPage="sidePagination === 'customer' ? total : tatalPage" v-show="tatalPage>1"></Pagination>
-    <Guid :dialogVisible="dialogVisible" :data="josn" @changeDialog="changeDialog"></Guid>
+    <Pagination 
+      @changePage="changePage" 
+      :tatalPage="sidePagination === 'customer' ? total : tatalPage" 
+      v-show="tatalPage>1"></Pagination>
+    <Guid 
+      :dialogVisible="dialogVisible" 
+      :data="josn" 
+      @changeDialog="changeDialog"></Guid>
   </div>
 </template>
 
@@ -127,6 +134,10 @@
       }
     },
     props: {
+      showPlusIcon: {
+        type: Boolean,
+        default: false
+      },
       tatalPage: {
         type: Number,
         default: 0
@@ -169,6 +180,9 @@
       Pagination
     },
     methods: {
+      addFun() {
+        this.$emit('addFun')
+      },
       handle(row, method) {
         this.$emit('handle', row, method)
       },
@@ -277,6 +291,7 @@
         this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
       },
       objectSpanMethod({ row, column, rowIndex, columnIndex }) {  // 合并单元格
+      console.log(row)
         if (columnIndex === 0) {
             const _row = this.spanArr[rowIndex];
             const _col = _row > 0 ? 1 : 0;

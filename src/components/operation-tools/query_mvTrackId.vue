@@ -38,8 +38,12 @@
         查询结果
       </div>
       <div class="card-container">
-        <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table :columns="columns" ref="table" :tableData="tableData" :showSummary="false" :tatalPage="tableData.length" v-show="tableData.length">
+        <Table 
+          :columns="columns" 
+          ref="table" 
+          :tableData="tableData" 
+          :showSummary="false" 
+          :tatalPage="tableData.length">
         </Table>
       </div>
     </div>

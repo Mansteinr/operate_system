@@ -43,5 +43,7 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-
+  .el-pagination
+    text-align: right;
+    margin-top: 15px;
 </style>

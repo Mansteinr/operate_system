@@ -154,9 +154,9 @@ const api = {
     secret: apiFormat('operator/lightSignIn/secret'),  /* 查看appKey */
   },
   wechatAPI: { // 微信公众号
-    customerInfo: apiFormat('wechatService/customerInfo/query', 'wechatapi'),  // 获取一键登录所有的客户
-    appInfo: apiFormat('operator/lightSignIn/appInfo', 'wechatapi'),  /* app信息 */
-    secret: apiFormat('operator/lightSignIn/secret', 'wechatapi')  /* 查看appKey */
+    customerInfo: apiFormat('wechatService/customerInfo/query', 'wechatapi'),  // 获取微信客户
+    customerInfoEdit: apiFormat('wechatService/customerInfo/edit', 'wechatapi'),  /* 编辑微信客户 */
+    customerInfoAdd: apiFormat('wechatService/customerInfo/add', 'wechatapi'),  /* 新增微信客户 */
   }
 }
 export default api
