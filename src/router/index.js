@@ -35,11 +35,6 @@ import queryQuality from '../components/operation-tools/query_quality'
 import queryMvTrackId from '../components/operation-tools/query_mvTrackId'
 import queryNewQuality from '../components/operation-tools/query_newquality'
 
-// 数据持久化
-// const dataReset = resolve => require(['../components/data-persistence/data-reset'], resolve)
-// const operationCache = resolve => require(['../components/data-persistence/operation-cache'], resolve)
-import dataReset from '../components/data-persistence/data-reset'
-import operationCache from '../components/data-persistence/operation-cache'
 
 // 数据导出
 // const upStreamCount = resolve => require(['../components/data-output/query_upStreamCount'], resolve)
@@ -88,10 +83,17 @@ import oneClickLogin from '../components/app/one_click_login'
 // const Login = resolve => require(['../components/Login'], resolve)
 // const Demo = resolve => require(['../components/demo'], resolve)
 // const Main = resolve => require(['../components/Main'], resolve)
+
+// 微信公众号
+import wechatCustomer from '../components/wechat/customer'
+import wechatService from '../components/wechat/service'
+import wechatComprehensive from '../components/wechat/comprehensive'
+import wechatLog from '../components/wechat/logs'
+
 import Login from '../components/Login'
 import Demo from '../components/demo'
 import Main from '../components/Main'
-import { resolve } from 'uri-js';
+
 
 Vue.use(Router)
 
@@ -108,87 +110,79 @@ const router = new Router({
       component: QueryIndex
     }, {
       path: '/QueryUsage',
-      name: 'views/query_usage.html',
+      name: 'views/statistics/query_usage.html',
       component: QueryUsage
     }, {
       path: '/QueryProfit',
-      name: 'views/query_profit.html',
+      name: 'views/statistics/query_profit.html',
       component: QueryProfit
     }, {
       path: '/QueryFinance',
-      name: 'views/query_finance.html',
+      name: 'views/statistics/query_finance.html',
       component: QueryFinance
     }, {
       path: '/upstreamSupplier',
-      name: 'views/query_upstream_supplier.html',
+      name: 'views/statistics/query_upstream_supplier.html',
       component: upstreamSupplier
     }, {
       path: '/upstreamCustomer',
-      name: 'views/query_upstream_customer.html',
+      name: 'views/statistics/query_downstream_customer.html',
       component: upstreamCustomer
     }, {
       path: '/upstreamService',
-      name: 'views/query_upstream_service.html',
+      name: 'views/statistics/query_upstream_service.html',
       component: upstreamService
     }, {
       path: '/upstreamServiceByData',
-      name: 'views/query_upstream_serviceByData.html',
+      name: 'views/statistics/query_upstream_serviceByData.html',
       component: upstreamServiceByData
     }, {
       path: '/downstreamCustomer',
-      name: 'views/query_downstream_customer.html',
+      name: 'views/statistics/query_downstream_customer.html',
       component: downstreamCustomer
     }, {
       path: '/downstreamService',
-      name: 'views/query_downstream_service.html',
+      name: 'views/statistics/query_downstream_service.html',
       component: downstreamService
     }, {
       path: '/QueryLog',
-      name: 'views/query_logs.html',
+      name: 'views/devops/query_logs.html',
       component: QueryLog
     }, {
       path: '/queryQuality',
-      name: 'views/query_quality.html',
+      name: 'views/devops/query_quality.html',
       component: queryQuality
     }, {
       path: '/queryNewQuality',
-      name: 'views/query_newquality.html',
+      name: 'views/devops/query_newquality.html',
       component: queryNewQuality
     },  {
       path: '/queryGuid',
-      name: 'views/query_guid.html',
+      name: 'views/devops/query_guid.html',
       component: queryGuid
     }, {
       path: '/queryMvTrackId',
-      name: 'views/query_mvTrackId.html',
+      name: 'views/devops/query_mvTrackId.html',
       component: queryMvTrackId
     }, {
-      path: '/operationCache',
-      name: 'views/opreat_cache.html',
-      component: operationCache
-    }, {
-      path: '/dataReset',
-      name: 'views/query_dataReset.html',
-      component: dataReset
-    }, {
       path: '/upStreamCount',
-      name: 'views/query_upStreamCount.html',
+      name: 'views/export/query_upStreamCount.html',
       component: upStreamCount
     }, {
       path: '/mobileOperator',
-      name: 'views/query_mobileOperator.html',
+      name: 'views/export/query_mobileOperator.html',
       component: mobileOperator
     }, {
       path: '/queryTrackDetail',
-      name: 'views/query_trackDetail.html',
+      name: 'views/export/query_trackDetail.html',
       component: queryTrackDetail
     }, {
       path: '/supplierAnalysis',
-      name: 'views/supplier_quality_analysis.html',
+      name: 'views/configure/supplier_quality_analysis.html',
       component: supplierAnalysis
     }, {
       path: '/customerAnalysis',
-      name: 'views/customer_quality_analysis.html',
+      name: 'views/configure/customer_quality_analysis.html',
       component: customerAnalysis
     }, {
       path: '/queryOrder',
@@ -204,7 +198,7 @@ const router = new Router({
       component: queryReconciliation    
     }, {
       path: '/parameterMaintenance',
-      name: 'views/interface_parameter_maintenance.html',
+      name: 'views/configure/interface_parameter_maintenance.html',
       component: parameterMaintenance
     }, {
       path: '/sensitiveWord',
@@ -238,7 +232,24 @@ const router = new Router({
       path: '/Demo',
       name: 'Demo',
       component: Demo   
-    }]
+    }, {
+      path: '/wechatCustomer',
+      name: 'views/wechat/customer.html',
+      component: wechatCustomer   
+    } , {
+      path: '/wechatService',
+      name: 'views/wechat/service.html',
+      component: wechatService   
+    }, {
+      path: '/wechatComprehensive',
+      name: 'views/wechat/comprehensive.html',
+      component: wechatComprehensive   
+    }, {
+      path: '/wechatLog',
+      name: 'views/wechat/wechatLog.html',
+      component: wechatLog   
+    }
+  ]
   }, {
     path: '/Login',
     name: 'Login',

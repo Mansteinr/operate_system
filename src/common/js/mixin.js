@@ -259,4 +259,26 @@ export const getParam = {
   }
 }
 
-
+export const wechatCustomerInfo = { // 微信公众号客户信息
+  data () {
+    return {
+      loginNameOrigin: [],
+      loginName: []
+    }
+  },
+  mounted () {
+    this.customerInfo()
+  },
+  methods: {
+    customerInfo (options ={
+      authCode: '',
+      customerId: ''
+    }) {
+      $http(this.API.wechatAPI.customerInfo, options).then((res) => {
+        this.loginNameOrigin = []
+        this.loginNameOrigin = res.resData
+        this.loginName = this.loginNameOrigin
+      })
+    }
+  }
+}

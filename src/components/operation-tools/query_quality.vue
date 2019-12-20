@@ -90,15 +90,15 @@
 </template>
 
 <script>
+import { reset } from '../../utils'
+import Table from '../../base/Table'
+import Select from '../../base/Select'
 import { $http } from '../../common/js/ajax'
+import serviceSelect from '../../base/Select'
+import loginNameSelect from '../../base/Select'
+import QueryButton from '../../base/QueryButton'
 import { setLineData, renderChart } from '../../common/js/myCharts'
 import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
-import Table from '../../base/Table'
-import QueryButton from '../../base/QueryButton'
-import loginNameSelect from '../../base/Select'
-import serviceSelect from '../../base/Select'
-import Select from '../../base/Select'
-import { reset } from '../../utils'
 export default {
   mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
   data () {

@@ -3,15 +3,15 @@
     <el-row :gutter="5" v-show="showSearch">
       <el-col :span="4" :offset="19"><el-input v-model.trim="search" size="mini" placeholder="请输入关键字"/></el-col>
       <el-col :span="1" class='export-wrapper'>
-        <div class="select-dropdown m-input">
-          <div class="text-warp selected-value" @click.stop.prevent="toggleExport($event)"></div>
-          <ul class="dropdown-menu">
-            <li class="dropdown-item text-warp" @click.self="exportExcel('xlsx',$event)">xlsx</li>
-            <li class="dropdown-item text-warp" @click.self="exportExcel('xml',$event)">xml</li>
-            <li class="dropdown-item text-warp" @click.self="exportExcel('csv',$event)">csv</li>
-            <li class="dropdown-item text-warp" @click.self="exportExcel('txt',$event)">txt</li>
-          </ul>
-        </div>
+        <el-dropdown>
+          <el-button size="mini" type="primary" icon="el-icon-share"></el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="exportExcel('xlsx',$event)">xlsx</el-dropdown-item>
+            <el-dropdown-item @click.native="exportExcel('xml',$event)">xml</el-dropdown-item>
+            <el-dropdown-item @click.native="exportExcel('csv',$event)">csv</el-dropdown-item>
+            <el-dropdown-item @click.native="exportExcel('txt',$event)">txt</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </el-col>
     </el-row>
     
@@ -305,14 +305,14 @@
           }
         }
       },
-      toggleExport (e) {
-        let classNames = e.target.parentNode.className
-          if ( classNames.indexOf('active') < 0 ) { 
-            e.target.parentNode.className = e.target.parentNode.className + ' active'
-          } else {
-            e.target.parentNode.className = e.target.parentNode.className.replace(' active', '')
-          }
-      },
+      // toggleExport (e) {
+      //   let classNames = e.target.parentNode.className
+      //     if ( classNames.indexOf('active') < 0 ) { 
+      //       e.target.parentNode.className = e.target.parentNode.className + ' active'
+      //     } else {
+      //       e.target.parentNode.className = e.target.parentNode.className.replace(' active', '')
+      //     }
+      // },
       irateror (dom) { // 递归 寻找table父元素
         this.parentDom.push(dom)
         if (dom.className && dom.className.indexOf('table') < 0) {
