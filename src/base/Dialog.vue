@@ -4,6 +4,7 @@
     custom-class="customize-dialog"
     :visible.sync="dialogShow"
     :width="width"
+    @opened="opened"
     :close-on-click-modal="isClickModal"
     :before-close="handleClose">
     <slot></slot>
@@ -51,6 +52,9 @@
       }
     },
     methods: {
+      opened() {
+        this.$emit('opened')
+      },
       handleClose() {
         this.$emit('handleClose', false)
       },

@@ -157,6 +157,7 @@ const api = {
     customerInfo: apiFormat('wechatService/customerInfo/query', 'wechatapi'),  // 获取微信客户
     customerInfoEdit: apiFormat('wechatService/customerInfo/edit', 'wechatapi'),  /* 编辑微信客户 */
     customerInfoAdd: apiFormat('wechatService/customerInfo/add', 'wechatapi'),  /* 新增微信客户 */
+    customerInfoDel: apiFormat('wechatService/customerInfo/del', 'wechatapi'),  /* 新增微信客户 */
   }
 }
 export default api

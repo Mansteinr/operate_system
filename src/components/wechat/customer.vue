@@ -57,12 +57,13 @@
       :title="dialogTitle"
       :dialogShow="dialogShow" 
       @handleClose="handleClose" 
+      @opened="opened"
       @determine="determine" 
       :isShowButton="true"
       :isClickModal="false">
         <el-form :model="dialogForm" :rules="dialogRules" ref="dialogForm" label-width="100px">
           <el-form-item label="客户英文名" prop="customerName">
-            <el-input v-model="dialogForm.customerName" :disabled="dialogTitle === '跟新'"></el-input>
+            <el-input v-model="dialogForm.customerName" :disabled="dialogTitle === '更新'"></el-input>
           </el-form-item>
           <el-form-item label="客户中文名" prop="customerNamezh">
             <el-input v-model="dialogForm.customerNamezh"></el-input>
@@ -142,6 +143,10 @@ export default {
         label: '客户名称',
         width: '160px'
       }, {
+        prop: 'customerNamezh',
+        label: '客户中文名称',
+        width: '160px'
+      }, {
         prop: 'authCode',
         label: '授权码'
       }, {
@@ -185,6 +190,12 @@ export default {
     QueryButton
   },
   methods: {
+    opened() {
+      console.log(this.dialogTitle)
+      if(this.dialogTitle === '新增') {
+        this.$refs.dialogForm.resetFields()
+      }
+    },
     addFun() {
       this.dialogTitle = '新增'
       this.dialogShow = true
@@ -198,34 +209,64 @@ export default {
       this.customerInfo(this.queryParams)
     },
     handleClose() {
-      this.$refs.dialogForm.resetFields()
       this.dialogShow = false
     },
     handleEditor(value) {
       this.dialogShow = true
-      this.dialogTitle = '跟新'
+      this.dialogTitle = '更新'
       Object.keys(value).forEach(k => {
         this.dialogForm[k] = value[k]
       })
     },
     handleDelete(value) {
-      console.log(value)
+      this.$confirm(`确定删除${value.customerNamezh}?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+          $http(this.API.wechatAPI.customerInfoDel, {
+            customerId: value.customerId
+          }).then((res) => {
+            showModal({
+              text: res.resMsg[0].msgText
+            })
+            this.handleClose()
+            this.customerInfo()
+          }).catch(() => {
+            showModal({
+              text: '操作失败',
+              type: 'error'
+            })
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })     
+      })
     },
     determine() {
-      // this.customerInfoEdit()
-      // console.log(90)
-      if(this.dialogTitle === '新增') {
-        this.$refs.queryParams.validate((valid) => {
-          if (valid) {
-            alert('submit!');
+      this.$refs.dialogForm.validate((valid) => {
+        if (valid) {
+          if(this.dialogTitle === '新增') {
+            $http(this.API.wechatAPI.customerInfoAdd, this.dialogForm).then((res) => {
+              showModal({
+                text: res.resMsg[0].msgText
+              })
+              this.handleClose()
+              this.customerInfo()
+            })
           } else {
-            console.log('error submit!!');
-            return false;
+            $http(this.API.wechatAPI.customerInfoEdit, this.dialogForm).then((res) => {
+              showModal({
+                text: res.resMsg[0].msgText
+              })
+              this.handleClose()
+              this.customerInfo()
+            })
           }
-        })
-      } else {
-
-      }
+        } 
+      })
     },
     changeSelect(val) {
       this.queryParams.customerId = val
