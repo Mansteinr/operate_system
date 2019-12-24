@@ -11,7 +11,7 @@
           </el-form-item>
           <Select 
             :labelTitle="'客户名称'" 
-            :originArr="loginName" 
+            :originArr="customerInfo" 
             :defaultValue="'customerId'" 
             :searchInput=true
             :isAll=true
@@ -35,10 +35,10 @@
         <Table class="table1" 
           ref="table"
           :showSummary="false" 
-          :tableData="loginName" 
+          :tableData="customerInfo" 
           :showPlusIcon=true
           @addFun="addFun"
-          :tatalPage="loginName.length" 
+          :tatalPage="customerInfo.length" 
           :columns="columns">
           <el-table-column
             label="操作"
@@ -98,10 +98,10 @@ import Dialog from '../../base/Dialog'
 import { showModal } from '../../utils'
 import { $http } from '../../common/js/ajax'
 import QueryButton from '../../base/QueryButton'
-import { wechatCustomerInfo } from '../../common/js/mixin'
+import { wechatCustomerInfoQuery } from '../../common/js/mixin'
 
 export default {
-  mixins: [ wechatCustomerInfo],
+  mixins: [ wechatCustomerInfoQuery],
   data() {
     return {
       dialogTitle: '新增',
@@ -200,12 +200,12 @@ export default {
       this.dialogShow = true
     },
     onSubmit() {
-      this.customerInfo(this.queryParams)
+      this.customerInfoQuery(this.queryParams)
     },
     reset() {
       this.$refs.querForm.resetFields()
       this.queryParams.customerId = ''
-      this.customerInfo(this.queryParams)
+      this.customerInfoQuery(this.queryParams)
     },
     handleClose() {
       this.dialogShow = false
@@ -228,7 +228,7 @@ export default {
           }).then((res) => {
             showModal(res.resMsg[0].msgText)
             this.handleClose()
-            this.customerInfo()
+            this.customerInfoQuery()
           }).catch(() => {
             showModal('操作失败', 'error')
           })
@@ -246,13 +246,13 @@ export default {
             $http(this.API.wechatAPI.customerInfoAdd, this.dialogForm).then((res) => {
               showModal(res.resMsg[0].msgText)
               this.handleClose()
-              this.customerInfo()
+              this.customerInfoQuery()
             })
           } else {
             $http(this.API.wechatAPI.customerInfoEdit, this.dialogForm).then((res) => {
               showModal(res.resMsg[0].msgText)
               this.handleClose()
-              this.customerInfo()
+              this.customerInfoQuery()
             })
           }
         } 

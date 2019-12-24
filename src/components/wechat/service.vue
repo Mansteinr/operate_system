@@ -8,7 +8,7 @@
         <el-form :inline="true"  ref="querForm" :model="queryParams" class="query-form">
           <Select 
             :labelTitle="'服务名称'" 
-            :originArr="loginName" 
+            :originArr="serviceInfo" 
             :defaultValue="'serviceId'" 
             :searchInput=true
             :isAll=true
@@ -31,19 +31,18 @@
         <Table class="table1" 
           ref="table"
           :showSummary="false" 
-          :tableData="loginName" 
+          :tableData="serviceInfo" 
           :showPlusIcon=true
           @addFun="addFun"
-          :tatalPage="loginName.length" 
+          :tatalPage="serviceInfo.length" 
           :columns="columns">
           <el-table-column
             label="是否禁用"
-            fixed="right"
-            width="100">
+            fixed="right">
               <template slot-scope="scope">
                 <el-tag
                   :type="scope.row.forbidFlag === '0' ? 'success' : 'warning'"
-                  >{{scope.row.forbidFlag === '0' ? '不禁用' : '禁用'}}</el-tag>
+                  >{{scope.row.forbidFlag === '0' ? '否' : '是'}}</el-tag>
               </template>
           </el-table-column>
           <el-table-column

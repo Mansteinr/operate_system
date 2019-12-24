@@ -259,25 +259,25 @@ export const getParam = {
   }
 }
 
-export const wechatCustomerInfo = { // 微信公众号客户信息
+export const wechatCustomerInfoQuery = { // 微信公众号客户信息
   data () {
     return {
-      loginNameOrigin: [],
-      loginName: []
+      customerInfoOrigin: [],
+      customerInfo: []
     }
   },
   mounted () {
-    this.customerInfo()
+    this.customerInfoQuery()
   },
   methods: {
-    customerInfo (options ={
+    customerInfoQuery (options ={
       authCode: '',
       customerId: ''
     }) {
       $http(this.API.wechatAPI.customerInfo, options).then((res) => {
-        this.loginNameOrigin = []
-        this.loginNameOrigin = res.resData
-        this.loginName = this.loginNameOrigin
+        this.customerInfoOrigin = []
+        this.customerInfoOrigin = res.resData
+        this.customerInfo = this.customerInfoOrigin
       })
     }
   }
@@ -286,8 +286,8 @@ export const wechatCustomerInfo = { // 微信公众号客户信息
 export const serviceInfoQuery = { // 微信公众号服务信息
   data () {
     return {
-      loginNameOrigin: [],
-      loginName: []
+      serviceInfoOrigin: [],
+      serviceInfo: []
     }
   },
   mounted () {
@@ -298,9 +298,30 @@ export const serviceInfoQuery = { // 微信公众号服务信息
       serviceId: ''
     }) {
       $http(this.API.wechatAPI.serviceInfoQuery, options).then((res) => {
-        this.loginNameOrigin = []
-        this.loginNameOrigin = res.resData
-        this.loginName = this.loginNameOrigin
+        this.serviceInfoOrigin = []
+        this.serviceInfoOrigin = res.resData
+        this.serviceInfo = this.serviceInfoOrigin
+      })
+    }
+  }
+}
+
+export const wechatComprehensiveQuery = { // 微信公众号服务信息
+  data () {
+    return {
+      wechatComprehensiveOrigin: [],
+      wechatComprehensive: []
+    }
+  },
+  mounted () {
+    this.wechatComprehensiveQuery()
+  },
+  methods: {
+    wechatComprehensiveQuery (options ={}) {
+      $http(this.API.wechatAPI.customerServiceInfoQuery, options).then((res) => {
+        this.wechatComprehensiveOrigin = []
+        this.wechatComprehensiveOrigin = res.resData
+        this.wechatComprehensive = this.wechatComprehensiveOrigin
       })
     }
   }

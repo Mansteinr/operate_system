@@ -113,14 +113,14 @@ export default {
     selectItem (value) { // 点击左侧菜单
       let unqiuFlag = false // 防止重复点击
       this.$router.push({name: value.resourceUrl})
-      console.log(value.resourceUrl)
+      
       this.menuActive = value.resourceUrl
       this.editableTabs.map(v => {
         if (v.name === value.resourceUrl) {
           unqiuFlag = true
         }
       })
-      console.log(this.menuActive)
+      
       if (!unqiuFlag) {
         this.editableTabs.push({
           title: value.name,
@@ -176,7 +176,6 @@ export default {
     }
   },
   mounted() {
-    console.log(9090909)
     this.userName = localStorage.getItem('accountName')
     this.querySubSystemMenuList()
   }

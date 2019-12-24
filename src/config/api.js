@@ -158,10 +158,14 @@ const api = {
     customerInfoEdit: apiFormat('wechatService/customerInfo/edit', 'wechatapi'),  /* 编辑微信客户 */
     customerInfoAdd: apiFormat('wechatService/customerInfo/add', 'wechatapi'),  /* 新增微信客户 */
     customerInfoDel: apiFormat('wechatService/customerInfo/del', 'wechatapi'),  /* 删除微信客户 */
-    serviceInfoQuery: apiFormat('wechatService/serviceInfo/query', 'wechatapi'),  /* 新增微信服务 */
-    serviceInfoDel: apiFormat('wechatService/serviceInfo/del', 'wechatapi'),  /* 新增微信服务 */
+    serviceInfoQuery: apiFormat('wechatService/serviceInfo/query', 'wechatapi'),  /* 查询微信服务 */
+    serviceInfoDel: apiFormat('wechatService/serviceInfo/del', 'wechatapi'),  /* 删除微信服务 */
     serviceInfoAdd: apiFormat('wechatService/serviceInfo/add', 'wechatapi'),  /* 新增微信服务 */
-    serviceInfoEdit: apiFormat('wechatService/serviceInfo/edit', 'wechatapi'),  /* 新增微信服务 */
+    serviceInfoEdit: apiFormat('wechatService/serviceInfo/edit', 'wechatapi'),  /* 编辑微信服务 */
+    customerServiceInfoQuery: apiFormat('wechatService/customerServiceInfo/query', 'wechatapi'),  /* 查询微信服务实例 */
+    customerServiceInfoAdd: apiFormat('wechatService/customerServiceInfo/add', 'wechatapi'),  /* 查询微信服务实例 */
+    customerServiceInfoEdit: apiFormat('wechatService/customerServiceInfo/alterAuthTotal', 'wechatapi'),  /* 查询微信服务实例 */
+    customerServiceInfoDel: apiFormat('wechatService/customerServiceInfo/del', 'wechatapi'),  /* 查询微信服务实例 */
   }
 }
 export default api

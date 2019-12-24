@@ -139,7 +139,7 @@ export default {
           v.className = v.className.replace(' active', '')
         }
       })
-    }, false)
+    })
 
     if (!this.originArr.length) {
       this.selectedValue = '暂无数据'
@@ -148,6 +148,12 @@ export default {
   },
   methods: {
     toggleExp(e) { // 展开折叠下拉框
+      /** 防止两个下拉框同时打开 */
+      document.querySelectorAll('.select-dropdown.m-input').forEach(v => {
+        if(v.classList.contains('active')) {
+          v.classList.remove('active')
+        }
+      })
       let classNames = ''
       if (e.target) {
         if(e.target.parentNode.querySelector('.search-input')) {
