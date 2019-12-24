@@ -157,7 +157,11 @@ const api = {
     customerInfo: apiFormat('wechatService/customerInfo/query', 'wechatapi'),  // 获取微信客户
     customerInfoEdit: apiFormat('wechatService/customerInfo/edit', 'wechatapi'),  /* 编辑微信客户 */
     customerInfoAdd: apiFormat('wechatService/customerInfo/add', 'wechatapi'),  /* 新增微信客户 */
-    customerInfoDel: apiFormat('wechatService/customerInfo/del', 'wechatapi'),  /* 新增微信客户 */
+    customerInfoDel: apiFormat('wechatService/customerInfo/del', 'wechatapi'),  /* 删除微信客户 */
+    serviceInfoQuery: apiFormat('wechatService/serviceInfo/query', 'wechatapi'),  /* 新增微信服务 */
+    serviceInfoDel: apiFormat('wechatService/serviceInfo/del', 'wechatapi'),  /* 新增微信服务 */
+    serviceInfoAdd: apiFormat('wechatService/serviceInfo/add', 'wechatapi'),  /* 新增微信服务 */
+    serviceInfoEdit: apiFormat('wechatService/serviceInfo/edit', 'wechatapi'),  /* 新增微信服务 */
   }
 }
 export default api

@@ -170,13 +170,6 @@ export default {
         width: "80px",
         label: '耗时(ms)'
       }, { 
-        prop: 'readCacheHit',
-        label: '命中缓存',
-        width: "80px",
-        formatter: row => {
-          return row.readCacheHit ? '是' : '否'
-        }
-      }, { 
         prop: 'rsp.RESULT',
         label: 'RESULT',
         width: "80px",

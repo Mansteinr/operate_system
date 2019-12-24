@@ -25,13 +25,13 @@
       :span-method="mergeCell?objectSpanMethod:null"
       :border="isBorder"
       style="width: 100%">
-        <!-- <slot></slot> -->
         <template  v-for="(v, k) in columns">
           <el-table-column
             :key="k"
             v-if="v.label != '操作' && v.label != 'guid' && v.label != '参数' && v.label != '渠道' && v.label !='车保报告'"
             :label="v.label"
             :fixed="v.fixed"
+            :class-name="v.className"
             :width="v.width"
             :align="v.align"
             :min-width="v.minWidth"
@@ -40,6 +40,7 @@
             :sortable="v.sortable"
             :type="v.type"
             :prop='v.prop'>
+            <div v-html="'<span>fsdfsd</span>'"></div>
           </el-table-column>
           <el-table-column
             :key="k"
@@ -290,8 +291,7 @@
         this.start = this.pageSize * (this.currentPage - 1)
         this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
       },
-      objectSpanMethod({ row, column, rowIndex, columnIndex }) {  // 合并单元格
-      console.log(row)
+      objectSpanMethod({ rowIndex, columnIndex }) {  // 合并单元格
         if (columnIndex === 0) {
             const _row = this.spanArr[rowIndex];
             const _col = _row > 0 ? 1 : 0;

@@ -191,7 +191,6 @@ export default {
   },
   methods: {
     opened() {
-      console.log(this.dialogTitle)
       if(this.dialogTitle === '新增') {
         this.$refs.dialogForm.resetFields()
       }
@@ -227,16 +226,11 @@ export default {
           $http(this.API.wechatAPI.customerInfoDel, {
             customerId: value.customerId
           }).then((res) => {
-            showModal({
-              text: res.resMsg[0].msgText
-            })
+            showModal(res.resMsg[0].msgText)
             this.handleClose()
             this.customerInfo()
           }).catch(() => {
-            showModal({
-              text: '操作失败',
-              type: 'error'
-            })
+            showModal('操作失败', 'error')
           })
       }).catch(() => {
         this.$message({
@@ -250,17 +244,13 @@ export default {
         if (valid) {
           if(this.dialogTitle === '新增') {
             $http(this.API.wechatAPI.customerInfoAdd, this.dialogForm).then((res) => {
-              showModal({
-                text: res.resMsg[0].msgText
-              })
+              showModal(res.resMsg[0].msgText)
               this.handleClose()
               this.customerInfo()
             })
           } else {
             $http(this.API.wechatAPI.customerInfoEdit, this.dialogForm).then((res) => {
-              showModal({
-                text: res.resMsg[0].msgText
-              })
+              showModal(res.resMsg[0].msgText)
               this.handleClose()
               this.customerInfo()
             })
@@ -270,16 +260,6 @@ export default {
     },
     changeSelect(val) {
       this.queryParams.customerId = val
-    },
-    customerInfoEdit() {
-      $http(this.API.wechatAPI.customerInfoEdit, this.dialogForm).then((res) => {
-        if(res.resCode) {
-          this.customerInfo()
-          showModal()
-        } else {
-          showModal('操作失败', 'error')
-        }
-      })
     }
   }
 }

@@ -282,3 +282,26 @@ export const wechatCustomerInfo = { // 微信公众号客户信息
     }
   }
 }
+
+export const serviceInfoQuery = { // 微信公众号服务信息
+  data () {
+    return {
+      loginNameOrigin: [],
+      loginName: []
+    }
+  },
+  mounted () {
+    this.serviceInfoQuery()
+  },
+  methods: {
+    serviceInfoQuery (options ={
+      serviceId: ''
+    }) {
+      $http(this.API.wechatAPI.serviceInfoQuery, options).then((res) => {
+        this.loginNameOrigin = []
+        this.loginNameOrigin = res.resData
+        this.loginName = this.loginNameOrigin
+      })
+    }
+  }
+}

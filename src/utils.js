@@ -15,35 +15,6 @@ export function toFixed (val, len = 2) {
   return Math.round(val * Math.pow(10, len)) / Math.pow(10, len)
 }
 
-// 身份证检验
-export function checkIdCard (card) {
-  if (card === '') { //是否为空  
-	return ('身份证号不能为空')
-  }
-  if (isCardNo(card) === false) { //校验长度，类型  
-	return ('身份证号码格式不正确')
-  }
-  if (checkProvince(card) === false) { //检查省份 
-	return ('身份证号码省不正确')
-  }
-  if (checkBirthday(card) === false) { //校验生日
-	return ('身份证号码生日不正确')
-  }
-  if (checkParity(card) === false) { //检验位的检测 
-	return ('身份证校验位不正确')
-  }
-  return ('身份证校正通过')
-  return true
-}
-// 手机号码检测
-export function checkMoble (val) {
-  var reg = /^1[0-9]\d{9}$/
-  if (reg.test(val)) {
-	 return true
-  } else {
-	 return false
-  }
-}
 // 是否是数字
 export function checkNumber (val) {
   var reg = /^[1-9]+[0-9]*]*$/
