@@ -166,6 +166,7 @@ const api = {
     customerServiceInfoAdd: apiFormat('wechatService/customerServiceInfo/add', 'wechatapi'),  /* 查询微信服务实例 */
     customerServiceInfoEdit: apiFormat('wechatService/customerServiceInfo/alterAuthTotal', 'wechatapi'),  /* 查询微信服务实例 */
     customerServiceInfoDel: apiFormat('wechatService/customerServiceInfo/del', 'wechatapi'),  /* 查询微信服务实例 */
+    trackQuery: apiFormat('wechatService/track/query', 'wechatapi'),  /* 查询微信服务实例 */
   }
 }
 export default api
