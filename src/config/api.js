@@ -1,6 +1,6 @@
 
 /*默认使用协议*/
-const protocol = 'http',  mode = 'prod'
+const protocol = 'http',  mode = 'test'
 const baseConfig = {
   protocols: {
     http: 'http://',
@@ -47,36 +47,36 @@ const api = {
   base: {
     login: apiFormat('login/doLogin', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
     loginout: apiFormat('logout/ajaxLogout', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
+    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
     querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
     projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', mode === 'prod' ? 'https' : 'http'),
     loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', mode === 'prod' ? 'https' : 'http'),
-    getVerifyCode: apiFormat('login/getVerifyCode', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
     imageapi: baseConfig.prod.imageapi
   },
   upApi: {
     /*！能力域api*/
-    businessTypes: apiFormat('operator/businessTypes'), // 获取行业类型
     logs: apiFormat('operator/logs'), // 获取行业类型
-    customers: apiFormat('operator/customers'), // 所以的客户名称
     services: apiFormat('operator/services'), // 获取接口服务
-    hasServices: apiFormat('operator/hasServices'), // 客户拥有的服务
     logDetail: apiFormat('operator/logDetail'), // g供应商
-    getCustomersByWebServiceNames: apiFormat('operator/getCustomersByWebServiceNames'), // g供应商
-    logByMvTrackId: apiFormat('operator/logByMvTrackId'),
+    customers: apiFormat('operator/customers'), // 所以的客户名称
+    hasServices: apiFormat('operator/hasServices'), // 客户拥有的服务
     companys: apiFormat('operator/supplier/companys'), // g供应商
-    getOutServiceChargeInfoBySupplier: apiFormat('operator/up/getOutServiceChargeInfoBySupplier'), // g供应商
+    businessTypes: apiFormat('operator/businessTypes'), // 获取行业类型
+    logByMvTrackId: apiFormat('operator/logByMvTrackId'),
+    queryByDate: apiFormat('operator/margin/queryByDate'), /* 利润分析 */
     getCustomerChargeInfo: apiFormat('operator/up/getCustomerChargeInfo'), // g供应商
     getOutServiceChargeInfo: apiFormat('operator/up/getOutServiceChargeInfo'),
-    getOutServiceChargeInfoByDay: apiFormat('operator/up/getOutServiceChargeInfoByDay'),
     getAllOutServiceChargeInfo: apiFormat('operator/up/getAllOutServiceChargeInfo'), /*--获取服务对应上游信息的每天详细统计信息(导出excel表格)*/
-    queryByDate: apiFormat('operator/margin/queryByDate'), /* 利润分析 */
+    getCustomersByWebServiceNames: apiFormat('operator/getCustomersByWebServiceNames'), // g供应商
+    getOutServiceChargeInfoByDay: apiFormat('operator/up/getOutServiceChargeInfoByDay'),
+    getOutServiceChargeInfoBySupplier: apiFormat('operator/up/getOutServiceChargeInfoBySupplier') // g供应商
   },
   downApi: {
     UsageByName: apiFormat('operator/down/UsageByName'),
     UsageByDate: apiFormat('operator/down/UsageByDate'), // 
+    chargeLog: apiFormat('operator/accounting/chargeLog'), // 余额快照
     UsageByCustomer: apiFormat('operator/down/UsageByCustomer'),
     UsageByResultNew: apiFormat('operator/down/UsageByResultNew'),
-    chargeLog: apiFormat('operator/accounting/chargeLog'), // 余额快照
     getBalanceSnapshot: apiFormat('operator/accounting/getBalanceSnapshot') // 余额快照
   },
   secureApi: { // 安全中心
@@ -84,11 +84,12 @@ const api = {
     wordInsert: apiFormat('secure/web/word/insert'), /*新增敏感词*/
     wordDelete: apiFormat('secure/web/word/delete'),  /*删除敏感词*/
     wordUpdate: apiFormat('secure/web/word/update'), /*新增敏感词*/
+    allRegIns: apiFormat('secure/web/regIns/allRegIns'), /*所有的规则实列*/
+    insertRegIns: apiFormat('secure/web/regIns/insert'), /*新增规则实列*/
+    deleteRegIns: apiFormat('secure/web/regIns/delete'), /*删除规则实列*/
+    updateRegIns: apiFormat('secure/web/regIns/update'), /*更新规则实列*/
     paramRecord: apiFormat('secure/web/record/paramRecord'), /* 参数拦截例 */
-    recoverUseful: apiFormat('secure/web/record/recoverUseful'), /* 告警恢复 */
     allService: apiFormat('secure/web/service/allService'), /*获取所有的服务*/
-    allRegulars: apiFormat('secure/web/regular/allRegulars'), /*获取所有规则*/
-    directService: apiFormat('secure/web/service/directService'), /*获取所有子服务*/
     deleteService: apiFormat('secure/web/service/delete'), /*删除服务*/
     insertService: apiFormat('secure/web/service/insert'), /*新增服务*/
     subService: apiFormat('secure/web/service/subService'), /*服务直接子服务*/
@@ -96,10 +97,9 @@ const api = {
     insertRegulars: apiFormat('secure/web/regular/insert'), /*新增规则*/
     deleteRegulars: apiFormat('secure/web/regular/delete'), /*删除规则*/
     updateRegulars: apiFormat('secure/web/regular/update'), /*更新规则*/
-    allRegIns: apiFormat('secure/web/regIns/allRegIns'), /*所有的规则实列*/
-    insertRegIns: apiFormat('secure/web/regIns/insert'), /*新增规则实列*/
-    deleteRegIns: apiFormat('secure/web/regIns/delete'), /*删除规则实列*/
-    updateRegIns: apiFormat('secure/web/regIns/update'), /*更新规则实列*/
+    allRegulars: apiFormat('secure/web/regular/allRegulars'), /*获取所有规则*/
+    directService: apiFormat('secure/web/service/directService'), /*获取所有子服务*/
+    recoverUseful: apiFormat('secure/web/record/recoverUseful'), /* 告警恢复 */
   },
   qualityanalyApi: { // 平台质量分析
     supplierRealTime: apiFormat('qualityanalyze/supplier/realTime'),  /* 供应商（上游）质量分析  实时数据 */
@@ -107,46 +107,46 @@ const api = {
     supplierHistory: apiFormat('qualityanalyze/supplier/history'), /* 供应商（上游）质量分析 历史数据 */
     customerHistory: apiFormat('qualityanalyze/customer/history'), /* 客户（上游）质量分析 历史数据 */
   },
-  redisApi: {
-    query: apiFormat('operator/redis/query')
-  },
   financeApi: {
+    trackDetail: apiFormat('operator/finance/trackDetail'), 
     upStreamCount: apiFormat('operator/finance/upStreamCount'),  /* 组合服务上游调用量 */
     upStreamDetail: apiFormat('operator/finance/upStreamDetail'),  /* 下游客户调用明细 */
-    trackDetail: apiFormat('operator/finance/trackDetail'), 
     mobileOperator: apiFormat('operator/finance/mobileOperator')
   },
   // boss提供的接口
   supplierApi: {
-    querySupInfoList: apiFormat('operator/supplier/querySupInfoList'),
     queryPipeList: apiFormat('operator/supplier/queryPipeList'),
+    querySupInfoList: apiFormat('operator/supplier/querySupInfoList'),
     querySupServiceList: apiFormat('operator/supplier/querySupServiceList')
   },
   persistApi: {
-    persistInfos: apiFormat('operator/persist/persistInfos'),
-    persistQuery: apiFormat('operator/persist/query'),
     persistDel: apiFormat('operator/persist/del'),
+    persistQuery: apiFormat('operator/persist/query'),
+    persistInfos: apiFormat('operator/persist/persistInfos')
   },
   paramsApi: {
-    queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName'), /*根据服务名查询参数*/
-    getParam: apiFormat('operator/ServiceNameParams/getParam'), /*配置管理获取所有的参数*/
+    getIP: apiFormat('/operator/slb/getIP'), /*获取ip黑名单*/
+    addIPBatch: apiFormat('/operator/slb/addIPBatch'), /*新增ip黑名单*/
+    delIPBatch: apiFormat('/operator/slb/delIPBatch'), /*新增ip黑名单*/
     getAll: apiFormat('operator/ServiceNameParams/getAll'), /*配置管理获取所有的服务名*/
+    getParam: apiFormat('operator/ServiceNameParams/getParam'), /*配置管理获取所有的参数*/
+    addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams'), /*配置管理新增的服务名*/
+    queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName'), /*根据服务名查询参数*/
     deleteByServiceNameAndParamName: apiFormat('operator/ServiceNameParams/deleteByServiceNameAndParamName'), /*配置管理删除的服务名*/
-    addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams') /*配置管理新增的服务名*/
   },
   callbackServiceApi: { // 异步服务
-    getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById'),  /* 订单号查看订单状态 */
-    getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin'),  /* vin查询符合条件的订单信息 */
+    upCount: apiFormat('callbackService/operator/bill/upCount'), /* 数据源账单 */
+    upDetail: apiFormat('callbackService/operator/bill/upDetail'), /* 利润查询 */
+    marginCount: apiFormat('callbackService/operator/bill/marginCount'), /*  利润查询 */
     getDecryptData: apiFormat('callbackService/operator/getDecryptData'), /* 订单号查询车保报告 */
+    marginDetail: apiFormat('callbackService/operator/bill/marginDetail'), /* 利润查询 */
+    customerCount: apiFormat('callbackService/operator/bill/customerCount'), /* 数据源账单 */
+    getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById'),  /* 订单号查看订单状态 */
+    customerDetail: apiFormat('callbackService/operator/bill/customerDetail'), /* 利润查询 */
     getAllAbilityInfo: apiFormat('callbackService/operator/getAllAbilityInfo'), /* 订单号查询车保报告 */
+    getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin'),  /* vin查询符合条件的订单信息 */
     getAbilitySupplilerInfo: apiFormat('callbackService/operator/getAbilitySupplilerInfo'), /* 订单号查询车保报告 */
     alterAbilitySupplilerInfo: apiFormat('callbackService/operator/alterAbilitySupplilerInfo'), /* 订单号查询车保报告 */
-    customerCount: apiFormat('callbackService/operator/bill/customerCount'), /* 数据源账单 */
-    upCount: apiFormat('callbackService/operator/bill/upCount'), /* 数据源账单 */
-    marginCount: apiFormat('callbackService/operator/bill/marginCount'), /*  利润查询 */
-    customerDetail: apiFormat('callbackService/operator/bill/customerDetail'), /* 利润查询 */
-    upDetail: apiFormat('callbackService/operator/bill/upDetail'), /* 利润查询 */
-    marginDetail: apiFormat('callbackService/operator/bill/marginDetail') /* 利润查询 */
   },
   lightSignIn: { // 一键登录
     customers: apiFormat('operator/lightSignIn/customers'),  // 获取一键登录所有的客户

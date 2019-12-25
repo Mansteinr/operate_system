@@ -70,6 +70,9 @@ import ruleInstance from '../components/security-center/rule_instance'
 import sensitiveWord from '../components/security-center/sensitive_word'
 import serviceRegular from '../components/security-center/service_regular'
 import parameterMaintenance from '../components/config-management/interface_parameter_maintenance'
+import blacklist from '../components/config-management/blacklist'
+import differenceValue from '../components/config-management/difference-value'
+import restrict from '../components/config-management/restrict'
 
 // 一键登录
 // const lightSignInAdd = resolve => require(['../components/app/add'], resolve)
@@ -248,6 +251,18 @@ const router = new Router({
       path: '/wechatLog',
       name: 'views/wechat/wechatLog.html',
       component: wechatLog   
+    }, {
+      path: '/blacklist',
+      name: 'views/configure/blacklist.html',
+      component: blacklist   
+    }, {
+      path: '/differenceValue',
+      name: 'views/configure/callDiffNumThreshold.html',
+      component: differenceValue   
+    }, {
+      path: '/restrict',
+      name: 'views/configure/restrict.html',
+      component: restrict   
     }
   ]
   }, {

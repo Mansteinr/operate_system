@@ -24,7 +24,9 @@
       :stripe="true"
       :span-method="mergeCell?objectSpanMethod:null"
       :border="isBorder"
+      @selection-change="handleSelectionChange"
       style="width: 100%">
+        <slot name="selection"></slot>
         <template  v-for="(v, k) in columns">
           <el-table-column
             :key="k"
@@ -110,7 +112,7 @@
 /**
  * 支持多选 单选 搜索 前端分页 后端分页 前端导出excel txt等格式 单元格合并
  */
-  import XLSX, { stream } from 'xlsx'
+  import XLSX from 'xlsx'
   import Guid from './Guid'
   import moment from 'moment'
   import FileSaver from 'file-saver'
@@ -181,6 +183,9 @@
       Pagination
     },
     methods: {
+      handleSelectionChange(val) {
+        this.$emit('handleSelectionChange', val)
+      },
       addFun() {
         this.$emit('addFun')
       },
@@ -291,7 +296,7 @@
         this.start = this.pageSize * (this.currentPage - 1)
         this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
       },
-      objectSpanMethod({ row, column, rowIndex, columnIndex }) {  // 合并单元格
+      objectSpanMethod({ rowIndex, columnIndex }) {  // 合并单元格
         if (columnIndex === 0) {
           return {
             rowspan: this.spanArr[rowIndex],
