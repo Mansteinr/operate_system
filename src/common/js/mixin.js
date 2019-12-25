@@ -320,7 +320,14 @@ export const wechatComprehensiveQuery = { // 微信公众号服务信息
     wechatComprehensiveQuery (options ={}) {
       $http(this.API.wechatAPI.customerServiceInfoQuery, options).then((res) => {
         this.wechatComprehensiveOrigin = []
-        this.wechatComprehensiveOrigin = res.resData
+        this.wechatComprehensiveOrigin = res.resData.sort((a, b) => {
+          if (a.authCode < b.authCode) {
+            return -1
+          }
+          if (a.authCode > b.authCode) {
+            return 1
+          }
+        })
         this.wechatComprehensive = this.wechatComprehensiveOrigin
       })
     }

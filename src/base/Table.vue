@@ -110,7 +110,7 @@
 /**
  * 支持多选 单选 搜索 前端分页 后端分页 前端导出excel txt等格式 单元格合并
  */
-  import XLSX from 'xlsx'
+  import XLSX, { stream } from 'xlsx'
   import Guid from './Guid'
   import moment from 'moment'
   import FileSaver from 'file-saver'
@@ -291,13 +291,11 @@
         this.start = this.pageSize * (this.currentPage - 1)
         this.end = Math.min(this.pageSize * (this.currentPage), this.tableData.length)
       },
-      objectSpanMethod({ rowIndex, columnIndex }) {  // 合并单元格
+      objectSpanMethod({ row, column, rowIndex, columnIndex }) {  // 合并单元格
         if (columnIndex === 0) {
-            const _row = this.spanArr[rowIndex];
-            const _col = _row > 0 ? 1 : 0;
           return {
-            rowspan: _row,
-            colspan: _col
+            rowspan: this.spanArr[rowIndex],
+            colspan: 1
           }
         }
       },
@@ -311,23 +309,15 @@
           } else {
             // 判断当前元素与上一个元素是否相同
             if (data[i][this.mergeCell] === data[i - 1][this.mergeCell]) {
-              this.spanArr[this.pos] += 1
-              this.spanArr.push(0)
+              this.spanArr[this.pos] += 1 // 索引加1
+              this.spanArr.push(0)  // 索引加1之后 push 0
             } else {
-              this.spanArr.push(1)
+              this.spanArr.push(1) //不同之后 直接push 1
               this.pos = i
             }
           }
         }
       },
-      // toggleExport (e) {
-      //   let classNames = e.target.parentNode.className
-      //     if ( classNames.indexOf('active') < 0 ) { 
-      //       e.target.parentNode.className = e.target.parentNode.className + ' active'
-      //     } else {
-      //       e.target.parentNode.className = e.target.parentNode.className.replace(' active', '')
-      //     }
-      // },
       irateror (dom) { // 递归 寻找table父元素
         this.parentDom.push(dom)
         if (dom.className && dom.className.indexOf('table') < 0) {

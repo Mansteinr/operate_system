@@ -48,6 +48,7 @@
           :tableData="wechatComprehensive" 
           :showPlusIcon=true
           @addFun="addFun"
+          mergeCell="authCode"
           :tatalPage="wechatComprehensive.length" 
           :columns="columns">
           <el-table-column
