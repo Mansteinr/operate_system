@@ -5,24 +5,15 @@
         查询条件
       </div>
       <div class="card-container clearfix">
-        <el-form :inline="true"  ref="querForm" :model="queryParams" class="query-form">
-          <el-form-item label="授权码：" prop="authCode">
-            <el-input v-model="queryParams.authCode" placeholder="请输入授权码"></el-input>
+        <el-form :inline="true" class="query-form restrict-from">
+          <el-form-item label="IdNamePhoto:">
+            <el-input disabled v-model="IdNamePhoto" placeholder="请输入IdNamePhoto总量"></el-input>
           </el-form-item>
-          <Select 
-            :labelTitle="'客户名称'" 
-            :originArr="customerInfo" 
-            :defaultValue="'customerId'" 
-            :searchInput=true
-            :isAll=true
-            @changeSelect="changeSelect"
-            :vModel="queryParams.searchValue"
-            :needValue="'customerId'"
-            :defaultLable="'customerNamezh'"
-            >
-          </Select>
+          <el-form-item label="是否开启:">
+            <el-switch @change="setUpServerLimitFlagFun" v-model="flag"></el-switch>
+          </el-form-item>
           <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
+           <query-button submitText="设置" :cancelBtn=false @submit="onSubmit"></query-button>
           </el-form-item>
         </el-form>
       </div>
@@ -33,20 +24,39 @@
       </div>
       <div class="card-container">
         <Table class="table1" 
-          ref="table"
           :showSummary="false" 
-          :tableData="customerInfo" 
-          :showPlusIcon=true
-          @addFun="addFun"
-          :tatalPage="customerInfo.length" 
+          :tableData="tableData"
+          :tatalPage="tableData.length" 
           :columns="columns">
           <el-table-column
             label="操作"
             fixed="right"
             width="100">
             <template slot-scope="scope">
-              <el-button @click="handleDelete(scope.row)" type="text" size="small">删除</el-button>
-              <el-button @click="handleEditor(scope.row)" type="text" size="small">更新</el-button>
+              <el-button @click="handleDelete(scope.row)" :disabled="scope.row.customerName ==='other'" type="text" size="small">删除</el-button>
+              <el-button @click="handleEditor(scope.row)" :disabled="scope.row.customerName ==='other'" type="text" size="small">更新</el-button>
+            </template>
+          </el-table-column>
+        </Table>
+      </div>
+    </div>
+    <div class="card-wrapper card-content">
+      <div class="card-title">
+        查询结果
+      </div>
+      <div class="card-container">
+        <Table class="table1" 
+          :showSummary="false" 
+          :tableData="tableData1"
+          :tatalPage="tableData1.length" 
+          :columns="columns">
+          <el-table-column
+            label="操作"
+            fixed="right"
+            width="100">
+            <template slot-scope="scope">
+              <el-button @click="handleDelete(scope.row)" :disabled="scope.row.customerName ==='other'" type="text" size="small">删除</el-button>
+              <el-button @click="handleEditor(scope.row)" :disabled="scope.row.customerName ==='other'" type="text" size="small">更新</el-button>
             </template>
           </el-table-column>
         </Table>
@@ -54,37 +64,15 @@
     </div>
     <Dialog
       ref='dialog'
-      :title="dialogTitle"
+      title="修改"
       :dialogShow="dialogShow" 
-      @handleClose="handleClose" 
-      @opened="opened"
+      @handleClose="handleClose"
       @determine="determine" 
       :isShowButton="true"
       :isClickModal="false">
-        <el-form :model="dialogForm" :rules="dialogRules" ref="dialogForm" label-width="100px">
-          <el-form-item label="客户英文名" prop="customerName">
-            <el-input v-model="dialogForm.customerName" :disabled="dialogTitle === '更新'"></el-input>
-          </el-form-item>
-          <el-form-item label="客户中文名" prop="customerNamezh">
-            <el-input v-model="dialogForm.customerNamezh"></el-input>
-          </el-form-item>
-          <el-form-item label="客户密码" prop="customerPwd">
-            <el-input v-model="dialogForm.customerPwd"></el-input>
-          </el-form-item>
-          <el-form-item label="客户联系人" prop="customerContact">
-            <el-input v-model="dialogForm.customerContact"></el-input>
-          </el-form-item>
-          <el-form-item label="客户联系方式" prop="customerMobile">
-            <el-input v-model="dialogForm.customerMobile"></el-input>
-          </el-form-item>
-          <el-form-item label="商务联系人" prop="bussinessContact">
-            <el-input v-model="dialogForm.bussinessContact"></el-input>
-          </el-form-item>
-          <el-form-item label="客户IP白名单" prop="customerIp">
-            <el-input v-model="dialogForm.customerIp"></el-input>
-          </el-form-item>
-          <el-form-item label="备注" prop="remark">
-            <el-input v-model="dialogForm.remark" type="textarea"></el-input>
+        <el-form label-width="120px">
+          <el-form-item :label="labelName">
+            <el-input v-model.number="editorValue"></el-input>
           </el-form-item>
         </el-form>
     </Dialog>
@@ -93,129 +81,100 @@
 
 <script>
 import Table from '../../base/Table'
-import Select from '../../base/Select'
 import Dialog from '../../base/Dialog'
 import { showModal } from '../../utils'
 import { $http } from '../../common/js/ajax'
 import QueryButton from '../../base/QueryButton'
-import { wechatCustomerInfoQuery } from '../../common/js/mixin'
 
 export default {
-  mixins: [ wechatCustomerInfoQuery],
   data() {
     return {
-      dialogTitle: '新增',
+      labelName: '',
+      editorValue: null,
+      IdNamePhoto: null,
+      tableData: [],
+      tableData1: [],
+      primaryKey: 'IdNamePhoto',
+      flag: false,
       dialogShow: false,
-      disabledFlag: false,
-      queryParams: {
-        authCode: '',
-        customerId: ''
-      },
-      dialogRules: {
-        customerName: [
-          { required: true, message: '请输入客户英文名', trigger: 'blur' }
-        ],
-        customerNamezh: [
-          { required: true, message: '请输入客户中文名', trigger: 'blur' }
-        ],
-        customerContact: [
-          { required: true, message: '请输入客户联系人', trigger: 'blur' }
-        ],
-        customerMobile: [
-          { required: true, message: '请输入客户联系方式', trigger: 'blur' }
-        ],
-        bussinessContact: [
-          { required: true, message: '请输入商务联系人', trigger: 'blur' }
-        ],
-      },
-      dialogForm: {
-        customerName: '',
-        customerNamezh: '',
-        customerPwd: '',
-        customerContact: '',
-        customerMobile: '',
-        bussinessContact: '',
-        customerIp: '',
-        remark: ''
-      },
       columns: [{
         prop: 'customerName',
-        label: '客户名称',
-        width: '160px'
+        label: '客户名称'
       }, {
-        prop: 'customerNamezh',
-        label: '客户中文名称',
-        width: '160px'
-      }, {
-        prop: 'authCode',
-        label: '授权码'
-      }, {
-        prop: 'customerContact',
-        label: '客户联系人'
-      },{
-        prop: 'customerMobile',
-        label: '客户联系方式',
-        width: '160px'
-      },{
-        prop: 'bussinessContact',
-        label: '商务联系人'
-      },{
-        prop: 'customerIp',
-        label: '客户IP',
-        width: '160px'
-      },{
-        prop: 'customerPwd',
-        label: '客户密码'
-      },{
-        prop: 'createTime',
-        label: '创建时间',
-        width: '160px',
-        formatter: row => {
-         return this.$refs.table.formatterTime(row.beginTime)
-        }
-      },{
-        prop: 'updateTime',
-        label: '更新时间',
-        width: '160px',
-        formatter: row => {
-         return this.$refs.table.formatterTime(row.beginTime)
-        }
+        prop: 'limit',
+        label: '限量'
       }]
     }
   },
   components: {
     Table,
     Dialog,
-    Select,
     QueryButton
   },
+  mounted() {
+    this.getUpServerLimitFlag()
+    this.getUpServerLimitCount()
+    this.getCustomerLimitCount()
+  },
   methods: {
-    opened() {
-      if(this.dialogTitle === '新增') {
-        this.$refs.dialogForm.resetFields()
-      }
+    getLimitServiceCondition() {
+
     },
-    addFun() {
-      this.dialogTitle = '新增'
-      this.dialogShow = true
+    setUpServerLimitFlagFun() {
+      this.$confirm(`确定${this.flag?'开启':'关闭'}?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+          $http(this.API.paramsApi.setUpServerLimitFlag, {
+            flag: this.flag ? '1' : '0',
+            service: this.primaryKey
+          }).then((res) => {
+            showModal(res.resMsg[0].msgText)
+            this.getUpServerLimitFlag()
+          }).catch(() => {
+            showModal('操作失败', 'error')
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        }) 
+        this.flag = !this.flag   
+      })
+    },
+    getUpServerLimitFlag() {
+      $http(`${this.API.paramsApi.getUpServerLimitFlag}/${this.primaryKey}`, {}, 'get').then((res) => {
+        this.flag = (res.resData === '0' ? false : true)
+      })
+    },
+    getUpServerLimitCount() {
+      $http(`${this.API.paramsApi.getUpServerLimitCount}/${this.primaryKey}`, {}, 'get').then((res) => {
+        this[this.primaryKey] = res.resData
+      })
+    },
+    getCustomerLimitCount() {
+      $http(this.API.paramsApi.getCustomerLimitCount, {}, 'get').then((res) => {
+        Object.keys(res.resData[this.primaryKey]).forEach(v => {
+          this.tableData.push({
+            customerName: v,
+            limit: res.resData[this.primaryKey][v]
+          })
+        })
+      })
     },
     onSubmit() {
-      this.customerInfoQuery(this.queryParams)
-    },
-    reset() {
-      this.$refs.querForm.resetFields()
-      this.queryParams.customerId = ''
-      this.customerInfoQuery(this.queryParams)
+      this.dialogShow = true
+      this.editorValue = this[this.primaryKey]
+      this.labelName = this.primaryKey
     },
     handleClose() {
       this.dialogShow = false
     },
     handleEditor(value) {
       this.dialogShow = true
-      this.dialogTitle = '更新'
-      Object.keys(value).forEach(k => {
-        this.dialogForm[k] = value[k]
-      })
+      this.editorValue = value.limit
+      this.labelName = value.customerName
     },
     handleDelete(value) {
       this.$confirm(`确定删除${value.customerNamezh}?`, '提示', {
@@ -228,7 +187,6 @@ export default {
           }).then((res) => {
             showModal(res.resMsg[0].msgText)
             this.handleClose()
-            this.customerInfoQuery()
           }).catch(() => {
             showModal('操作失败', 'error')
           })
@@ -240,28 +198,61 @@ export default {
       })
     },
     determine() {
-      this.$refs.dialogForm.validate((valid) => {
-        if (valid) {
-          if(this.dialogTitle === '新增') {
-            $http(this.API.wechatAPI.customerInfoAdd, this.dialogForm).then((res) => {
-              showModal(res.resMsg[0].msgText)
-              this.handleClose()
-              this.customerInfoQuery()
-            })
-          } else {
-            $http(this.API.wechatAPI.customerInfoEdit, this.dialogForm).then((res) => {
-              showModal(res.resMsg[0].msgText)
-              this.handleClose()
-              this.customerInfoQuery()
-            })
-          }
-        } 
+      if(typeof (this.editorValue / 1) !== 'number') {
+        this.$message({
+          type: 'warning',
+          message: '请输入数字'
+        }) 
+        return
+      }
+      let compareNum = 0, finalNum = 0
+      this.tableData.forEach(v => {
+        if(v.customerName === 'other') return
+        compareNum += v.limit / 1
       })
-    },
-    changeSelect(val) {
-      this.queryParams.customerId = val
+       finalNum = this.editorValue - compareNum
+       if(finalNum < 0) {
+          this.$message({
+            type: 'warning',
+            message: '总量设置有问题，请检查'
+          }) 
+        return
+       }
+      this.$confirm(`other客户${this.primaryKey}服务将变为${finalNum}?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        $http(this.API.paramsApi.setUpServerLimitCount, {
+          service: this.primaryKey,
+          limit: this.editorValue
+        }).then((res) => {
+          showModal(res.resMsg[0].msgText)
+          this.handleClose()
+          FN.getUpServerLimitCount()
+          this.getUpServerLimitCount()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })     
+      })
     }
   }
 }
 </script>
+<style lang="stylus">
+.restrict-from
+  .el-form-item
+    width 40%
+    text-align left !important
+    .el-form-item__label
+      width 130px !important
+      text-align center
+    .el-form-item__content
+      width calc(100% - 153px) !important
+  .query-item
+    width 10% !important
 
+</style>

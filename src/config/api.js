@@ -130,6 +130,13 @@ const api = {
     delIPBatch: apiFormat('/operator/slb/delIPBatch'), /*新增ip黑名单*/
     getAll: apiFormat('operator/ServiceNameParams/getAll'), /*配置管理获取所有的服务名*/
     getParam: apiFormat('operator/ServiceNameParams/getParam'), /*配置管理获取所有的参数*/
+    getUpServerLimitFlag: apiFormat('operator/limitOfCXZX/getUpServerLimitFlag'), /*获取限制开关*/
+    getUpServerLimitCount: apiFormat('operator/limitOfCXZX/getUpServerLimitCount'), /*获取限制总量*/
+    getCustomerLimitCount: apiFormat('operator/limitOfCXZX/getCustomerLimitCount'), /*获取客户总量*/
+    setUpServerLimitCount: apiFormat('operator/limitOfCXZX/setUpServerLimitCount'), /*获取客户总量*/
+    setUpServerLimitFlag: apiFormat('operator/limitOfCXZX/setUpServerLimitFlag'), /*获取客户总量*/
+    getLimitServiceCondition: apiFormat('operator/limitOfCXZX/getLimitServiceCondition'), /*获取客户使用总量*/
+    setCustomerLimitCount: apiFormat('operator/limitOfCXZX/setCustomerLimitCount'), /*获取客户使用总量*/
     addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams'), /*配置管理新增的服务名*/
     queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName'), /*根据服务名查询参数*/
     deleteByServiceNameAndParamName: apiFormat('operator/ServiceNameParams/deleteByServiceNameAndParamName'), /*配置管理删除的服务名*/
