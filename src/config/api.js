@@ -12,7 +12,7 @@ const baseConfig = {
     rbacapi: 'userapi.miniclouds.cn/',	/* ! 系统权限管理api服务器地址 */
     upapi: '121.196.243.13:7200/',	/* ! 上游服务有关接口 */
     wechatapi: 'face.minivision.com.cn:9099/',	/* ! 上游服务有关接口 */
-    imageapi: 'http://101.37.108.12:10778/file/show'	/* ! 图片接口 */
+    imageapi: 'http://121.196.243.13:7200/file/show'	/* ! 图片接口 */
   },
   /*开发环境*/
   dev: {
