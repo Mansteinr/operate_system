@@ -1,7 +1,7 @@
 
 /*默认使用协议*/
-const protocol = 'http',  mode = 'test'
-const baseConfig = {
+const protocol = 'http', mode = process.env.NODE_ENV,
+      baseConfig = {
   protocols: {
     http: 'http://',
     https: 'https://'
@@ -37,10 +37,10 @@ const baseConfig = {
     imageapi: 'http://120.55.241.117:10777/file/show'	/* ! 图片接口 */
   }
 }
-
+console.log(process.env)
 /*设置api转换*/
 let apiFormat = (api = '', hostkey = 'upapi', pt = protocol) => {
-  return baseConfig.protocols[pt] + baseConfig[mode][hostkey] + api
+  return baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
 }
 
 const api = {
