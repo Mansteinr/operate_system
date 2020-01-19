@@ -72,11 +72,11 @@
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax'
-import { setLineData, renderChart } from '../../common/js/myCharts'
-import { switchMixin, hotKeyTime } from '../../common/js/mixin'
 import Table from '../../base/Table'
+import { $http } from '../../common/js/ajax'
 import QueryButton from '../../base/QueryButton'
+import { switchMixin, hotKeyTime } from '../../common/js/mixin'
+import { setLineData, renderChart } from '../../common/js/myCharts'
 export default {
   mixins: [switchMixin, hotKeyTime],
   data () {

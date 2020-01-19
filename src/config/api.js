@@ -1,7 +1,7 @@
 
 /*默认使用协议*/
 const protocol = 'http', mode = process.env.NODE_ENV,
-      baseConfig = {
+baseConfig = {
   protocols: {
     http: 'http://',
     https: 'https://'
@@ -40,6 +40,7 @@ const protocol = 'http', mode = process.env.NODE_ENV,
 console.log(process.env)
 /*设置api转换*/
 let apiFormat = (api = '', hostkey = 'upapi', pt = protocol) => {
+  debugger
   return baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
 }
 
