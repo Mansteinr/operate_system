@@ -8,33 +8,15 @@ baseConfig = {
   },
   /*生产环境*/
   prod: {
-    rbacweb: 'boss.miniclouds.cn:80/',	/* ! 系统权限管理web页面地址 */
-    rbacapi: 'userapi.miniclouds.cn/',	/* ! 系统权限管理api服务器地址 */
-    upapi: '121.196.243.13:7200/',	/* ! 上游服务有关接口 */
-    wechatapi: 'face.minivision.com.cn:9099/',	/* ! 上游服务有关接口 */
-    imageapi: 'http://121.196.243.13:7200/file/show'	/* ! 图片接口 */
+
   },
   /*开发环境*/
   dev: {
-    rbacweb: '172.16.9.216:8020/',	/* ! 系统权限管理web页面地址 */
-    rbacapi: '192.168.109.173:7000/',	/* ! 系统权限管理api服务器地址 */
-    upapi: '192.168.109.171:7000/',	/* ! 上游服务有关接口 */
-    vehicleapi: '120.55.241.117:9089/',	/* ! 车辆维保 */
-    qualityanalyzeapi: '114.55.36.16:9999/',	/* ! 质量分析 */
-    safaCenterapi: '120.55.241.117:9191/',	/* ! 安全中心 */
-    lightSignInapi: '120.55.241.117:9191/',	/* ! 安全中心 */
-    imageapi: 'http://120.55.241.117:10777/file/show'	/* ! 图片接口 */
+ 
   },
   /*测试环境*/
   test: {
-    rbacweb: '172.16.9.216:8020/',	/* ! 系统权限管理web页面地址 */
-    rbacapi: '192.168.109.173:7000/',	/* ! 系统权限管理api服务器地址 */
-    upapi: '10.30.20.77:30002/',	/* ! 上游服务有关接口 */
-    vehicleapi: '10.30.20.77:9089/',	/* ! 车辆维保 */
-    qualityanalyzeapi: '10.30.20.77:30002/',	/* ! 质量分析 */
-    safaCenterapi: '10.30.20.77:9191/',	/* ! 安全中心 */
-    lightSignInapi: '10.30.20.77:30002/',	/* ! 一键登录 */
-    imageapi: 'http://120.55.241.117:10777/file/show'	/* ! 图片接口 */
+
   }
 }
 console.log(process.env)
