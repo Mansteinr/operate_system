@@ -1,29 +1,19 @@
 
+import interfaceApi from './interface.json'
+console.log(interfaceApi)
 /*默认使用协议*/
-const protocol = 'http', mode = process.env.NODE_ENV,
+const protocol = 'http', mode = 'prod',
+// const protocol = 'http', mode = process.env.NODE_ENV,
 baseConfig = {
   protocols: {
     http: 'http://',
     https: 'https://'
-  },
-  /*生产环境*/
-  prod: {
-
-  },
-  /*开发环境*/
-  dev: {
- 
-  },
-  /*测试环境*/
-  test: {
-
   }
 }
-console.log(process.env)
+console.log(mode, 'dsd')
 /*设置api转换*/
 let apiFormat = (api = '', hostkey = 'upapi', pt = protocol) => {
-  debugger
-  return baseConfig.protocols[pt] + baseConfig[process.env.NODE_ENV][hostkey] + api
+  return baseConfig.protocols[pt] + interfaceApi[mode][hostkey] + api
 }
 
 const api = {
@@ -34,7 +24,7 @@ const api = {
     querymenus: apiFormat('sys/resource/querySubSystemMenuList', 'rbacapi', mode === 'prod' ? 'https' : 'http'),
     projectchoose: apiFormat('boss2-0-web/rbac-web/choose.html', 'rbacweb', mode === 'prod' ? 'https' : 'http'),
     loginchannel: apiFormat('boss2-0-web/rbac-web/loginChannel.html', 'rbacweb', mode === 'prod' ? 'https' : 'http'),
-    imageapi: baseConfig.prod.imageapi
+    imageapi: interfaceApi[mode].imageapi
   },
   upApi: {
     /*！能力域api*/
