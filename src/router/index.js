@@ -1,101 +1,101 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 // 总量统计
-// const QueryIndex = resolve => require(['../components/query-index'], resolve)
-import QueryIndex from '../components/query-index'
+// const QueryIndex = resolve => require(['../pages/query-index'], resolve)
+import QueryIndex from '../pages/query-index'
 // 用量统计
-// const QueryUsage = resolve => require(['../components/usage-statistics/query_usage'], resolve)
-// const QueryProfit = resolve => require(['../components/usage-statistics/query_profit'], resolve) // 利润分析
-// const QueryFinance = resolve => require(['../components/usage-statistics/query_finance'], resolve) // 余额快照
-// const upstreamService = resolve => require(['../components/usage-statistics/upper-service/upstream_service'], resolve)
-// const upstreamCustomer = resolve => require(['../components/usage-statistics/upper-service/upstream_customer'], resolve)
-// const upstreamSupplier = resolve => require(['../components/usage-statistics/upper-service/upstream_supplier'], resolve)
-// const downstreamService = resolve => require(['../components/usage-statistics/down-service/downstream_service'], resolve)
-// const downstreamCustomer = resolve => require(['../components/usage-statistics/down-service/downstream_customer'], resolve)
-// const upstreamServiceByData = resolve => require(['../components/usage-statistics/upper-service/upstream_serviceByData'], resolve)
-import QueryUsage from '../components/usage-statistics/query_usage'
-import QueryProfit from '../components/usage-statistics/query_profit' // 利润分析
-import QueryFinance from '../components/usage-statistics/query_finance' // 余额快照
-import upstreamService from '../components/usage-statistics/upper-service/upstream_service'
-import upstreamCustomer from '../components/usage-statistics/upper-service/upstream_customer'
-import upstreamSupplier from '../components/usage-statistics/upper-service/upstream_supplier'
-import downstreamService from '../components/usage-statistics/down-service/downstream_service'
-import downstreamCustomer from '../components/usage-statistics/down-service/downstream_customer'
-import upstreamServiceByData from '../components/usage-statistics/upper-service/upstream_serviceByData'
+// const QueryUsage = resolve => require(['../pages/usage-statistics/query_usage'], resolve)
+// const QueryProfit = resolve => require(['../pages/usage-statistics/query_profit'], resolve) // 利润分析
+// const QueryFinance = resolve => require(['../pages/usage-statistics/query_finance'], resolve) // 余额快照
+// const upstreamService = resolve => require(['../pages/usage-statistics/upper-service/upstream_service'], resolve)
+// const upstreamCustomer = resolve => require(['../pages/usage-statistics/upper-service/upstream_customer'], resolve)
+// const upstreamSupplier = resolve => require(['../pages/usage-statistics/upper-service/upstream_supplier'], resolve)
+// const downstreamService = resolve => require(['../pages/usage-statistics/down-service/downstream_service'], resolve)
+// const downstreamCustomer = resolve => require(['../pages/usage-statistics/down-service/downstream_customer'], resolve)
+// const upstreamServiceByData = resolve => require(['../pages/usage-statistics/upper-service/upstream_serviceByData'], resolve)
+import QueryUsage from '../pages/usage-statistics/query_usage'
+import QueryProfit from '../pages/usage-statistics/query_profit' // 利润分析
+import QueryFinance from '../pages/usage-statistics/query_finance' // 余额快照
+import upstreamService from '../pages/usage-statistics/upper-service/upstream_service'
+import upstreamCustomer from '../pages/usage-statistics/upper-service/upstream_customer'
+import upstreamSupplier from '../pages/usage-statistics/upper-service/upstream_supplier'
+import downstreamService from '../pages/usage-statistics/down-service/downstream_service'
+import downstreamCustomer from '../pages/usage-statistics/down-service/downstream_customer'
+import upstreamServiceByData from '../pages/usage-statistics/upper-service/upstream_serviceByData'
 
 // y运维工具
-// const QueryLog = resolve => require(['../components/operation-tools/query_logs'], resolve)
-// const queryGuid = resolve => require(['../components/operation-tools/query_guid'], resolve)
-// const queryQuality = resolve => require(['../components/operation-tools/query_quality'], resolve)
-// const queryMvTrackId = resolve => require(['../components/operation-tools/query_mvTrackId'], resolve)
-// const queryNewQuality = resolve => require(['../components/operation-tools/query_newquality'], resolve)
-import QueryLog from '../components/operation-tools/query_logs'
-import queryGuid from '../components/operation-tools/query_guid'
-import queryQuality from '../components/operation-tools/query_quality'
-import queryMvTrackId from '../components/operation-tools/query_mvTrackId'
-import queryNewQuality from '../components/operation-tools/query_newquality'
+// const QueryLog = resolve => require(['../pages/operation-tools/query_logs'], resolve)
+// const queryGuid = resolve => require(['../pages/operation-tools/query_guid'], resolve)
+// const queryQuality = resolve => require(['../pages/operation-tools/query_quality'], resolve)
+// const queryMvTrackId = resolve => require(['../pages/operation-tools/query_mvTrackId'], resolve)
+// const queryNewQuality = resolve => require(['../pages/operation-tools/query_newquality'], resolve)
+import QueryLog from '../pages/operation-tools/query_logs'
+import queryGuid from '../pages/operation-tools/query_guid'
+import queryQuality from '../pages/operation-tools/query_quality'
+import queryMvTrackId from '../pages/operation-tools/query_mvTrackId'
+import queryNewQuality from '../pages/operation-tools/query_newquality'
 
 
 // 数据导出
-// const upStreamCount = resolve => require(['../components/data-output/query_upStreamCount'], resolve)
-// const queryTrackDetail = resolve => require(['../components/data-output/query_trackDetail'], resolve)
-// const mobileOperator = resolve => require(['../components/data-output/query_mobileOperator'], resolve)
-import upStreamCount from '../components/data-output/query_upStreamCount'
-import queryTrackDetail from '../components/data-output/query_trackDetail'
-import mobileOperator from '../components/data-output/query_mobileOperator'
+// const upStreamCount = resolve => require(['../pages/data-output/query_upStreamCount'], resolve)
+// const queryTrackDetail = resolve => require(['../pages/data-output/query_trackDetail'], resolve)
+// const mobileOperator = resolve => require(['../pages/data-output/query_mobileOperator'], resolve)
+import upStreamCount from '../pages/data-output/query_upStreamCount'
+import queryTrackDetail from '../pages/data-output/query_trackDetail'
+import mobileOperator from '../pages/data-output/query_mobileOperator'
 
 // 平台治理分析
-// const supplierAnalysis = resolve => require(['../components/quality-analysis/supplier_quality_analysis'], resolve)
-// const customerAnalysis = resolve => require(['../components/quality-analysis/customer_quality_analysis'], resolve)
-import supplierAnalysis from '../components/quality-analysis/supplier_quality_analysis'
-import customerAnalysis from '../components/quality-analysis/customer_quality_analysis'
+// const supplierAnalysis = resolve => require(['../pages/quality-analysis/supplier_quality_analysis'], resolve)
+// const customerAnalysis = resolve => require(['../pages/quality-analysis/customer_quality_analysis'], resolve)
+import supplierAnalysis from '../pages/quality-analysis/supplier_quality_analysis'
+import customerAnalysis from '../pages/quality-analysis/customer_quality_analysis'
 
 /* 异步服务 */
-// const queryOrder = resolve => require(['../components/async-service/query_order'], resolve)
-// const channelManagement = resolve => require(['../components/async-service/channel_management'], resolve)
-// const queryReconciliation = resolve => require(['../components/async-service/query_reconciliation'], resolve)
-import queryOrder from '../components/async-service/query_order'
-import channelManagement from '../components/async-service/channel_management'
-import queryReconciliation from '../components/async-service/query_reconciliation'
+// const queryOrder = resolve => require(['../pages/async-service/query_order'], resolve)
+// const channelManagement = resolve => require(['../pages/async-service/channel_management'], resolve)
+// const queryReconciliation = resolve => require(['../pages/async-service/query_reconciliation'], resolve)
+import queryOrder from '../pages/async-service/query_order'
+import channelManagement from '../pages/async-service/channel_management'
+import queryReconciliation from '../pages/async-service/query_reconciliation'
 
 /** 安全中心 */
-// const paramRecord = resolve => require(['../components/security-center/param_record'], resolve)
-// const ruleInstance = resolve => require(['../components/security-center/rule_instance'], resolve)
-// const sensitiveWord = resolve => require(['../components/security-center/sensitive_word'], resolve)
-// const serviceRegular = resolve => require(['../components/security-center/service_regular'], resolve)
-// const parameterMaintenance = resolve => require(['../components/config-management/interface_parameter_maintenance'], resolve)
-// const paramRecord = resolve => require(['../components/security-center/param_record'], resolve)
-import paramRecord from '../components/security-center/param_record'
-import ruleInstance from '../components/security-center/rule_instance'
-import sensitiveWord from '../components/security-center/sensitive_word'
-import serviceRegular from '../components/security-center/service_regular'
-import parameterMaintenance from '../components/config-management/interface_parameter_maintenance'
-import blacklist from '../components/config-management/blacklist'
-import differenceValue from '../components/config-management/difference-value'
-import restrict from '../components/config-management/restrict'
+// const paramRecord = resolve => require(['../pages/security-center/param_record'], resolve)
+// const ruleInstance = resolve => require(['../pages/security-center/rule_instance'], resolve)
+// const sensitiveWord = resolve => require(['../pages/security-center/sensitive_word'], resolve)
+// const serviceRegular = resolve => require(['../pages/security-center/service_regular'], resolve)
+// const parameterMaintenance = resolve => require(['../pages/config-management/interface_parameter_maintenance'], resolve)
+// const paramRecord = resolve => require(['../pages/security-center/param_record'], resolve)
+import paramRecord from '../pages/security-center/param_record'
+import ruleInstance from '../pages/security-center/rule_instance'
+import sensitiveWord from '../pages/security-center/sensitive_word'
+import serviceRegular from '../pages/security-center/service_regular'
+import parameterMaintenance from '../pages/config-management/interface_parameter_maintenance'
+import blacklist from '../pages/config-management/blacklist'
+import differenceValue from '../pages/config-management/difference-value'
+import restrict from '../pages/config-management/restrict'
 
 // 一键登录
-// const lightSignInAdd = resolve => require(['../components/app/add'], resolve)
-// const lightSignInDetail = resolve => require(['../components/app/detail'], resolve)
-// const oneClickLogin = resolve => require(['../components/app/one_click_login'], resolve)
-import lightSignInAdd from '../components/app/add'
-import lightSignInDetail from '../components/app/add'
-import oneClickLogin from '../components/app/one_click_login'
+// const lightSignInAdd = resolve => require(['../pages/app/add'], resolve)
+// const lightSignInDetail = resolve => require(['../pages/app/detail'], resolve)
+// const oneClickLogin = resolve => require(['../pages/app/one_click_login'], resolve)
+import lightSignInAdd from '../pages/app/add'
+import lightSignInDetail from '../pages/app/add'
+import oneClickLogin from '../pages/app/one_click_login'
 
 // 登陆
-// const Login = resolve => require(['../components/Login'], resolve)
-// const Demo = resolve => require(['../components/demo'], resolve)
-// const Main = resolve => require(['../components/Main'], resolve)
+// const Login = resolve => require(['../pages/Login'], resolve)
+// const Demo = resolve => require(['../pages/demo'], resolve)
+// const Main = resolve => require(['../pages/Main'], resolve)
 
 // 微信公众号
-import wechatCustomer from '../components/wechat/customer'
-import wechatService from '../components/wechat/service'
-import wechatComprehensive from '../components/wechat/comprehensive'
-import wechatLog from '../components/wechat/logs'
+import wechatCustomer from '../pages/wechat/customer'
+import wechatService from '../pages/wechat/service'
+import wechatComprehensive from '../pages/wechat/comprehensive'
+import wechatLog from '../pages/wechat/logs'
 
-import Login from '../components/Login'
-import Demo from '../components/demo'
-import Main from '../components/Main'
+import Login from '../pages/Login'
+import Demo from '../pages/demo'
+import Main from '../pages/Main'
 
 
 Vue.use(Router)
