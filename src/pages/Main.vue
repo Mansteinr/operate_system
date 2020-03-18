@@ -1,27 +1,7 @@
 <template>
   <el-container id="app">
-    <!-- 头部 -->
-    <el-header>
-      <div class="header-logo"></div>
-      <div class="header-menu-warp">
-        <el-select v-model="value4" placeholder="请选择">
-          <el-option @click.native="selectLang('zh-CN')" value="中文"></el-option>
-          <el-option @click.native="selectLang('en-US')" value="English"></el-option>
-        </el-select>
-        <div class="avatar">
-          <img src="../common/images/default.jpg">
-        </div>
-        <el-dropdown class="el-select">
-          <span class="el-dropdown-link">
-            {{userName}}<i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="choseProject">{{$t('m.header.choseProject')}}</el-dropdown-item>
-            <el-dropdown-item @click.native="loginOut">{{$t('m.header.loginOut')}}</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
-    </el-header>
+    <!-- 头部组件 -->
+    <MHeader/>
     <el-container class="m-body">
       <el-aside :class="isCollapse?'':'active'">
         <el-menu 
@@ -83,12 +63,11 @@
 </template>
 <script>
 // import { mapGetters } from 'vuex' // 获取state里面的数据
-import { $http } from '../common/js/ajax'
+import { $http } from '@/common/js/ajax'
+import MHeader from '@/components/Header'
 export default {
   data () {
     return {
-      value4: '中文',
-      userName: 'zhoumingye',
       menu: [],
       menuActive: '', // 标记菜单激活状态
       isCollapse: false,
@@ -96,6 +75,9 @@ export default {
       editableTabs: [],
       tabIndex: 1
     }
+  },
+  components: {
+    MHeader
   },
   // computed: {
   //   ...mapGetters([
@@ -129,16 +111,6 @@ export default {
         })
       }
       this.editableTabsValue = this.menuActive
-    },
-    selectLang (value) {
-      console.log(value)
-    },
-    choseProject () { // 选择项目
-       window.location.href = this.API.base.projectchoose
-    },
-    loginOut () { // 退出
-      localStorage.removeItem('mtk')
-      this.$router.push({ name: '/Login' })
     },
     querySubSystemMenuList () { // 获取菜单
       $http(this.API.base.querymenus, { 'systemName': '服务平台' }).then((res) => {
@@ -176,7 +148,6 @@ export default {
     }
   },
   mounted() {
-    this.userName = localStorage.getItem('accountName')
     this.querySubSystemMenuList()
   }
 }
@@ -187,44 +158,8 @@ export default {
 .el-container 
   min-width 715px
   height 100%
-  .el-header 
-    box-shadow 0 4px 16px rgba(0, 0, 0, 0.08)
-    background $color-nave
-    .header-menu-warp 
-      position relative
-      float right
-      height 60px
-      line-height 60px
-      width 240px
-      padding 0
-      display flex
-      .avatar 
-        width 20%
-        height calc(100% -12px)
-        display table-cell
-        text-align center
-        padding-top 12px
-        img 
-          width 36px
-          height 36px
-          border-radius 50%
-      .el-select 
-        &:first-child 
-          width 70px
-        span 
-          color white
-      input 
-        background-color rgba(43, 63, 115, 0) !important
-        border none !important
-        color white
-        padding 0
-    .header-logo 
-      display inline-block
-      width 250px
-      height 100%
-      background url('../common/images/logo.png') no-repeat 16px center
-
-  .m-body 
+  .m-body
+    margin-top: 60px;
     .el-main
       overflow-y scroll
       padding 0px 10px 20px 10px !important
