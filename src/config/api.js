@@ -1,6 +1,5 @@
 
 import interfaceApi from './interface.json'
-console.log(interfaceApi)
 /*默认使用协议*/
 const protocol = 'http', mode = 'prod',
 // const protocol = 'http', mode = process.env.NODE_ENV,

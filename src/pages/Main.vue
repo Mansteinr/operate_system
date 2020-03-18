@@ -3,57 +3,18 @@
     <!-- 头部组件 -->
     <MHeader/>
     <el-container class="m-body">
-      <el-aside :class="isCollapse?'':'active'">
-        <el-menu 
-          class="el-menu-vertical-demo"
-          background-color="#3f455b"
-          text-color="#fff"
-          active-text-color="#ffd04b"
-          :unique-opened="true" 
-          :collapse="isCollapse"
-          :router="true"
-          :default-active="menuActive">
-          <div class="mv-collapse" @click="collapse"><i class="iconfont icon-tubiaozhizuomoban"></i></div>
-          <template v-for="v in menu">
-            <el-menu-item :index="v.resourceUrl+''" :key="v.id" v-if="v.childResource.length==0" @click="selectItem(v)">
-              <i :class="v.icon"></i>
-              <span slot="title">{{v.name}}</span>
-            </el-menu-item>
-            <el-submenu v-else :index="v.id+''" :key="v.id">
-              <template slot="title">
-                <i :class="v.icon"></i>
-                <span slot="title">{{v.name}}</span>
-              </template>
-              <template v-for="v1 in v.childResource">
-                <el-menu-item v-if="v1.childResource.length==0" :key="v1.id" :index="v1.resourceUrl" @click="selectItem(v1)">
-                 <i :class="v1.icon"></i>
-                  <span slot="title">{{v1.name}}</span>
-                </el-menu-item>
-                <el-submenu :index="v.id+'-'+v1.id" :key="v1.id"  v-else>
-                  <template slot="title">
-                    <i :class="v.icon"></i>
-                    <span slot="title">{{v1.name}}</span>
-                  </template>
-                  <el-menu-item v-for="v2 in v1.childResource" :index="v2.resourceUrl" :key="v2.id" @click="selectItem(v2)">
-                  <span slot="title">{{v2.name}}</span></el-menu-item>
-                </el-submenu>
-              </template>
-            </el-submenu>
-          </template>
-        </el-menu>
-      </el-aside>
+      <!-- 左侧导航 -->
+      <NavLeft/>
       <el-main>
-        <div class="tab-wrapper">
-          <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab" @tab-click="clickTabs">
-            <el-tab-pane
-              v-for="item in editableTabs"
-              :key="item.name"
-              :label="item.title"
-              :name="item.url"
-            >
-            </el-tab-pane>
-          </el-tabs>
-        </div>
+        <el-tabs v-model="editableTabsValue" type="card" closable @tab-remove="removeTab" @tab-click="clickTabs" class="tab-wrapper">
+          <el-tab-pane
+            v-for="item in editableTabs"
+            :key="item.name"
+            :label="item.title"
+            :name="item.url"
+          >
+          </el-tab-pane>
+        </el-tabs>
         <keep-alive>
           <router-view/>
         </keep-alive>
@@ -65,6 +26,7 @@
 // import { mapGetters } from 'vuex' // 获取state里面的数据
 import { $http } from '@/common/js/ajax'
 import MHeader from '@/components/Header'
+import NavLeft from '@/components/NavLeft'
 export default {
   data () {
     return {
@@ -77,7 +39,8 @@ export default {
     }
   },
   components: {
-    MHeader
+    MHeader,
+    NavLeft,
   },
   // computed: {
   //   ...mapGetters([
@@ -91,26 +54,6 @@ export default {
     },
     collapse () { // 左侧菜单展开折叠
       this.isCollapse = !this.isCollapse
-    },
-    selectItem (value) { // 点击左侧菜单
-      let unqiuFlag = false // 防止重复点击
-      this.$router.push({name: value.resourceUrl})
-      
-      this.menuActive = value.resourceUrl
-      this.editableTabs.map(v => {
-        if (v.name === value.resourceUrl) {
-          unqiuFlag = true
-        }
-      })
-      
-      if (!unqiuFlag) {
-        this.editableTabs.push({
-          title: value.name,
-          name: this.menuActive,
-          url: value.resourceUrl
-        })
-      }
-      this.editableTabsValue = this.menuActive
     },
     querySubSystemMenuList () { // 获取菜单
       $http(this.API.base.querymenus, { 'systemName': '服务平台' }).then((res) => {
@@ -148,7 +91,7 @@ export default {
     }
   },
   mounted() {
-    this.querySubSystemMenuList()
+    // this.querySubSystemMenuList()
   }
 }
 </script>

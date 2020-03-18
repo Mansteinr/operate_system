@@ -1,20 +1,16 @@
-import * as types from './mutations-type'
-import { showModal } from '../utils'
+/**
+ * 操作改变motataio 改变state里面的数据
+ */
+
+import * as types from './mutations-types'
+
+ console.log(types.GET_SYSTEMMENU_AJAX_LIST, [types.GET_SYSTEMMENU_AJAX_LIST])
 const mutations = {
-  // 这是一个修改方法， 第一个参数获取的state，第二个参数是提交的数据
-  [types.SET_MENU] (state, addMenu) {
-    if (!state.addMenu[addMenu]) {
-      state.addMenu[addMenu] = addMenu // 修改state里面的数据
-    } else {
-      showModal(`${addMenu}详情页已经打开了`, 'warning')
-    }
+  [types.GET_SYSTEMMENU_AJAX_LIST]: (state, list) => {
+    console.log(list, '909090909')
+    state.systemMenuList = list
   },
-  add (state, n = 1) {
-    state.count += n
-  },
-  reduction (state, n = 1) {
-    state.count -= n
-  }
 }
 
+console.log(mutations)
 export default mutations

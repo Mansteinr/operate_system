@@ -1,0 +1,2 @@
+export const SET_MENU = 'SET_MENU'
+export const GET_SYSTEMMENU_AJAX_LIST = 'GET_SYSTEMMENU_AJAX_LIST'
