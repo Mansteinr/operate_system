@@ -1,4 +1,5 @@
 const state = {
+  menuActive: '',
   systemMenuList: [],
   addMenu: {
     k: 'op'

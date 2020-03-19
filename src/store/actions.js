@@ -9,6 +9,7 @@ export const reductionFun = value => value.commit('reduction')
 export const getSystemMenuAjax = ({ commit }) => {
   $http(API.base.querymenus, { 'systemName': '服务平台' }).then((res) => {
     commit(types.GET_SYSTEMMENU_AJAX_LIST, res.resData)
+    commit(types.SET_ACTIVE_MEUN, res.resData[0].resourceUrl)
     // this.menu =  res.resData
     // this.menuActive = this.menu[0].resourceUrl
     // this.editableTabs.push({

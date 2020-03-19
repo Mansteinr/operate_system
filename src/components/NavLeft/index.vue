@@ -41,13 +41,10 @@
   </el-aside>
 </template>
 <script>
-import { mapGetters } from 'vuex' // 获取state里面的数据
-import { mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex' // 获取state里面的数据
 export default {
   data () {
     return {
-      menu: [],
-      menuActive: '', // 标记菜单激活状态
       isCollapse: false,
       editableTabsValue: '', // 标记卡片激活状态
       editableTabs: []
@@ -56,13 +53,13 @@ export default {
   methods: {
     collapse () { // 左侧菜单展开折叠
       this.isCollapse = !this.isCollapse
-      console.log(this.systemMenuList)
     },
     selectItem (value) { // 点击左侧菜单
       let unqiuFlag = false // 防止重复点击
       this.$router.push({name: value.resourceUrl})
       
-      this.menuActive = value.resourceUrl
+      // 此处是单独发送一个Mutation
+      this.setActiveMEUN(value.resourceUrl)
       this.editableTabs.map(v => {
         if (v.name === value.resourceUrl) {
           unqiuFlag = true
@@ -81,15 +78,20 @@ export default {
     // 映射action
     ...mapActions([
       'getSystemMenuAjax'
-    ])
+    ]),
+    ...mapMutations({ // 获取SET_ACTIVE_MEUN的方法
+      setActiveMEUN: 'SET_ACTIVE_MEUN'
+    })
   },
   mounted() {
     // 发送异步请求 单个Mutatio直接用mapMutations映射 多个mutations或者异步action用mapActions
+    // 此处是提交异步action  action内部其实也是提交的mutation
     this.getSystemMenuAjax()
   },
   computed: {
     ...mapGetters([
-      'systemMenuList'
+      'systemMenuList',
+      'menuActive'
     ])
   },
 }

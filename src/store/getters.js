@@ -2,3 +2,4 @@ export const addMenu = state => state.addMenu // es6语法简写 ruturn state.me
 
 
 export const systemMenuList = state => state.systemMenuList 
+export const menuActive = state => state.menuActive 
