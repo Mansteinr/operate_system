@@ -1,5 +1,7 @@
 const state = {
   menuActive: '',
+  editableTabsValue: '',
+  editableTabs: [],
   systemMenuList: [],
   addMenu: {
     k: 'op'

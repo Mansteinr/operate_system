@@ -10,13 +10,11 @@ export const getSystemMenuAjax = ({ commit }) => {
   $http(API.base.querymenus, { 'systemName': '服务平台' }).then((res) => {
     commit(types.GET_SYSTEMMENU_AJAX_LIST, res.resData)
     commit(types.SET_ACTIVE_MEUN, res.resData[0].resourceUrl)
-    // this.menu =  res.resData
-    // this.menuActive = this.menu[0].resourceUrl
-    // this.editableTabs.push({
-    //   title: this.menu[0].name,
-    //   name: this.menuActive,
-    //   url: this.menu[0].resourceUrl
-    // })
-    // this.editableTabsValue = this.menuActive
+    commit(types.SET_ACTIVE_HEADER_TAB, res.resData[0].resourceUrl)
+    commit(types.SET_HEADER_TABS, [{
+      title: res.resData[0].name,
+      name: res.resData[0].resourceUrl,
+      url: res.resData[0].resourceUrl
+    }])
   })
 }

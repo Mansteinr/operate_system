@@ -56,9 +56,10 @@ export default {
     },
     selectItem (value) { // 点击左侧菜单
       let unqiuFlag = false // 防止重复点击
+
       this.$router.push({name: value.resourceUrl})
       
-      // 此处是单独发送一个Mutation
+      // 此处是单独发送一个Mutationn 设置左侧激活状态
       this.setActiveMEUN(value.resourceUrl)
       this.editableTabs.map(v => {
         if (v.name === value.resourceUrl) {
@@ -67,20 +68,22 @@ export default {
       })
       
       if (!unqiuFlag) {
-        this.editableTabs.push({
+        this.setHeaderTab([{
           title: value.name,
           name: this.menuActive,
           url: value.resourceUrl
-        })
+        }])
       }
-      this.editableTabsValue = this.menuActive
+      this.setActiveHeaderTab(this.menuActive)
     },
     // 映射action
     ...mapActions([
       'getSystemMenuAjax'
     ]),
     ...mapMutations({ // 获取SET_ACTIVE_MEUN的方法
-      setActiveMEUN: 'SET_ACTIVE_MEUN'
+      setActiveMEUN: 'SET_ACTIVE_MEUN',
+      setHeaderTab: 'SET_HEADER_TABS',
+      setActiveHeaderTab: 'SET_ACTIVE_HEADER_TAB',
     })
   },
   mounted() {
@@ -93,7 +96,7 @@ export default {
       'systemMenuList',
       'menuActive'
     ])
-  },
+  }
 }
 </script>
 

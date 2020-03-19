@@ -9,7 +9,7 @@ baseConfig = {
     https: 'https://'
   }
 }
-console.log(mode, 'dsd')
+
 /*设置api转换*/
 let apiFormat = (api = '', hostkey = 'upapi', pt = protocol) => {
   return baseConfig.protocols[pt] + interfaceApi[mode][hostkey] + api
