@@ -55,18 +55,6 @@ export default {
     collapse () { // 左侧菜单展开折叠
       this.isCollapse = !this.isCollapse
     },
-    querySubSystemMenuList () { // 获取菜单
-      $http(this.API.base.querymenus, { 'systemName': '服务平台' }).then((res) => {
-        this.menu =  res.resData
-        this.menuActive = this.menu[0].resourceUrl
-        this.editableTabs.push({
-          title: this.menu[0].name,
-          name: this.menuActive,
-          url: this.menu[0].resourceUrl
-        })
-        this.editableTabsValue = this.menuActive
-      })
-    },
     removeTab(targetName) { // 删除tab选项卡
       if (!(this.editableTabs.length - 1)) {
         return
@@ -89,9 +77,6 @@ export default {
       this.editableTabsValue = this.editableTabs[this.editableTabs.length-1].url
       this.menuActive = this.editableTabs[this.editableTabs.length-1].url
     }
-  },
-  mounted() {
-    // this.querySubSystemMenuList()
   }
 }
 </script>
@@ -108,18 +93,27 @@ export default {
       padding 0px 10px 20px 10px !important
       .template-wrapper
         margin-top 20px
-      .el-tabs
-        height 50px !important
+      .tab-wrapper
+        position relative
+        height 40px
+        overflow hidden
+        background #fff
+        padding 0 10px
+        box-shadow 0 5px 10px #ddd
         margin-left -10px
         margin-right -10px
-        position absolute
-        z-index 102
-        width 100%
-        background #ecf1f5
-        .is-active
-          background white
-          border-top-left-radius 10px
-          border-top-right-radius 10px
+        .el-tabs
+          height 50px !important
+          margin-left -10px
+          margin-right -10px
+          position absolute
+          z-index 102
+          width 100%
+          background #ecf1f5
+          .is-active
+            background white
+            border-top-left-radius 10px
+            border-top-right-radius 10px
     .el-aside
       width: auto !important
       background $color-nave
@@ -142,13 +136,4 @@ export default {
       width 220px !important
       .icon-tubiaozhizuomoban
         transform rotate(-90deg)
-.tab-wrapper
-  position relative
-  height 40px
-  overflow hidden
-  background #fff
-  padding 0 10px
-  box-shadow 0 5px 10px #ddd
-  margin-left -10px
-  margin-right -10px
 </style>

@@ -290,7 +290,6 @@ export default {
     selectService (v) {
       if (!this.showHideFlag) return
       if (!v.serviceName) return
-      let _this = this
       $http(this.API.paramsApi.queryParamsByServiceName, v).then((res) => {
         this.paramsArr = res.resData.paramNameBeans
       })
@@ -332,7 +331,7 @@ export default {
       let options = {}
 
       if (this.showHideFlag && document.querySelector('.query-hide .mv-input')) {
-        document.querySelectorAll('.query-hide .mv-input input').forEach((v, k) => {
+        document.querySelectorAll('.query-hide .mv-input input').forEach(v => {
           if (v.name && v.value && v.value.replace(/(^\s*)|(\s*$)/g, "")) {
             options[v.name] =v.value.replace(/(^\s*)|(\s*$)/g, "")
           }
