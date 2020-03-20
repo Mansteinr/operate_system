@@ -91,11 +91,6 @@ const api = {
     querySupInfoList: apiFormat('operator/supplier/querySupInfoList'),
     querySupServiceList: apiFormat('operator/supplier/querySupServiceList')
   },
-  persistApi: {
-    persistDel: apiFormat('operator/persist/del'),
-    persistQuery: apiFormat('operator/persist/query'),
-    persistInfos: apiFormat('operator/persist/persistInfos')
-  },
   paramsApi: {
     getIP: apiFormat('/operator/slb/getIP'), /*获取ip黑名单*/
     addIPBatch: apiFormat('/operator/slb/addIPBatch'), /*新增ip黑名单*/
@@ -112,20 +107,6 @@ const api = {
     addServiceNameAndParams: apiFormat('operator/ServiceNameParams/addServiceNameAndParams'), /*配置管理新增的服务名*/
     queryParamsByServiceName: apiFormat('operator/ServiceNameParams/queryParamsByServiceName'), /*根据服务名查询参数*/
     deleteByServiceNameAndParamName: apiFormat('operator/ServiceNameParams/deleteByServiceNameAndParamName'), /*配置管理删除的服务名*/
-  },
-  callbackServiceApi: { // 异步服务
-    upCount: apiFormat('callbackService/operator/bill/upCount'), /* 数据源账单 */
-    upDetail: apiFormat('callbackService/operator/bill/upDetail'), /* 利润查询 */
-    marginCount: apiFormat('callbackService/operator/bill/marginCount'), /*  利润查询 */
-    getDecryptData: apiFormat('callbackService/operator/getDecryptData'), /* 订单号查询车保报告 */
-    marginDetail: apiFormat('callbackService/operator/bill/marginDetail'), /* 利润查询 */
-    customerCount: apiFormat('callbackService/operator/bill/customerCount'), /* 数据源账单 */
-    getOrderInfoById: apiFormat('callbackService/operator/getOrderInfoById'),  /* 订单号查看订单状态 */
-    customerDetail: apiFormat('callbackService/operator/bill/customerDetail'), /* 利润查询 */
-    getAllAbilityInfo: apiFormat('callbackService/operator/getAllAbilityInfo'), /* 订单号查询车保报告 */
-    getOrderInfoByVin: apiFormat('callbackService/operator/getOrderInfoByVin'),  /* vin查询符合条件的订单信息 */
-    getAbilitySupplilerInfo: apiFormat('callbackService/operator/getAbilitySupplilerInfo'), /* 订单号查询车保报告 */
-    alterAbilitySupplilerInfo: apiFormat('callbackService/operator/alterAbilitySupplilerInfo'), /* 订单号查询车保报告 */
   },
   lightSignIn: { // 一键登录
     customers: apiFormat('operator/lightSignIn/customers'),  // 获取一键登录所有的客户

@@ -67,15 +67,8 @@ export default {
       this.$router.push({path:'/lightSignInAdd'})
     },
     toDetail (value) { // 查看客户详情
-      this.setMenu(value)
-      console.log(this.addMenu())
+      // this.setMenu(value)
     },
-     ...mapMutations({ // 修改mutation 拿到定义在mutations里面的修改函数
-      setMenu: 'SET_MENU'
-    }),
-    ...mapGetters([
-      'addMenu' // 这个menu对应的是getters里面的menu 这样就拿到state中的菜单信息
-    ])
   }
 }
 </script>

@@ -22,7 +22,7 @@
 import md5 from 'js-md5'
 import axios from 'axios'
 import { showModal } from '../utils'
-import { mapMutations } from 'vuex' // 引入mapMutations函数
+// import { mapMutations } from 'vuex' // 引入mapMutations函数
 import { $http } from '../common/js/ajax'
 export default {
   data () {
@@ -71,9 +71,9 @@ export default {
         })
       }
     },
-    ...mapMutations({ // 修改mutation 拿到定义在mutations里面的修改函数
-      setMtk: 'SET_MTK'
-    })
+    // ...mapMutations({ // 修改mutation 拿到定义在mutations里面的修改函数
+    //   setMtk: 'SET_MTK'
+    // })
   }
 }
 </script>

@@ -50,13 +50,6 @@ import mobileOperator from '../pages/data-output/query_mobileOperator'
 import supplierAnalysis from '../pages/quality-analysis/supplier_quality_analysis'
 import customerAnalysis from '../pages/quality-analysis/customer_quality_analysis'
 
-/* 异步服务 */
-// const queryOrder = resolve => require(['../pages/async-service/query_order'], resolve)
-// const channelManagement = resolve => require(['../pages/async-service/channel_management'], resolve)
-// const queryReconciliation = resolve => require(['../pages/async-service/query_reconciliation'], resolve)
-import queryOrder from '../pages/async-service/query_order'
-import channelManagement from '../pages/async-service/channel_management'
-import queryReconciliation from '../pages/async-service/query_reconciliation'
 
 /** 安全中心 */
 // const paramRecord = resolve => require(['../pages/security-center/param_record'], resolve)
@@ -187,18 +180,6 @@ const router = new Router({
       path: '/customerAnalysis',
       name: 'views/configure/customer_quality_analysis.html',
       component: customerAnalysis
-    }, {
-      path: '/queryOrder',
-      name: 'views/vehicle/query_order.html',
-      component: queryOrder  
-    }, {
-      path: '/channelManagement',
-      name: 'views/vehicle/channel_management.html',
-      component: channelManagement    
-    },  {
-      path: '/queryReconciliation',
-      name: 'views/vehicle/query_reconciliation.html',
-      component: queryReconciliation    
     }, {
       path: '/parameterMaintenance',
       name: 'views/configure/interface_parameter_maintenance.html',

@@ -45,9 +45,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex' // 获取state里面
 export default {
   data () {
     return {
-      isCollapse: false,
-      editableTabsValue: '', // 标记卡片激活状态
-      editableTabs: []
+      isCollapse: false
     }
   },
   methods: {
@@ -61,12 +59,10 @@ export default {
       
       // 此处是单独发送一个Mutationn 设置左侧激活状态
       this.setActiveMEUN(value.resourceUrl)
-      this.editableTabs.map(v => {
-        if (v.name === value.resourceUrl) {
-          unqiuFlag = true
-        }
-      })
       
+      // 防止头部导航器重复添加
+      unqiuFlag = this.editableTabs.some(v => v.name === value.resourceUrl)
+
       if (!unqiuFlag) {
         this.setHeaderTab([{
           title: value.name,
@@ -77,13 +73,16 @@ export default {
       this.setActiveHeaderTab(this.menuActive)
     },
     // 映射action
-    ...mapActions([
-      'getSystemMenuAjax'
-    ]),
+    ...mapActions({
+      getSystemMenuAjax: 'basics/getSystemMenuAjax'
+    }),
+    // ...mapActions([
+    //   'getSystemMenuAjax'
+    // ]),
     ...mapMutations({ // 获取SET_ACTIVE_MEUN的方法
-      setActiveMEUN: 'SET_ACTIVE_MEUN',
-      setHeaderTab: 'SET_HEADER_TABS',
-      setActiveHeaderTab: 'SET_ACTIVE_HEADER_TAB',
+      setActiveMEUN: 'basics/SET_ACTIVE_MEUN',
+      setHeaderTab: 'basics/SET_HEADER_TABS',
+      setActiveHeaderTab: 'basics/SET_ACTIVE_HEADER_TAB'
     })
   },
   mounted() {
@@ -92,10 +91,15 @@ export default {
     this.getSystemMenuAjax()
   },
   computed: {
-    ...mapGetters([
-      'systemMenuList',
-      'menuActive'
-    ])
+    // ...mapGetters([
+    //   'systemMenuList',
+    //   'menuActive'
+    // ])
+    ...mapGetters({
+      systemMenuList: 'basics/systemMenuList',
+      menuActive: 'basics/menuActive',
+      editableTabs: 'basics/editableTabs'
+   })
   }
 }
 </script>
