@@ -2,8 +2,8 @@
   <div class="template-wrapper">
     <div class="card-wrapper card-content">
       <div class="card-title">
-        查询结果
-         <el-button type="primary" class="fr" icon="el-icon-edit">新增</el-button>
+        {{$t('m.basics.resultCardTitle')}}
+         <el-button type="primary" class="fr" icon="el-icon-edit">{{$t('m.basics.addTitle')}}</el-button>
       </div>
       <div class="card-container">
         <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
@@ -14,15 +14,15 @@
           :tableData="tableData" 
           v-show="tableData.length">
           <el-table-column
-            label="客户名称">
+            :label="$t('m.basics.customerName')">
             <template slot-scope="scope">
               <div>{{scope.row}}</div>
             </template>
           </el-table-column>
           <el-table-column
-            label="操作">
+            :label="$t('m.basics.operateTitle')">
             <template slot-scope="scope">
-              <div @click="detail(scope.row)" class="link">详情</div>
+              <div @click="detail(scope.row)" class="link">{{$t('m.basics.detailTitle')}}</div>
             </template>
           </el-table-column>
         </Table>

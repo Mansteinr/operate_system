@@ -175,6 +175,7 @@ input {
     height 100%
     width 30px
     text-align center
+    line-height 51px
   }
 }
 

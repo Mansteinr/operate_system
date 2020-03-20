@@ -5,8 +5,8 @@
     <div class="header-logo"></div>
     <div class="header-menu-warp">
       <el-select v-model="chooseLanguageTitle" class="chooseLanguageSelect" :placeholder="$t('m.header.choosePlaceholder')">
-        <el-option @click.native="selectLang('zh-CN')" value="中文"></el-option>
-        <el-option @click.native="selectLang('en-US')" value="English"></el-option>
+        <el-option @click.native="selectLang('zh')" value="中文"></el-option>
+        <el-option @click.native="selectLang('en')" value="English"></el-option>
       </el-select>
       <el-dropdown class="el-select chooseNameSelect">
         <span class="el-dropdown-link">
@@ -32,7 +32,7 @@
     methods: {
       // 选择语言
       selectLang (value) {
-        console.log(value)
+        this.$i18n.locale = value
       },
       choseProject () { // 选择项目
        window.location.href = this.API.base.projectchoose
