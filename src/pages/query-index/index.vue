@@ -1,33 +1,25 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper">
-      <div class="card-title">
-        {{$t('m.basics.queryCardTitle')}}
-      </div>
-      <div class="card-container">
-        <el-form :inline="true" :model="queryParams" ref="querForm" class="query-form">
-          <el-form-item :label="$t('m.basics.datePickerLabel')" prop="time">
-            <div class="block">
-              <el-date-picker
-                v-model="queryParams.time"
-                type="daterange"
-                align="right"
-                unlink-panels
-                :clearable="false"
-                :range-separator="$t('m.basics.datePickerRangeSeparator')"
-                :name="['start', 'end']"
-                :start-placeholder="$t('m.basics.datePickerStartPlaceholder')"
-                :end-placeholder="$t('m.basics.datePickerEndPlaceholder')"
-                :picker-options="pickerOptions2">
-              </el-date-picker>
-            </div>
-          </el-form-item>
-          <el-form-item class="query-item">
-            <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </div>
+    <Inquiry
+      :queryParams="queryParams"
+      >
+      <el-form-item :label="$t('m.basics.datePickerLabel')" prop="time">
+        <div class="block">
+          <el-date-picker
+            v-model="queryParams.time"
+            type="daterange"
+            align="right"
+            unlink-panels
+            :clearable="false"
+            :range-separator="$t('m.basics.datePickerRangeSeparator')"
+            :name="['start', 'end']"
+            :start-placeholder="$t('m.basics.datePickerStartPlaceholder')"
+            :end-placeholder="$t('m.basics.datePickerEndPlaceholder')"
+            :picker-options="pickerOptions2">
+          </el-date-picker>
+        </div>
+      </el-form-item>
+    </Inquiry>
     <div class="card-wrapper card-content">
       <div class="card-title">
         {{$t('m.basics.resultCardTitle')}}
@@ -76,6 +68,7 @@
 </template>
 
 <script>
+import Inquiry from '@/components/Inquiry'
 import Table from '../../base/Table'
 import { $http } from '../../common/js/ajax'
 import QueryButton from '../../base/QueryButton'
@@ -134,6 +127,7 @@ export default {
   },
   components: {
     Table,
+    Inquiry,
     QueryButton
   },
   methods: {

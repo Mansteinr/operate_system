@@ -1,0 +1,4 @@
+// 按每日统计
+export const GET_USAGEBYDATE = 'GET_USAGEBYDATE'
+// 按客户统计
+export const GET_USAGEBYCUSTOMER = 'GET_USAGEBYCUSTOMER'

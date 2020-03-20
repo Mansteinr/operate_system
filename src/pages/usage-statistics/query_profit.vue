@@ -243,7 +243,7 @@ export default {
   methods: {
     reset () { //  重置操作
       this.$refs.querForm.resetFields()
-      reset()
+      // reset()
     },
     onSubmit () {
       let options = {}
