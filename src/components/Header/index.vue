@@ -4,7 +4,7 @@
   <el-header class="m-header">
     <div class="header-logo"></div>
     <div class="header-menu-warp">
-      <el-select v-model="chooseLanguageTitle" class="chooseLanguageSelect" placeholder="请选择">
+      <el-select v-model="chooseLanguageTitle" class="chooseLanguageSelect" :placeholder="$t('m.header.choosePlaceholder')">
         <el-option @click.native="selectLang('zh-CN')" value="中文"></el-option>
         <el-option @click.native="selectLang('en-US')" value="English"></el-option>
       </el-select>

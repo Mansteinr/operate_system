@@ -7,13 +7,14 @@
         <input type="text" v-model="username" :placeholder="$t('m.login.username')" @keyup.enter="goLogin" />
       </div>
       <div class="login-input-warp login-pwd">
-        <input type="password" v-model="password" :placeholder="$t('m.login.password')" @keyup.enter="goLogin" />
+        <input :type="isShow ? 'text' : 'password'" v-model="password" :placeholder="$t('m.login.password')" @keyup.enter="goLogin" />
+        <span @click="toggelShow" class="iconfont" :class="isShow ? 'icon-xianshimima' : 'icon-buxianshimima'"></span>
       </div>
       <div class="input-code">
-        <input type="text" id="code" v-model.trim="vcode" class="user-input" placeholder="验证码" @keyup.enter="goLogin" maxlength="4">
-        <img class="code-img" :src="imgSrc" alt="点击刷新验证码" @click="reloadImg">
+        <input type="text" id="code" v-model.trim="vcode" class="user-input" :placeholder="$t('m.login.placeholder')" @keyup.enter="goLogin" maxlength="4">
+        <img class="code-img" :src="imgSrc" :alt="$t('m.login.imageAlt')" @click="reloadImg">
       </div>
-      <el-button type="primary" @click="goLogin" class="login-btn">登录</el-button>
+      <el-button type="primary" @click="goLogin" class="login-btn">{{$t('m.login.loginBtnText')}}</el-button>
     </div>
   </section>
 </template>
@@ -31,13 +32,17 @@ export default {
       password: '',
       imgSrc: '',
       uuid: '',
-      vcode: ''
+      vcode: '',
+      isShow: false
     }
   },
   mounted () {
     this.getVerifyCode()
   },
   methods: {
+    toggelShow () {
+      this.isShow = !this.isShow
+    },
     reloadImg () {
       this.getVerifyCode()
     },
@@ -162,7 +167,15 @@ input {
 }
 
 .login-input-warp.login-pwd {
+  position relative
   background-image: url('../common/images/login/pwd.png');
+  span {
+    position absolute
+    right 10px
+    height 100%
+    width 30px
+    text-align center
+  }
 }
 
 .login-inputs input, .login-input-warp input {
