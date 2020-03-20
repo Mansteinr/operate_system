@@ -31,21 +31,25 @@
     <div class="card-wrapper card-content">
       <div class="card-title">
         {{$t('m.basics.resultCardTitle')}}
-        <el-button-group>
-          <el-button :type="tabFlag?'':'primary'" :class="tabFlag?'':'active'" @click="switchTab(false)">{{$t('m.basics.switchTabChart')}}</el-button>
-          <el-button :type="tabFlag?'primary':''" :class="tabFlag?'active':''"  @click="switchTab(true)">{{$t('m.basics.switchTabTable')}}</el-button>
-        </el-button-group>
       </div>
       <div class="card-container">
-        <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag && tableData.length" class="charts" ref="charts1" style="height:400px;width:100%;"></div>        
-        <Table ref="table" 
-          class="table table1" 
-          :tableData="tableData" 
-          :tatalPage="tableData.length" 
-          v-show="tabFlag" 
-          :columns="columns">
-        </Table>
+        <el-tabs type="card" class="mv-tabs">
+          <el-tab-pane
+            :label="$t('m.basics.switchTabTable')"
+          >
+            <Table ref="table" 
+              class="table table1" 
+              :tableData="tableData" 
+              :tatalPage="tableData.length" 
+              :columns="columns">
+            </Table>
+          </el-tab-pane>
+          <el-tab-pane
+            :label="$t('m.basics.switchTabChart')"
+          >
+            <div class="charts" ref="charts1" style="height:400px;width:100%;"></div>  
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </div>
     <div class="card-wrapper card-content">
@@ -202,5 +206,13 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus">
+.mv-tabs
+  position relative
+  overflow hidden
+  .el-tabs__header
+    position absolute
+    right 0
+  .el-tabs__content
+    margin-top 45px
 </style>
