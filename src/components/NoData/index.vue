@@ -42,7 +42,7 @@
         </g>
       </svg>
     </div>
-    <p class="ant-empty-description">No Data</p>
+    <p class="ant-empty-description">{{$t('m.basics.noData')}}</p>
   </div>
 </template>
 

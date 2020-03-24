@@ -134,16 +134,17 @@ let color = ['rgba(44,181,171, 1)', 'rgba(44,181,171,.3)', 'rgba(145,191,93,1)',
       },
     },
   }
-export function setLineData (title, xAxisData, series) {
-  var legendData = []
-  let seriesOpt = []
-  var arrLength = series.length > 15 ? 15 : series.length
-  for (var i = 0; i < series.length; i++) {
+export function setLineData (options) {
+  console.log(options, 'setLineData')
+  // debugger
+  if(!options) return
+  let legendData = [], seriesOpt = [], arrLength = options.series.length > 15 ? 15 : options.series.length
+  for (let i = 0; i < options.series.length; i++) {
     if (i <= arrLength) {
-      legendData.push(series[i].name)
+      legendData.push(options.series[i].name)
     }
     seriesOpt.push({
-      "name": series[i].name,
+      "name": options.series[i].name,
       type: 'line',
       smooth: true, //是否平滑曲线显示
       lineStyle: { //线条样式 
@@ -163,12 +164,12 @@ export function setLineData (title, xAxisData, series) {
           color: color[i * 2]
         }
       },
-      "data": series[i].data
+      "data": options.series[i].data
     })
   }
-  var option = {
+  let option = {
     title: {
-      text: title,
+      text: options.title,
       left: '1%',
       top: '-1%',
       textStyle: {
@@ -183,11 +184,11 @@ export function setLineData (title, xAxisData, series) {
     grid: grid,
     toolbox: toolbox,
     calculable: true,
-    xAxis: [Object.assign(xAxis, { data: xAxisData })],
+    xAxis: [Object.assign(xAxis, { data: options.xAxisData })],
     yAxis: yAxis,
     series: seriesOpt
   }
-  if (xAxisData.length > 20) {
+  if (options.xAxisData.length > 20) {
     option.dataZoom = dataBar
     option.dataZoom[0].bottom = 15 + Math.ceil(legendData.length / 8) * 20
     option.grid.bottom = 70 + Math.ceil(legendData.length / 8) * 20
@@ -197,6 +198,7 @@ export function setLineData (title, xAxisData, series) {
   if (arrLength > 15) {
     option.legend.bottom = 0
   }
+  console.log(option, 'optionoptionoptio')
   return option
 }
 
@@ -254,7 +256,7 @@ export function setOtherLineData (xAxisData, series) {
         },
       }
     }],
-    series: series
+    series: options.series
   }
   if (xAxisData.length > 20) {
     var dataZoom = [];

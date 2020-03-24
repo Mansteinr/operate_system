@@ -113,12 +113,12 @@
  * 支持多选 单选 搜索 前端分页 后端分页 前端导出excel txt等格式 单元格合并
  */
   import XLSX from 'xlsx'
-  import Guid from './Guid'
+  import Guid from '../Guid'
   import moment from 'moment'
   import FileSaver from 'file-saver'
   import { Loading } from 'element-ui'
-  import Pagination from './Pagination'
-  import { $http } from '../common/js/ajax'
+  import Pagination from '../Pagination'
+  import { $http } from '../../common/js/ajax'
   export default {
     data () {
       return {

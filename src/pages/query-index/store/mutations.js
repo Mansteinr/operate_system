@@ -8,6 +8,7 @@ const mutations = {
   [types.GET_USAGEBYDATE] (state, list) {
     let newList = JSON.parse(JSON.stringify(list))
     state.UsageByDateList = Object.assign([], newList)
+    console.log(state.UsageByDateList)
   },
   [types.GET_USAGEBYCUSTOMER] (state, list) { //左侧标记菜单激活状态
     let newList = JSON.parse(JSON.stringify(list))

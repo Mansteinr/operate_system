@@ -50,8 +50,7 @@
             options[v.name] = v.value
           }
         })
-        // this.initFun(options)
-        console.log(options)
+        this.$emit('initFun', options)
       }
     }
   }

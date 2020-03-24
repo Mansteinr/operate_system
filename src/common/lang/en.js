@@ -18,6 +18,7 @@ export const m = {
     addTitle: 'add',
     operateTitle: 'operate',
     detailTitle: 'detail',
+    noData: 'No Data',
   },
   login: { //  登陆页面
     title: 'Operation platform',

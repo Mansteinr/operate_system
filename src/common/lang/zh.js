@@ -19,6 +19,7 @@ export const m = {
     addTitle: '新增',
     operateTitle: '操作',
     detailTitle: '详情',
+    noData: 'No Data',
   },
   login: { //  登陆页面
     title: '运营平台',
