@@ -135,8 +135,6 @@ let color = ['rgba(44,181,171, 1)', 'rgba(44,181,171,.3)', 'rgba(145,191,93,1)',
     },
   }
 export function setLineData (options) {
-  console.log(options, 'setLineData')
-  // debugger
   if(!options) return
   let legendData = [], seriesOpt = [], arrLength = options.series.length > 15 ? 15 : options.series.length
   for (let i = 0; i < options.series.length; i++) {
@@ -144,7 +142,7 @@ export function setLineData (options) {
       legendData.push(options.series[i].name)
     }
     seriesOpt.push({
-      "name": options.series[i].name,
+      name: options.series[i].name,
       type: 'line',
       smooth: true, //是否平滑曲线显示
       lineStyle: { //线条样式 
@@ -164,7 +162,7 @@ export function setLineData (options) {
           color: color[i * 2]
         }
       },
-      "data": options.series[i].data
+      data: options.series[i].data
     })
   }
   let option = {
@@ -198,7 +196,6 @@ export function setLineData (options) {
   if (arrLength > 15) {
     option.legend.bottom = 0
   }
-  console.log(option, 'optionoptionoptio')
   return option
 }
 

@@ -1,21 +1,10 @@
 <template>
   <div class="table">
-    <el-row :gutter="5" v-show="showSearch">
-      <el-col :span="1" v-show="showPlusIcon"><el-button @click="addFun" type="primary" icon="el-icon-plus" size="mini"></el-button></el-col>
-      <el-col :span="4" :offset="showPlusIcon?17:18"><el-input v-model.trim="search" size="mini" placeholder="请输入关键字"/></el-col>
-      <el-col :span="2" class='export-wrapper'>
-        <el-dropdown>
-          <el-button size="mini" type="primary" icon="el-icon-share"></el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item @click.native="exportExcel('xlsx',$event)">xlsx</el-dropdown-item>
-            <el-dropdown-item @click.native="exportExcel('xml',$event)">xml</el-dropdown-item>
-            <el-dropdown-item @click.native="exportExcel('csv',$event)">csv</el-dropdown-item>
-            <el-dropdown-item @click.native="exportExcel('txt',$event)">txt</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </el-col>
-    </el-row>
-    
+    <!-- 导出文件组件 -->
+    <Export
+      :showPlusIcon="showPlusIcon"
+      @addFun = "addFun"
+      :data="this.tableData"/>
     <el-table
       id="out-table"
       :data="sidePagination === 'customer' ? tableDataComputed.slice(start, end) : tableData"
@@ -112,11 +101,10 @@
 /**
  * 支持多选 单选 搜索 前端分页 后端分页 前端导出excel txt等格式 单元格合并
  */
-  import XLSX from 'xlsx'
+  
   import Guid from '../Guid'
   import moment from 'moment'
-  import FileSaver from 'file-saver'
-  import { Loading } from 'element-ui'
+  import Export from '../Export'
   import Pagination from '../Pagination'
   import { $http } from '../../common/js/ajax'
   export default {
@@ -128,10 +116,8 @@
         Dom: null,
         search: '',
         pageSize: 10,
-        parentDom: [],
         currentPage: 1,
         stopFlag: true,
-        selectValue: 'xlsx',
         dialogVisible: false,
         spanArr: [] // 合并单元格时 统计需要合并单元格数量
       }
@@ -180,6 +166,7 @@
     },
     components: {
       Guid,
+      Export,
       Pagination
     },
     methods: {
@@ -243,32 +230,7 @@
       formatterParams (val) { // 参数展示
         var html = '';
         for (var key in val) {
-          var label = key
-          switch (key) {
-            case 'accountNo':
-              label = '银行卡号'
-              break;
-            case 'idCard':
-              label = '身份证号'
-              break;
-            case 'mobile':
-              label = '手机号码'
-              break;
-            case 'name':
-              label = '姓名'
-              break;
-            case 'plateNumber':
-              label = '车牌号'
-              break;
-            case 'plateType':
-              label = '号牌种类'
-              break;
-            default:
-              label = key
-              break;
-          }
-          // 只展示下面几个参数 其他不需要展示
-          if (key == 'accountNo' || key == 'idCard' || key == 'mobile' || key == 'name' || key == 'plateNumber' || key == 'plateType') {
+         if (key !== 'guid' && key !== 'image' && key !== 'shaIdCard' && key !== 'shaName' && key !== 'shaMobile') { // 不需要展示guid
             html += '<span class="param-item" title="' + label + ': ' + val[key] + '">' + label + ': ' + val[key] + '</span>'
           }
         }
@@ -323,14 +285,6 @@
           }
         }
       },
-      irateror (dom) { // 递归 寻找table父元素
-        this.parentDom.push(dom)
-        if (dom.className && dom.className.indexOf('table') < 0) {
-          this.irateror(dom.parentNode)
-        } else {
-          return dom
-        }
-      },
       formatterSrc (val) {
         if (val && val.length) {
           let html = ''
@@ -342,40 +296,6 @@
           return html
         }
       },
-      exportExcel (kind, e) { // 导出excel
-        this.parentDom = [] // 清空数据防止遗留数据影响
-        this.irateror(e.target)
-        const loading = Loading.service({
-          lock: true,
-          text: '下载中…',
-          background: 'rgba(0, 0, 0, 0.7)'
-        })
-        if (this.tableData.length > 10) {
-          let ul = this.parentDom[this.parentDom.length-1].querySelector('.el-select-dropdown__list')
-          let lis = ul.getElementsByTagName('li')
-          lis[lis.length -1].click()
-          this.$nextTick(() => {
-            setTimeout(()=> {
-              var wb = XLSX.utils.table_to_book(this.parentDom[this.parentDom.length-1])
-              var wbout = XLSX.write(wb, { bookType: kind, bookSST: true, type: 'array' })
-              try {
-                  FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'download.' + kind)
-              } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
-              loading.close()
-              lis[0].click()
-              return wbout
-            }, 1000)
-          })
-        } else {
-          var wb = XLSX.utils.table_to_book(this.parentDom[this.parentDom.length-1])
-          var wbout = XLSX.write(wb, { bookType: kind, bookSST: true, type: 'array' })
-          try {
-              FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'download.' + kind)
-          } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
-          loading.close()
-          return wbout
-        }
-      }
     },
     computed: {
       tableDataComputed (param) {

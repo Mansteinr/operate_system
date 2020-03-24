@@ -10,7 +10,6 @@
 <script>
   import { setLineData, renderChart } from '@/common/js/myCharts'
   let tempChart = null
-  console.log(window)
   export default {
     props: {
       options: Object,
@@ -18,7 +17,6 @@
     },
     mounted() {
       this.$nextTick(() => {
-        console.log(this.options, 'this.option')
         if(!this.options) return
         tempChart = renderChart(this.$refs.charts, setLineData(this.options))
       })
@@ -34,7 +32,6 @@
   }
   // 屏幕改变时 重新渲染 echats 适配
   window.onresize = function () {
-    console.log('909090')
     tempChart.resize()
   }
 </script>
