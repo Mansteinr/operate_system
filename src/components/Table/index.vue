@@ -2,8 +2,10 @@
   <div class="table">
     <!-- 导出文件组件 -->
     <Export
+      :showSearch="showSearch"
       :showPlusIcon="showPlusIcon"
       @addFun = "addFun"
+      @searchChange="searchChange"
       :data="this.tableData"/>
     <el-table
       id="out-table"
@@ -19,7 +21,6 @@
         <template  v-for="(v, k) in columns">
           <el-table-column
             :key="k"
-            v-if="v.label != '操作' && v.label != 'guid' && v.label != '参数' && v.label != '渠道' && v.label !='车保报告'"
             :label="v.label"
             :fixed="v.fixed"
             :class-name="v.className"
@@ -31,60 +32,9 @@
             :sortable="v.sortable"
             :type="v.type"
             :prop='v.prop'>
-            <div v-html="'<span>fsdfsd</span>'"></div>
-          </el-table-column>
-          <el-table-column
-            :key="k"
-            v-else-if="v.label == '操作' || v.label == '车保报告'"
-            :width="v.width"
-            :label="v.label"
-          >
-          <template slot-scope="scope">
-            <el-button
-              v-for="(v1, k1) in v.prop"
-              :key="k1"
-              plain
-              :disabled="v.disabled"
-              :type="v1.type?v1.type:'primary'"
-              :size="v1.size?v1.size:'mini'"
-              @click="handle(scope.row, v1.method)">{{v1.keyWord}}</el-button>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :key="k"
-            v-else-if="v.label == 'guid'"
-            :prop="v.prop"
-            :width="v.width"
-            :label="v.label"
-          >
-            <template slot-scope="scope">
-              <div class="link" @click="queryGuid(scope.row[v.prop])">{{scope.row[v.prop]}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :key="k"
-            v-else-if="v.label == '参数'"
-            :prop="v.prop"
-            :width="v.width"
-            :label="v.label"
-          >
-            <template slot-scope="scope">
-              <div v-html="scope.row.param?formatterParams(scope.row.param):formatterParamsArrobj(scope.row.paramNameBeans)"></div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :key="k"
-            v-else-if="v.label == '渠道'"
-            :prop="v.prop"
-            :width="v.width"
-            :label="v.label"
-          >
-            <template slot-scope="scope">
-              <div v-html="formatterSrc(scope.row.srcQueryReturnList)"></div>
-            </template>
           </el-table-column>
         </template>
-        <slot></slot>
+        <slot name="tableTail"></slot>
     </el-table>
     <Pagination 
       @changePage="changePage" 
@@ -113,11 +63,9 @@
         end: 10,
         start:0,
         josn: {},
-        Dom: null,
         search: '',
         pageSize: 10,
         currentPage: 1,
-        stopFlag: true,
         dialogVisible: false,
         spanArr: [] // 合并单元格时 统计需要合并单元格数量
       }
@@ -170,6 +118,10 @@
       Pagination
     },
     methods: {
+      searchChange(value) {
+        this.search = value
+        console.log(value, 'searchChange')
+      },
       handleSelectionChange(val) {
         this.$emit('handleSelectionChange', val)
       },

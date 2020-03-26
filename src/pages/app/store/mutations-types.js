@@ -1,0 +1,2 @@
+// 获取一键登陆客户
+export const GET_LIGHTSIGNIN_CUSTOMER = 'GET_LIGHTSIGNIN_CUSTOMER'

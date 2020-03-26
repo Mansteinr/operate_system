@@ -6,7 +6,7 @@
     </div>
     <div class="card-container">
       <NoData v-show="!data.length"/>
-      <el-tabs v-show="data.length" type="card" class="mv-tabs">
+      <el-tabs v-show="data.length && !isOnlyTable" type="card" class="mv-tabs">
         <el-tab-pane :label="$t('m.basics.switchTabChart')">
           <slot name="Chart"></slot>
         </el-tab-pane>
@@ -14,6 +14,7 @@
           <slot name="Table"></slot>
         </el-tab-pane>
       </el-tabs>
+      <slot v-show="data.length && isOnlyTable" name="onlyTable"></slot>
     </div>
   </div>
 </template>
@@ -34,17 +35,9 @@ export default {
       type: Array,
       default: () => []
     },
-    tableData: {
-      type: Array,
-      default: () => []
-    },
-    columns: {
-      type: Array,
-      default: () => []
-    },
-    tatalPage: {
-      type: Number,
-      default: 0
+    isOnlyTable: {
+      type: Boolean,
+      default: false
     }
   }
 }

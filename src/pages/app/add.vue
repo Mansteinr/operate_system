@@ -1,34 +1,12 @@
 <template>
-  <div class="template-wrapper">
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        {{$t('m.basics.resultCardTitle')}}
-         <el-button type="primary" class="fr" icon="el-icon-edit">{{$t('m.basics.addTitle')}}</el-button>
-      </div>
-      <div class="card-container">
-        <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table 
-          ref="table"
-          :showSearch="false" 
-          :showSummary="false" 
-          :tableData="tableData" 
-          v-show="tableData.length">
-          <el-table-column
-            :label="$t('m.basics.customerName')">
-            <template slot-scope="scope">
-              <div>{{scope.row}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            :label="$t('m.basics.operateTitle')">
-            <template slot-scope="scope">
-              <div @click="detail(scope.row)" class="link">{{$t('m.basics.detailTitle')}}</div>
-            </template>
-          </el-table-column>
-        </Table>
-      </div>
-    </div>
-  </div>
+  <Content :isOnlyTable="true">
+    <Table 
+      slot="onlyTable"
+      ref="table" 
+        :tableData="UsageByDateList" 
+        :tatalPage="UsageByDateList.length" 
+        :columns="columns"/>
+  </Content>
 </template>
 
 <script>
@@ -42,8 +20,10 @@
  * 3、不支持跨越查询, 故开始时间默认为当月1号零时零点零秒  结束时间为当前时间
  *
  */
-import Table from '../../base/Table'
-import { $http } from '../../common/js/ajax'
+import Table from '@/base/Table'
+import { $http } from '@/common/js/ajax'
+import Content from '@/components/Content'
+import { mapActions, mapState, mapGetters } from 'vuex'
 export default {
   data () {
     return {
@@ -51,17 +31,16 @@ export default {
     }
   },
   components: {
-    Table
+    Table,
+    Content
   },
   mounted() {
     this.getLightSignIncustomer()
   },
   methods: {
-    getLightSignIncustomer () {
-      $http(this.API.lightSignIn.customers, {}, 'get').then((res) => {
-        this.tableData = res.resData
-      })
-    }
+    ...mapActions({
+      getLightSignInCustomersAjax: 'lightSignIn/getLightSignInCustomersAjax'
+    })
   }
 }
 </script>

@@ -1,5 +1,6 @@
 <template>
   <div class="template-wrapper">
+    <!-- 查询模块 -->
     <Inquiry
       :queryParams="queryParams"
       @initFun="initFun"
@@ -21,43 +22,35 @@
         </div>
       </el-form-item>
     </Inquiry>
+    <!-- 按日期分析 -->
     <Content :data="UsageByDateList">
-      <template slot="Chart">
-        <Chart :options="UsageByDateChartOption"/>
-      </template>
-      <template slot="Table">
-      <Table ref="table" 
+      <Chart slot="Chart" :options="UsageByDateChartOption"/>
+      <Table slot="Table" ref="table" 
         :tableData="UsageByDateList" 
         :tatalPage="UsageByDateList.length" 
-        :columns="columns">
-      </Table>
-      </template>
+        :columns="columns"/>
     </Content>
+    <!-- 按客户分析 -->
     <Content :data="UsageByCustomerList">
-      <template slot="Chart">
-        <Chart :options="UsageByCustomerChartOption"/>
-      </template>
-      <template slot="Table">
-      <Table ref="table" 
+      <Chart slot="Chart" :options="UsageByCustomerChartOption"/>
+      <Table slot="Table" ref="table" 
         :tableData="UsageByCustomerList" 
         :tatalPage="UsageByCustomerList.length" 
-        :columns="columns">
-      </Table>
-      </template>
+        :columns="columns"/>
     </Content>
   </div>
 </template>
 
 <script>
+import Table from '@/components/Table'
 import Chart from '@/components/Chart'
 import Content from '@/components/Content'
 import Inquiry from '@/components/Inquiry'
-import Table from '../../base/Table'
 import { $http } from '../../common/js/ajax'
 import QueryButton from '../../base/QueryButton'
+import { mapActions, mapState, mapGetters } from 'vuex'
 import { switchMixin, hotKeyTime } from '../../common/js/mixin'
 import { setLineData, renderChart } from '../../common/js/myCharts'
-import { mapActions, mapState, mapGetters } from 'vuex'
 export default {
   mixins: [switchMixin, hotKeyTime],
   data () {
@@ -125,7 +118,7 @@ export default {
     ...mapActions({
       getUsageByDateAjax: 'queryIndex/getUsageByDateAjax',
       getUsageByCustomerAjax: 'queryIndex/getUsageByCustomerAjax',
-    }),
+    })
   },
   computed: {
     // ...mapState({

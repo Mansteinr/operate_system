@@ -4,7 +4,6 @@ export const m = {
     resultCardTitle: '查询结果',
     switchTabChart: '图表',
     switchTabTable: '数据',
-    switchTabTable: '数据',
     datePickerLabel: '选择时间：',
     datePickerRangeSeparator: '至',
     datePickerEndPlaceholder: '开始日期',

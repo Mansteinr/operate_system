@@ -1,6 +1,12 @@
 <template>
-  <div class="template-wrapper">
-    <div class="card-wrapper card-content">
+  <div slot="onlyTable" class="template-wrapper">
+    <Content :data="lightSignInCustomerList">
+      <Table slot="Table" ref="table" 
+        :tableData="lightSignInCustomerList" 
+        :tatalPage="lightSignInCustomerList.length" 
+        :columns="columns"/>
+    </Content>
+    <!-- <div class="card-wrapper card-content">
       <div class="card-title">
         新增
          <el-button type="primary" class="fr" @click="add" icon="el-icon-edit">新增</el-button>
@@ -11,8 +17,8 @@
           ref="table"
           :showSearch="false" 
           :showSummary="false" 
-          :tableData="tableData" 
-          v-show="tableData.length">
+          :tableData="lightSignInCustomerList" 
+          v-show="lightSignInCustomerList.length">
           <el-table-column
             label="客户名称">
             <template slot-scope="scope">
@@ -27,7 +33,7 @@
           </el-table-column>
         </Table>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -42,33 +48,45 @@
  * 3、不支持跨越查询, 故开始时间默认为当月1号零时零点零秒  结束时间为当前时间
  *
  */
+
 import Table from '../../base/Table'
-import { mapMutations, mapGetters } from 'vuex' // 引入mapMutations函数
 import { $http } from '../../common/js/ajax'
+import Content from '@/components/Content'
+import { mapActions, mapState, mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      tableData: []
+      columns: [{
+        prop: this.$t('m.basics.customerName'),
+        label: this.$t('m.basics.dayTime')
+      }, {
+        prop: 'dayTime',
+        sortable: true,
+        label: this.$t('m.basics.dayTime')
+      }]
     }
   },
   components: {
     Table
   },
   mounted() {
-    this.getLightSignIncustomer()
+    this.getLightSignInCustomersAjax()
   },
   methods: {
-    getLightSignIncustomer () { // 获取所有的开通一键登录的客户
-      $http(this.API.lightSignIn.customers, {}, 'get').then((res) => {
-        this.tableData = res.resData
-      })
-    },
     add () { //  新增客户
       this.$router.push({path:'/lightSignInAdd'})
     },
     toDetail (value) { // 查看客户详情
       // this.setMenu(value)
     },
+    ...mapActions({
+      getLightSignInCustomersAjax: 'lightSignIn/getLightSignInCustomersAjax'
+    })
+  },
+  computed: {
+    ...mapGetters({
+      lightSignInCustomerList: 'lightSignIn/lightSignInCustomerList'
+   }),
   }
 }
 </script>

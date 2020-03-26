@@ -29,9 +29,14 @@
     data () {
       return {
         parentDom: [],
+        search: ''
       }
     },
     props: {
+      showSearch: {
+        type: Boolean,
+        default: true
+      },
       showPlusIcon: {
         type: Boolean,
         default: false
@@ -41,8 +46,17 @@
         default: () => []
       }
     },
+    watch: {
+      search() {
+        console.log(this.search, 'this.search')
+        this.$emit('searchChange', this.search)
+      }
+    },
     methods: {
-       addFun() {
+      // searchChange() {
+      //   console.log('searchChange', this.search)
+      // },
+      addFun() {
         this.$emit('addFun')
       },
       irateror (dom) { // 递归 寻找table父元素
