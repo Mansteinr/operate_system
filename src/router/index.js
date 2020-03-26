@@ -100,108 +100,107 @@ const router = new Router({
     name: 'Main',
     component: Main,
     children: [{
-      path: '/QueryIndex',
-      label: 'popo',
+      path: '/views/query_index',
       name: 'views/query_index.html',
       component: QueryIndex
     }, {
-      path: '/QueryUsage',
+      path: '/views/statistics/query_usage',
       name: 'views/statistics/query_usage.html',
       component: QueryUsage
     }, {
-      path: '/QueryProfit',
+      path: '/views/statistics/query_profit',
       name: 'views/statistics/query_profit.html',
       component: QueryProfit
     }, {
-      path: '/QueryFinance',
+      path: '/views/statistics/query_finance',
       name: 'views/statistics/query_finance.html',
       component: QueryFinance
     }, {
-      path: '/upstreamSupplier',
+      path: '/views/statistics/query_upstream_supplier',
       name: 'views/statistics/query_upstream_supplier.html',
       component: upstreamSupplier
     }, {
-      path: '/upstreamCustomer',
-      name: 'views/statistics/query_downstream_customer.html',
+      path: '/views/statistics/query_upstream_customer',
+      name: 'views/statistics/query_upstream_customer.html',
       component: upstreamCustomer
     }, {
-      path: '/upstreamService',
+      path: '/statistics/query_upstream_service',
       name: 'views/statistics/query_upstream_service.html',
       component: upstreamService
     }, {
-      path: '/upstreamServiceByData',
+      path: '/views/statistics/query_upstream_serviceByData',
       name: 'views/statistics/query_upstream_serviceByData.html',
       component: upstreamServiceByData
     }, {
-      path: '/downstreamCustomer',
+      path: '/query_downstream_customer',
       name: 'views/statistics/query_downstream_customer.html',
       component: downstreamCustomer
     }, {
-      path: '/downstreamService',
+      path: '/views/statistics/query_downstream_service',
       name: 'views/statistics/query_downstream_service.html',
       component: downstreamService
     }, {
-      path: '/QueryLog',
+      path: '/views/devops/query_logs',
       name: 'views/devops/query_logs.html',
       component: QueryLog
     }, {
-      path: '/queryQuality',
+      path: '/views/devops/query_quality',
       name: 'views/devops/query_quality.html',
       component: queryQuality
     }, {
-      path: '/queryNewQuality',
+      path: '/views/devops/query_newquality',
       name: 'views/devops/query_newquality.html',
       component: queryNewQuality
     },  {
-      path: '/queryGuid',
+      path: '/views/devops/query_guid',
       name: 'views/devops/query_guid.html',
       component: queryGuid
     }, {
-      path: '/queryMvTrackId',
+      path: '/views/devops/query_mvTrackId',
       name: 'views/devops/query_mvTrackId.html',
       component: queryMvTrackId
     }, {
-      path: '/upStreamCount',
+      path: '/views/export/query_upStreamCount',
       name: 'views/export/query_upStreamCount.html',
       component: upStreamCount
     }, {
-      path: '/mobileOperator',
+      path: '/views/export/query_mobileOperator',
       name: 'views/export/query_mobileOperator.html',
       component: mobileOperator
     }, {
-      path: '/queryTrackDetail',
+      path: '/views/export/query_trackDetail',
       name: 'views/export/query_trackDetail.html',
       component: queryTrackDetail
     }, {
-      path: '/supplierAnalysis',
+      path: '/views/configure/supplier_quality_analysis',
       name: 'views/configure/supplier_quality_analysis.html',
       component: supplierAnalysis
     }, {
-      path: '/customerAnalysis',
+      path: '/views/configure/customer_quality_analysis',
       name: 'views/configure/customer_quality_analysis.html',
       component: customerAnalysis
     }, {
-      path: '/parameterMaintenance',
+      path: '/views/configure/interface_parameter_maintenance',
       name: 'views/configure/interface_parameter_maintenance.html',
       component: parameterMaintenance
     }, {
-      path: '/sensitiveWord',
+      path: '/views/security/sensitive_word',
       name: 'views/security/sensitive_word.html',
       component: sensitiveWord
     }, {
-      path: '/serviceRegular',
+      path: '/views/security/service_regular',
       name: 'views/security/service_regular.html',
       component: serviceRegular
     }, {
-      path: '/paramRecord',
+      path: '/views/security/param_record',
       name: 'views/security/param_record.html',
       component: paramRecord
     }, {
-      path: '/ruleInstance',
+      path: '/views/security/rule_instance',
       name: 'views/security/rule_instance.html',
       component: ruleInstance
     }, {
-      path: '/oneClickLogin',
+      path: '/views/app/one_click_login',
       name: 'views/app/one_click_login.html',
       component: oneClickLogin  
     }, {
@@ -217,31 +216,31 @@ const router = new Router({
       name: 'Demo',
       component: Demo   
     }, {
-      path: '/wechatCustomer',
+      path: '/views/wechat/customer',
       name: 'views/wechat/customer.html',
       component: wechatCustomer   
     } , {
-      path: '/wechatService',
+      path: '/views/wechat/service',
       name: 'views/wechat/service.html',
       component: wechatService   
     }, {
-      path: '/wechatComprehensive',
+      path: '/views/wechat/comprehensive',
       name: 'views/wechat/comprehensive.html',
       component: wechatComprehensive   
     }, {
-      path: '/wechatLog',
+      path: '/views/wechat/wechatLog',
       name: 'views/wechat/wechatLog.html',
       component: wechatLog   
     }, {
-      path: '/blacklist',
+      path: '/views/configure/blacklist',
       name: 'views/configure/blacklist.html',
       component: blacklist   
     }, {
-      path: '/differenceValue',
+      path: '/views/configure/callDiffNumThreshold',
       name: 'views/configure/callDiffNumThreshold.html',
       component: differenceValue   
     }, {
-      path: '/restrict',
+      path: '/views/configure/restrict',
       name: 'views/configure/restrict.html',
       component: restrict   
     }

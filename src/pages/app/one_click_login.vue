@@ -1,7 +1,9 @@
 <template>
-  <div slot="onlyTable" class="template-wrapper">
-    <Content :data="lightSignInCustomerList">
-      <Table slot="Table" ref="table" 
+  <div  class="template-wrapper">
+    <Content  :data="lightSignInCustomerList">
+      <Table slot="onlyTable" ref="table"
+         :showSearch="false" 
+          :showSummary="false" 
         :tableData="lightSignInCustomerList" 
         :tatalPage="lightSignInCustomerList.length" 
         :columns="columns"/>
@@ -49,7 +51,7 @@
  *
  */
 
-import Table from '../../base/Table'
+import Table from '@/components/Table'
 import { $http } from '../../common/js/ajax'
 import Content from '@/components/Content'
 import { mapActions, mapState, mapGetters } from 'vuex'
