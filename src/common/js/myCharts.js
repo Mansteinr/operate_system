@@ -173,7 +173,7 @@ export function setLineData (options) {
       textStyle: {
         fontSize: 16,
         fontWeight: "normal",
-        fontFamily: "微软雅黑",
+        fontFamily: "宋体",
         color: "#36383c"
       }
     },
@@ -300,7 +300,7 @@ export function setColumnData (title, xAxisData, series,subTitle) {
       textStyle: {
         fontSize: 16,
         fontWeight: "normal",
-        fontFamily: "微软雅黑",
+        fontFamily: "宋体",
         color: "#36383c"
       },
       subtextStyle: {

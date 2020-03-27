@@ -21,5 +21,8 @@ const mutations = {
     console.log(currentHeader,  'SET_ACTIVE_HEADER_TAB')
     state.editableTabsValue = currentHeader
   },
+  [types.DELETE_HEADER_TAB] (state, list) { //删除导航
+    state.editableTabs = [...list]
+  },
 }
 export default mutations

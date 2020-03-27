@@ -1,41 +1,24 @@
 <template>
-  <div  class="template-wrapper">
-    <Content  :data="lightSignInCustomerList">
+  <div class="template-wrapper">
+    <Content
+      :title="$t('m.lightSignIn.resultCardTitle')"
+      :isOnlyTable="true" 
+      :data="lightSignInCustomerList">
       <Table slot="onlyTable" ref="table"
-         :showSearch="false" 
-          :showSummary="false" 
+        :showSearch="false" 
+        :showSummary="false" 
         :tableData="lightSignInCustomerList" 
         :tatalPage="lightSignInCustomerList.length" 
-        :columns="columns"/>
-    </Content>
-    <!-- <div class="card-wrapper card-content">
-      <div class="card-title">
-        新增
-         <el-button type="primary" class="fr" @click="add" icon="el-icon-edit">新增</el-button>
-      </div>
-      <div class="card-container">
-        <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table 
-          ref="table"
-          :showSearch="false" 
-          :showSummary="false" 
-          :tableData="lightSignInCustomerList" 
-          v-show="lightSignInCustomerList.length">
+        :columns="columns">
           <el-table-column
-            label="客户名称">
+            slot="tableTail"
+            :label="this.$t('m.basics.operateTitle')">
             <template slot-scope="scope">
-              <div>{{scope.row}}</div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作">
-            <template slot-scope="scope">
-              <div @click="toDetail(scope.row)" class="link">详情</div>
+              <router-link class="link" :to="{path:'/lightSignInDetail', query: {id: scope.row}}">{{$t('m.basics.detailTitle')}}</router-link>
             </template>
           </el-table-column>
         </Table>
-      </div>
-    </div> -->
+    </Content>
   </div>
 </template>
 
@@ -52,24 +35,22 @@
  */
 
 import Table from '@/components/Table'
-import { $http } from '../../common/js/ajax'
 import Content from '@/components/Content'
 import { mapActions, mapState, mapGetters } from 'vuex'
 export default {
   data () {
     return {
       columns: [{
-        prop: this.$t('m.basics.customerName'),
-        label: this.$t('m.basics.dayTime')
-      }, {
-        prop: 'dayTime',
-        sortable: true,
-        label: this.$t('m.basics.dayTime')
+        label: this.$t('m.basics.dayTime'),
+        formatter: (row, column) => {
+          return row
+        }
       }]
     }
   },
   components: {
-    Table
+    Table,
+    Content
   },
   mounted() {
     this.getLightSignInCustomersAjax()
@@ -79,7 +60,10 @@ export default {
       this.$router.push({path:'/lightSignInAdd'})
     },
     toDetail (value) { // 查看客户详情
-      // this.setMenu(value)
+      this.$router.push({
+        path:'/lightSignInDetail',
+        query: {id: value}
+      }) 
     },
     ...mapActions({
       getLightSignInCustomersAjax: 'lightSignIn/getLightSignInCustomersAjax'

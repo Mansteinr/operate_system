@@ -678,7 +678,7 @@ export default {
   .el-button
     padding 10px
     font-size 14px
-    font-family '微软雅黑'
+    font-family '宋体'
 .radio-box,.mv-picker
   position absolute
   top 0px

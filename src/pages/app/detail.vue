@@ -44,6 +44,7 @@
  */
 import Table from '../../base/Table'
 import { $http } from '../../common/js/ajax'
+import { mapGetters, mapMutations, mapActions } from 'vuex' // 获取state里面的数据
 export default {
   data () {
     return {
@@ -54,14 +55,40 @@ export default {
     Table
   },
   mounted() {
-    this.getLightSignIncustomer()
-    console.log(this.$route.params,this.$route.query)
+    this.setActiveTabs()
   },
   methods: {
     getLightSignIncustomer () {
       $http(this.API.lightSignIn.customers + this.$route.params, {}, 'get').then((res) => {
         this.tableData = res.resData
       })
+    },
+    setActiveTabs() {
+      let unqiuFlag = false, params = this.$route // 防止重复添加
+      if(!params.query.id) return
+      unqiuFlag = this.editableTabs.some(v => v.name === (params.name + '-' + params.query.id))
+      if(!unqiuFlag) {
+        this.setHeaderTab([{
+          title: `${params.query.id}详情`,
+          name: `${params.name}-${params.query.id}`,
+          url: `${params.name}-${params.query.id}`
+        }])
+    }
+    this.setActiveHeaderTab(`${params.name}-${params.query.id}`)
+    },
+    ...mapMutations({ // 获取SET_ACTIVE_MEUN的方法
+      setHeaderTab: 'basics/SET_HEADER_TABS',
+      setActiveHeaderTab: 'basics/SET_ACTIVE_HEADER_TAB'
+    })
+  },
+  computed: {
+    ...mapGetters({
+      editableTabs: 'basics/editableTabs'
+   })
+  },
+  watch: {
+    '$route' (val, old) {
+      this.setActiveTabs()
     }
   }
 }

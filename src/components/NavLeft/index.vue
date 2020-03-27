@@ -67,7 +67,7 @@ export default {
         this.setHeaderTab([{
           title: value.name,
           name: this.menuActive,
-          url: value.resourceUrl.trim()
+          url: value.resourceUrl
         }])
       }
       this.setActiveHeaderTab(this.menuActive)

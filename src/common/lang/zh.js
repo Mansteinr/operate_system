@@ -32,5 +32,8 @@ export const m = {
     choseProject: '项目选择',
     loginOut: '退出',
     choosePlaceholder: '请选择',
+  },
+  lightSignIn: { // 一键登陆管理
+    resultCardTitle: '一键登陆管理',
   }
 }

@@ -7,3 +7,5 @@ export const SET_ACTIVE_MEUN = 'SET_ACTIVE_MEUN'
 export const SET_HEADER_TABS = 'SET_HEADER_TABS'
 // 设置头部卡片激活状态
 export const SET_ACTIVE_HEADER_TAB = 'SET_ACTIVE_HEADER_TAB'
+// 删除头部卡
+export const DELETE_HEADER_TAB = 'DELETE_HEADER_TAB'

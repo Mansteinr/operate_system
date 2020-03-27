@@ -25,7 +25,6 @@ export const getSystemMenuAjax = ({ commit }) => {
 //递归遍历实现
 let serachTrueTitle = (list, truePathName) => function(){
   for(let i = 0; i < list.length; i++) {
-    console.log(list[i])
     if(list[i].childResource.length) {
       let result = serachTrueTitle(list[i].childResource, truePathName)()
       if(result) return result

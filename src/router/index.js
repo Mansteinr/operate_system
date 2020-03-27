@@ -72,7 +72,7 @@ import restrict from '../pages/config-management/restrict'
 // const lightSignInDetail = resolve => require(['../pages/app/detail'], resolve)
 // const oneClickLogin = resolve => require(['../pages/app/one_click_login'], resolve)
 import lightSignInAdd from '../pages/app/add'
-import lightSignInDetail from '../pages/app/add'
+import lightSignInDetail from '../pages/app/detail'
 import oneClickLogin from '../pages/app/one_click_login'
 
 // 登陆

@@ -2,7 +2,7 @@
 <template>
   <div class="card-wrapper card-content">
     <div class="card-title">
-      {{$t('m.basics.resultCardTitle')}}
+      {{title || $t('m.basics.resultCardTitle')}}
     </div>
     <div class="card-container">
       <NoData v-show="!data.length"/>
@@ -38,6 +38,10 @@ export default {
     isOnlyTable: {
       type: Boolean,
       default: false
+    },
+    title: {
+      type: String,
+      default: ''
     }
   }
 }

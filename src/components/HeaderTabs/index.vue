@@ -8,7 +8,7 @@
     @tab-click="clickTabs"
     class="tab-wrapper"
   >
-    <el-tab-pane v-for="item in basics.editableTabs" :key="item.name" :label="item.title" :name="item.url"></el-tab-pane>
+    <el-tab-pane v-for="item in basics.editableTabs" :key="item.name.trim()" :label="item.title" :name="item.url.trim()"></el-tab-pane>
   </el-tabs>
 </template>
 
@@ -25,6 +25,7 @@ export default {
       this.$router.push({ name: tab.name }) //点击选项卡时 切换路由
     },
     removeTab(targetName) {
+      // debugger
       // 删除tab选项卡
       if (!(this.basics.editableTabs.length - 1)) return
       let tabs = this.basics.editableTabs, activeName = this.basics.editableTabsValue
@@ -34,22 +35,25 @@ export default {
             let nextTab = tabs[index + 1] || tabs[index - 1]
             if (nextTab) {
               activeName = nextTab.name
-              // this.setActiveHeaderTab(nextTab.name)
             }
           }
         })
       }
-      // this.setActiveHeaderTab(activeName)
-      let tempTableTabs = tabs.filter(tab => tab.name !== targetName)
-      this.setHeaderTab(tempTableTabs)
+      let tempTableTabs = tabs.filter(tab => tab.name !== targetName), getActiveName = tempTableTabs[tempTableTabs.length - 1].url
+      // console.log(tempTableTabs)
+      // return
+      // this.setHeaderTab(tempTableTabs)
+      this.deleteHeaderTab(tempTableTabs)
       this.$router.push({
-        name: `${this.basics.editableTabs[this.basics.editableTabs.length - 1].url}`
+        name: getActiveName
       })
-      this.setMenuActive(this.tempTableTabs[this.tempTableTabs.length - 1].url)
+      this.setMenuActive(getActiveName)
+      this.setActiveHeaderTab(getActiveName)
     },
     ...mapMutations({ // 获取SET_ACTIVE_MEUN的方法
       setHeaderTab: 'basics/SET_HEADER_TABS',
       setMenuActive: 'basics/SET_ACTIVE_MEUN',
+      deleteHeaderTab: 'basics/DELETE_HEADER_TAB',
       setActiveHeaderTab: 'basics/SET_ACTIVE_HEADER_TAB',
     })
   },

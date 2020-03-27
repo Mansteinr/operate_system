@@ -32,6 +32,8 @@
             :sortable="v.sortable"
             :type="v.type"
             :prop='v.prop'>
+            
+            {{ v.render ? v.render : '' }}
           </el-table-column>
         </template>
         <slot name="tableTail"></slot>
