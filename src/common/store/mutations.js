@@ -24,5 +24,34 @@ const mutations = {
   [types.DELETE_HEADER_TAB] (state, list) { //删除导航
     state.editableTabs = [...list]
   },
+  [types.GET_BUSINESS_TYPES] (state, list) { //获取行业类型
+    let newList = JSON.parse(JSON.stringify(state.editableTabs))
+    state.businessTypesList = [...newList, ...list]
+  },
+  [types.GET_BASICS_ALL_SERVICES] (state, list) { //获取所有服务
+    let newList = JSON.parse(JSON.stringify(state.editableTabs))
+    state.allBusinessTypesList = [...newList, ...list]
+  },
+  [types.GET_BASICS_SERVICES] (state, list) { //获取服务
+    let newList = JSON.parse(JSON.stringify(state.editableTabs))
+    state.basicsServiceList = [...newList, ...list]
+  },
+  [types.GET_BASICS_CUSTOMERS] (state, list) { //获取客户
+    let newList = JSON.parse(JSON.stringify(state.editableTabs))
+    state.basicsCustomerList = [...newList, ...list]
+  },
+  [types.CHANGE_BUSINESS_TYPES] (state, value) { //选择行业类型
+    console.log(value, state)
+    // let newList = JSON.parse(JSON.stringify(state.editableTabs))
+    // state.businessTypesList = [...newList, ...list]
+  },
+  [types.CHANGE_BASICS_CUSTOMER] (state, list) { //选择客户
+    let newList = JSON.parse(JSON.stringify(state.editableTabs))
+    state.basicsCustomerList = [...newList, ...list]
+  },
+  [types.CHANGE_BASICS_SERVICENAME] (state, list) { //选择服务
+    let newList = JSON.parse(JSON.stringify(state.editableTabs))
+    state.basicsServiceList = [...newList, ...list]
+  },
 }
 export default mutations

@@ -12,3 +12,11 @@ export const menuActive = state => state.menuActive
 export const editableTabs = state => [...[], ...state.editableTabs] 
 // 头部导航激活状态
 export const editableTabsValue = state => state.editableTabsValue
+// 获取行业类型
+export const businessTypesList = state => state.businessTypesList
+// 获取所有服务
+export const allBusinessTypesList = state => state.allBusinessTypesList
+// 获取服务
+export const basicsServiceList = state => state.basicsServiceList
+// 获取客户
+export const basicsCustomerList = state => state.basicsCustomerList

@@ -2,15 +2,11 @@ import { $http } from '@/common/js/ajax'
 import * as types from './mutations-types'
 import API from '@/config/api'
 
-
-export const addFun = value => value.commit('add')
-export const reductionFun = value => value.commit('reduction')
-
+// 获取菜单
 export const getSystemMenuAjax = ({ commit }) => {
   $http(API.base.querymenus, { 'systemName': '服务平台' }).then((res) => {
     let truePathName = location.pathname ? location.pathname.substring(1).trim()+'.html' : res.resData[0].resourceUrl.trim(),
         trueTitle = serachTrueTitle(res.resData, truePathName)()
-
     commit(types.GET_SYSTEMMENU_AJAX_LIST, res.resData)
     commit(types.SET_ACTIVE_MEUN, truePathName)
     commit(types.SET_ACTIVE_HEADER_TAB, truePathName)
@@ -19,6 +15,30 @@ export const getSystemMenuAjax = ({ commit }) => {
       name: truePathName,
       url: truePathName
     }])
+  })
+}
+// 获取行业类型
+export const getBasicBusinessTypesAjax = ({ commit }) => {
+  $http(API.upApi.businessTypes, {}).then((res) => {
+    commit(types.GET_BUSINESS_TYPES, res.resData)
+  })
+}
+// 获取服务
+export const getBasicServiceAjax = ({ commit }, option) => {
+  $http(API.upApi.hasServices, option).then((res) => {
+    commit(types.GET_BASICS_SERVICES, res.resData)
+  })
+}
+// 获取所有服务
+export const getAllBasicServiceAjax = ({ commit }, option) => {
+  $http(API.upApi.services, option).then((res) => {
+    commit(types.GET_BASICS_ALL_SERVICES, res.resData)
+  })
+}
+// 获取客户
+export const getBasicCustomerAjax = ({ commit }, option = {}) => {
+  $http(API.upApi.customers, option).then((res) => {
+    commit(types.GET_BASICS_CUSTOMERS, res.resData)
   })
 }
 

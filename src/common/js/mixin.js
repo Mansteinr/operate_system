@@ -77,21 +77,21 @@ export const hotKeyTime = {
 }
 
 export const businessType = { // 行业类型
-  data () {
-    return {
-      businessType: []
-    }
-  },
+  // data () {
+  //   return {
+  //     businessType: []
+  //   }
+  // },
   mounted () {
-    this.businessTypes()
+    this.getBasicBusinessTypesAjax()
   },
   methods: {
-    businessTypes () {
-      $http(this.API.upApi.businessTypes, {}).then((res) => {
-        this.businessType = []
-        this.businessType = res.resData
-      })
-    },
+    // businessTypes () {
+    //   $http(this.API.upApi.businessTypes, {}).then((res) => {
+    //     this.businessType = []
+    //     this.businessType = res.resData
+    //   })
+    // },
     changeType (msg) { // 行业类型切换时 对应的客户名称发生变化 该变化时前端做的 不需要发送请求
       this.loginName = [] // 改变时 首先清空原有的数组 防止重复
       if (msg.typeId) { // 不是全部选项时
@@ -110,21 +110,21 @@ export const businessType = { // 行业类型
 export const loginName = { // 客户登陆名称
   data () {
     return {
-      loginNameOrigin: [],
-      loginName: []
+      loginNameOrigin: this.basicsCustomerList,
+      loginName: this.basicsCustomerList
     }
   },
   mounted () {
-    this.customers()
+    this.getBasicCustomerAjax()
   },
   methods: {
-    customers () {
-      $http(this.API.upApi.customers, {}).then((res) => {
-        this.loginNameOrigin = []
-        this.loginNameOrigin = res.resData
-        this.loginName = this.loginNameOrigin
-      })
-    },
+    // customers () {
+    //   $http(this.API.upApi.customers, {}).then((res) => {
+    //     this.loginNameOrigin = []
+    //     this.loginNameOrigin = res.resData
+    //     this.loginName = this.loginNameOrigin
+    //   })
+    // },
     changeCustomer (v) {
       if (v.customerId) {
         this.getHasService({ customerId: v.customerId })
@@ -147,18 +147,18 @@ export const services = { // 接口类型
     }
   },
   mounted () {
-    this.getAllServices()
+    this.getAllBasicServiceAjax()
   },
   methods: {
-    getAllServices () {
-      $http(this.API.upApi.services, {}).then((res) => {
-        this.services = []
-        this.services = res.resData
-        if (this.selectedService) {
-          this.selectedService = this.services[0]
-        }
-      })
-    }
+    // getAllServices () {
+    //   $http(this.API.upApi.services, {}).then((res) => {
+    //     this.services = []
+    //     this.services = res.resData
+    //     if (this.selectedService) {
+    //       this.selectedService = this.services[0]
+    //     }
+    //   })
+    // }
   }
 }
 

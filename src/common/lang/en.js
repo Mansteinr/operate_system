@@ -18,6 +18,9 @@ export const m = {
     addTitle: 'add',
     operateTitle: 'operate',
     detailTitle: 'detail',
+    businessType: 'businessType',
+    loginName: 'loginName',
+    serviceName: 'serviceName',
     noData: 'No Data',
   },
   login: { //  登陆页面

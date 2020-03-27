@@ -2,6 +2,10 @@ const state = {
   menuActive: '',
   editableTabsValue: '',
   editableTabs: [],
-  systemMenuList: []
+  systemMenuList: [],
+  businessTypesList: [],
+  allBasicsServiceList: [],
+  basicsServiceList: [],
+  basicsCustomerList: [],
 }
 export default state

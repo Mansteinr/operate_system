@@ -22,30 +22,30 @@
             </div>
           </el-form-item>
           <Select 
-            :labelTitle="'行业类型'" 
-            :originArr="businessType" 
+            :labelTitle="$t('m.basics.businessType')" 
+            :originArr="businessTypesList" 
             :defaultValue="'typeId'" 
             :defaultLable="'typeName'"
             :isAll = true
-            @changeInputValue="changeType"> 
+            @changeType="changeType"> 
           </Select>
-          <loginNameSelect 
-            :labelTitle="'客户名称'" 
-            :originArr="loginName" 
+          <Select 
+            :labelTitle="$t('m.basics.loginName')" 
+            :originArr="basicsCustomerList" 
             :defaultValue="'loginName'" 
             :defaultLable="'customerName'"
             :needValue="'customerId'"
             :searchInput=true
-            :isAll=true
+            :isAll = true
             @changeInputValue="changeCustomer">
-          </loginNameSelect>
-          <serviceSelect 
-            :labelTitle="'接口类型'" 
+          </Select>
+          <Select 
+            :labelTitle="$t('m.basics.serviceName')" 
             :originArr="services" 
             :defaultValue="'serviceName'" 
             :searchInput = true
             :defaultLable="'serviceNameZh'">
-          </serviceSelect>
+          </Select>
           <el-form-item class="query-item">
            <query-button @reset="reset" @submit="onSubmit"></query-button>
           </el-form-item>
@@ -71,15 +71,16 @@
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax'
-import { setLineData, renderChart } from '../../common/js/myCharts'
-import { reset } from '../../utils'
-import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
-import Table from '../../base/Table'
-import Select from '../../base/Select'
-import loginNameSelect from '../../base/Select'
-import serviceSelect from '../../base/Select'
-import QueryButton from '../../base/QueryButton'
+import { reset } from '@/utils'
+import Table from '@/base/Table'
+import Select from '@/components/Select'
+// import serviceSelect from '@/base/Select'
+// import loginNameSelect from '@/base/Select'
+import QueryButton from '@/base/QueryButton'
+import { mapActions, mapState, mapGetters } from 'vuex'
+import { setLineData, renderChart } from '@/common/js/myCharts'
+import { switchMixin, hotKeyTime, businessType, loginName, services } from '@/common/js/mixin'
+
 export default {
   mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
   data () {
@@ -114,8 +115,16 @@ export default {
     Table,
     Select,
     QueryButton,
-    serviceSelect,
-    loginNameSelect
+    // serviceSelect,
+    // loginNameSelect
+  },
+  computed: {
+    ...mapGetters({
+      businessTypesList: 'basics/businessTypesList',
+      basicsServiceList: 'basics/basicsServiceList',
+      basicsCustomerList: 'basics/basicsCustomerList',
+      allBusinessTypesList: 'basics/allBusinessTypesList',
+    })
   },
   methods: {
     reset () {
@@ -155,7 +164,13 @@ export default {
           renderChart(this.$refs.charts, setLineData('总体情况-按日期统计', xAxisData, series))
         }
       })
-    }
+    },
+    ...mapActions({
+      getBasicServiceAjax: 'basics/getBasicServiceAjax',
+      getBasicCustomerAjax: 'basics/getBasicCustomerAjax',
+      getAllBasicServiceAjax: 'basics/getAllBasicServiceAjax',
+      getBasicBusinessTypesAjax: 'basics/getBasicBusinessTypesAjax'
+    })
   }
 }
 </script>

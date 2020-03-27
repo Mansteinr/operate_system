@@ -7,6 +7,8 @@ import basics from '@/common/store'
 import queryIndex from '@/pages/query-index/store'
 // 一键登陆
 import lightSignIn from '@/pages/app/store'
+// 用量统计
+import usageStatistics from '@/pages/usage-statistics/store'
 
 import createLogger from 'vuex/dist/logger' // 通过mutations修改state的时候 在控制台打印相关的修改记录
 
@@ -19,7 +21,8 @@ export default new Vuex.Store({ // 导出Store的实例
   modules: {
     basics,
     queryIndex,
-    lightSignIn
+    lightSignIn,
+    usageStatistics
   },
   strict: false, // 开启严格模式 可以帮助检测state的修改，是不是通过mutations去修改，否则会报错 开启时候性能会损耗，所以线上不建议使用
   plugins: debug ? [createLogger()] : []

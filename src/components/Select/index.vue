@@ -4,11 +4,11 @@
     <div class="select-dropdown m-input" :class="defaultValue">
       <div class="text-warp selected-value" @click.stop="toggleExp($event)" :title="`${selectedValue} (${selectedDefault})`">{{selectedValue}}</div>
       <input type="hidden" 
-        :name="defaultValue" 
+        :name="defaultValue"
         v-model="selectedDefault">
       <ul class="dropdown-menu" :class="isMultiple ? 'multiple' : ''">
         <li class="dropdown-input" v-show="searchInput">
-          <input 
+        <input 
           type="text" 
           placeholder="输入搜索" 
           v-model.trim="searchValue" 
@@ -36,6 +36,7 @@
 </template>
 <script>
 import pinyin from 'js-pinyin'
+import { mapMutations } from 'vuex'
 export default {
   data() {
     return {
@@ -94,6 +95,12 @@ export default {
     }
   },
   watch: {
+    selectedDefault() {
+      // console.log(this.selectedDefault, this.labelTitle)
+      if(this.labelTitle === '行业类型' || this.labelTitle === 'businessType') {
+        this.changeBusinessType(this.selectedDefault)
+      }
+    },
     originArr() {
       if (!this.originArr.length) { // 没有数据 直接返回 防止报错
         this.localDataArr = []
@@ -147,6 +154,11 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({ // 获取SET_ACTIVE_MEUN的方法
+      changeBusinessType: 'basics/CHANGE_BUSINESS_TYPES',
+      changeBasicsService: 'basics/CHANGE_BASICS_SERVICENAME',
+      changeBasicsCustomer: 'basics/CHANGE_BASICS_CUSTOMER'
+    }),
     toggleExp(e) { // 展开折叠下拉框
       /** 防止两个下拉框同时打开 */
       document.querySelectorAll('.select-dropdown.m-input').forEach(v => {
@@ -192,6 +204,9 @@ export default {
       })
       this.selectedValue = this.selectedArr.join(',')
       this.selectedDefault = this.selectedDefaultArr.join(',')
+    },
+    change() {
+      console.log(this.selectedDefault)
     },
     searchClick (e,v, k) {
       this.selectedIndex = k

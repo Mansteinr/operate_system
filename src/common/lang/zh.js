@@ -21,6 +21,9 @@ export const m = {
     lookTitle: '查看',
     deleteTitle: '删除',
     editTitle: '编辑',
+    businessType: '行业类型',
+    loginName: '客户名称',
+    serviceName: '接口类型',
     noData: 'No Data',
   },
   login: { //  登陆页面
