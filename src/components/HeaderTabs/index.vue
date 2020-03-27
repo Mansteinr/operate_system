@@ -40,9 +40,6 @@ export default {
         })
       }
       let tempTableTabs = tabs.filter(tab => tab.name !== targetName), getActiveName = tempTableTabs[tempTableTabs.length - 1].url
-      // console.log(tempTableTabs)
-      // return
-      // this.setHeaderTab(tempTableTabs)
       this.deleteHeaderTab(tempTableTabs)
       this.$router.push({
         name: getActiveName

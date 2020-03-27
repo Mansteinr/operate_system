@@ -18,6 +18,9 @@ export const m = {
     addTitle: '新增',
     operateTitle: '操作',
     detailTitle: '详情',
+    lookTitle: '查看',
+    deleteTitle: '删除',
+    editTitle: '编辑',
     noData: 'No Data',
   },
   login: { //  登陆页面
@@ -35,5 +38,13 @@ export const m = {
   },
   lightSignIn: { // 一键登陆管理
     resultCardTitle: '一键登陆管理',
+    tableAppName: '应用名称',
+    tableAppBusiness: '所属行业',
+    tableAppType: '应用类型',
+    tableIcon: 'icon',
+    tablePlatform: '平台详情',
+    tableAppState: 'APP状态',
+    tableAndroidLink: '链接',
+    tableCreateTime: '创建时间'
   }
 }

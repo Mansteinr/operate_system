@@ -5,7 +5,7 @@
       {{title || $t('m.basics.resultCardTitle')}}
     </div>
     <div class="card-container">
-      <NoData v-show="!data.length"/>
+      <NoData v-show="!data.length && !isOnlyTable"/>
       <el-tabs v-show="data.length && !isOnlyTable" type="card" class="mv-tabs">
         <el-tab-pane :label="$t('m.basics.switchTabChart')">
           <slot name="Chart"></slot>
@@ -20,13 +20,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-import Table from '@/components/Table'
 import NoData from '@/components/NoData'
 export default {
-  data() {
-    return {
-    }
-  },
   components: {
     NoData
   },

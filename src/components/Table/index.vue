@@ -20,6 +20,7 @@
         <slot name="selection"></slot>
         <template  v-for="(v, k) in columns">
           <el-table-column
+            v-if="v.type === 'image'"
             :key="k"
             :label="v.label"
             :fixed="v.fixed"
@@ -32,8 +33,27 @@
             :sortable="v.sortable"
             :type="v.type"
             :prop='v.prop'>
-            
-            {{ v.render ? v.render : '' }}
+            <template slot-scope="scope">
+              <el-image style="width: 34px; height: 34px"
+                :alt="v.urlType === 'base64' ? `data:image/jpeg;base64,${scope.row[v.prop]}` : scope.row[v.prop]"
+                :src="v.urlType === 'base64' ? `data:image/jpeg;base64,${scope.row[v.prop]}` : scope.row[v.prop]"
+                fit="contain"></el-image>
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-else
+            :key="k"
+            :label="v.label"
+            :fixed="v.fixed"
+            :class-name="v.className"
+            :width="v.width"
+            :align="v.align"
+            :min-width="v.minWidth"
+            :show-overflow-tooltip="v.showOverflow?v.showOverflow:true"
+            :formatter="v.formatter"
+            :sortable="v.sortable"
+            :type="v.type"
+            :prop='v.prop'>
           </el-table-column>
         </template>
         <slot name="tableTail"></slot>
@@ -185,7 +205,7 @@
         var html = '';
         for (var key in val) {
          if (key !== 'guid' && key !== 'image' && key !== 'shaIdCard' && key !== 'shaName' && key !== 'shaMobile') { // 不需要展示guid
-            html += '<span class="param-item" title="' + label + ': ' + val[key] + '">' + label + ': ' + val[key] + '</span>'
+            html += '<span class="param-item" title="' + key + ': ' + val[key] + '">' + key + ': ' + val[key] + '</span>'
           }
         }
         return html

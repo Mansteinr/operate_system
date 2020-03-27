@@ -1,4 +1,5 @@
 const state = {
-  lightSignInCustomerList: []
+  lightSignInCustomerList: [],
+  lightSignInAppInfoList: []
 }
 export default state
