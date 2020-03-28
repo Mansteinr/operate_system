@@ -46,11 +46,10 @@ import Table from '@/components/Table'
 import Chart from '@/components/Chart'
 import Content from '@/components/Content'
 import Inquiry from '@/components/Inquiry'
-import { mapActions, mapState, mapGetters } from 'vuex'
-import { switchMixin, hotKeyTime } from '@/common/js/mixin'
-import { setLineData, renderChart } from '@/common/js/myCharts'
+import { mapActions, mapGetters } from 'vuex'
+import { hotKeyTime } from '@/common/js/mixin'
 export default {
-  mixins: [switchMixin, hotKeyTime],
+  mixins: [ hotKeyTime],
   data () {
     return {
       queryParams: {

@@ -63,10 +63,8 @@ import Chart from "@/components/Chart"
 import Select from "@/components/Select"
 import Content from "@/components/Content"
 import Inquiry from "@/components/Inquiry"
-import { mapActions, mapState, mapGetters } from "vuex"
-import { setLineData, renderChart } from "@/common/js/myCharts"
+import { mapActions, mapGetters } from "vuex"
 import {
-  switchMixin,
   hotKeyTime,
   businessType,
   loginName,
@@ -74,7 +72,7 @@ import {
 } from "@/common/js/mixin"
 
 export default {
-  mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
+  mixins: [hotKeyTime, businessType, loginName, services],
   data() {
     return {
       queryParams: {
@@ -83,7 +81,6 @@ export default {
           new Date()
         ] /**默认时间最近七天 */
       },
-      tableData: [],
       columns: [{
         prop: "dayTime",
         sortable: true,

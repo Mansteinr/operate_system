@@ -38,5 +38,18 @@ export const m = {
   },
   lightSignIn: { // 一键登陆管理
     resultCardTitle: 'One Click Login Management',
+    tableAppName: 'AppName',
+    tableAppBusiness: 'AppBusiness',
+    tableAppType: 'AppType',
+    tableIcon: 'icon',
+    tablePlatform: 'Platform',
+    tableAppState: 'AppState',
+    tableAndroidLink: 'Link',
+    tableCreateTime: 'CreateTime'
+  },
+  // 用量统计
+  usageStatistics: {
+    balanceSnapshotTitle: 'balanceSnapshot',
+    chargeLogTitle: 'chargeLog',
   }
 }

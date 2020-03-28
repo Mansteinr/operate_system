@@ -5,13 +5,13 @@
 import * as types from './mutations-types'
 
 const mutations = {
-  [types.GET_LIGHTSIGNIN_CUSTOMER] (state, list) {
+  [types.GET_BALANCESNAPSHOT_ACTION] (state, list) {
     let newList = JSON.parse(JSON.stringify(list))
-    state.lightSignInCustomerList = Object.assign([], newList)
+    state.balanceSnapshotList = Object.assign([], newList)
   },
-  [types.GET_LIGHTSIGNIN_APPINFO] (state, list) {
+  [types.GET_CHARGELOG_ACTION] (state, list) {
     let newList = JSON.parse(JSON.stringify(list))
-    state.lightSignInAppInfoList = Object.assign([], newList)
+    state.chargeLogList = Object.assign([], newList)
   },
 }
 export default mutations

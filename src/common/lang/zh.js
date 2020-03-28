@@ -49,5 +49,10 @@ export const m = {
     tableAppState: 'APP状态',
     tableAndroidLink: '链接',
     tableCreateTime: '创建时间'
+  },
+  // 用量统计
+  usageStatistics: {
+    balanceSnapshotTitle: '余额快照',
+    chargeLogTitle: '充值记录',
   }
 }

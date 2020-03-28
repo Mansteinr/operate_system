@@ -1,45 +1,62 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper">
-      <div class="card-title">
-        查询条件
-      </div>
-      <div class="card-container">
-        <el-form :inline="true" ref="querForm" :model="queryParams" class="query-form">
-          <el-form-item label="选择时间：" prop="time">
-            <div class="block">
-              <el-date-picker
-                type="daterange" 
-                unlink-panels
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :name="['start', 'end']"
-                :clearable="false"
-                v-model="queryParams.time"
-                range-separator="至"
-                @change="changeTime"
-                :picker-options="pickerOptions2">
-              </el-date-picker>
-            </div>
-          </el-form-item>
-          <loginNameSelect 
-            :labelTitle="'客户名称'" 
-            :originArr="loginName" 
-            :defaultValue="'loginName'" 
-            :searchInput=true
-            :isMultiple='multiple'
-            :isAll='all'
-            :needValue="'customerId'"
-            :defaultLable="'customerName'"
-            >
-          </loginNameSelect>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
+        <!-- 查询模块 -->
+    <Inquiry :queryParams="queryParams" @initFun="initFun">
+      <el-form-item :label="$t('m.basics.datePickerLabel')" prop="time">
+        <div class="block">
+          <el-date-picker
+            v-model="queryParams.time"
+            type="daterange"
+            align="right"
+            @change="changeTime"
+            unlink-panels
+            :clearable="false"
+            :range-separator="$t('m.basics.datePickerRangeSeparator')"
+            :name="['start', 'end']"
+            :start-placeholder="$t('m.basics.datePickerStartPlaceholder')"
+            :end-placeholder="$t('m.basics.datePickerEndPlaceholder')"
+            :picker-options="pickerOptions2"
+          ></el-date-picker>
+        </div>
+      </el-form-item>
+      <Select 
+        :labelTitle="'客户名称'" 
+        :originArr="basicsCustomerList" 
+        :defaultValue="'loginName'" 
+        :searchInput=true
+        :isMultiple='multiple'
+        :isAll='all'
+        :needValue="'customerId'"
+        :defaultLable="'customerName'"
+        >
+      </Select>
+    </Inquiry>
+    <!-- 余额快照 -->
+    <Content
+      :isOnlyTable="true" 
+      :title="$t('m.usageStatistics.balanceSnapshotTitle')" 
+      :data="balanceSnapshotList">
+      <Table
+        slot="onlyTable"
+        :tableData="balanceSnapshotList"
+        :tatalPage="balanceSnapshotList.length"
+        :columns="columns"
+      />
+    </Content>
+    <!-- 充值记录 -->
+    <Content
+      v-show="chargeLogFlag"
+      :isOnlyTable="true" 
+      :title="$t('m.usageStatistics.chargeLogTitle')" 
+      :data="chargeLogList">
+      <Table
+        slot="onlyTable"
+        :tableData="chargeLogList"
+        :tatalPage="chargeLogList.length"
+        :columns="columns2"
+      />
+    </Content>
+    <!-- <div class="card-wrapper card-content">
       <div class="card-title">
         余额快照
       </div>
@@ -58,7 +75,7 @@
         <Table :columns="columns2" class="table2" :showSummary="false" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tableData2.length">
         </Table>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -69,12 +86,12 @@
  *  1、只选择一个客户时 需要展示余额快照和充值记录
  *  2、当选择多个客户时 只需要展示余额快照
 */
-import { $http } from '../../common/js/ajax'
-import { hotKeyTime, loginName } from '../../common/js/mixin'
-import Table from '../../base/Table'
-import loginNameSelect from '../../base/Select'
-import QueryButton from '../../base/QueryButton'
-import { reset } from '../../utils'
+import Table from '@/components/Table'
+import Select from "@/components/Select"
+import Content from '@/components/Content'
+import Inquiry from '@/components/Inquiry'
+import { mapActions, mapGetters } from "vuex"
+import { hotKeyTime, loginName } from '@/common/js/mixin'
 let loginNameObj = {}  // 由于后端 传参的时候 没有将中文名传过来 前端自己将中英文对照
 export default {
   mixins: [hotKeyTime, loginName],
@@ -83,9 +100,7 @@ export default {
       queryParams: { // 保留该参数 是为了重置方便
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
       },
-      chargeLogFlag: false, // 控制显示隐藏充值记录
-      tableData: [], // 余额快照table数据
-      tableData2: [],  // 充值记录table数据
+      chargeLogFlag: true, // 控制显示隐藏充值记录
       multiple: false, // 是否多选
       all: false, // 是否多选
       columns: [{
@@ -113,30 +128,37 @@ export default {
       columns2: [{
         prop: 'dateTime',
         label: '充值时间',
-        sortable: true
+        sortable: true,
+        width: '150px'
       }, {
         prop: 'curBalance',
         label: '当前余额',
-        sortable: true
+        sortable: true,
+        width: '100px'
       }, {
         prop: 'actualRechargeAmount',
         label: '实际充值金额',
-        sortable: true
+        sortable: true,
+        width: '140px'
       }, {
         prop: 'extRechargeAmount',
         label: '附加充值金额',
-        sortable: true
+        sortable: true,
+        width: '125px'
       }, {
         prop: 'packRechargeAmount',
         label: '包年包月充值金额',
-        sortable: true
+        sortable: true,
+        width: '150px'
       }, {
         prop: 'preBalance',
         label: '充值前金额',
-        sortable: true
+        sortable: true,
+        width: '120px'
       }, {
         prop: 'operator',
         label: '经办人',
+        width: '80px'
       }, {
         prop: 'remark',
         label: '说明',
@@ -144,9 +166,10 @@ export default {
     }
   },
   components: {
+    Inquiry,
+    Content,
     Table,
-    QueryButton,
-    loginNameSelect
+    Select
   },
   watch: {
     loginName () {
@@ -156,10 +179,6 @@ export default {
     }
   },
   methods: {
-    reset () {
-      this.$refs.querForm.resetFields()
-      reset()
-    },
     changeTime () { // 监听时间变化
       if (+new Date(this.queryParams.time[0]) === +new Date(this.queryParams.time[1])) { // 同一天为 为多选
         this.multiple = true
@@ -170,19 +189,13 @@ export default {
         this.all = false
         this.chargeLogFlag = true
       }
-      this.customers() // 强制请求数据 更新组件样式
+      this.getBasicCustomerAjax() // 强制请求数据 更新组件样式
     },
-    onSubmit () {
-      let options = {}
-      document.querySelectorAll('form input').forEach(v => {
-        if (v.name) {
-          options[v.name] = v.value
-        }
-      })
+    initFun (options) {
       if (options.start != options.end) { // 一段时间的情况
         options.loginNames = [options.loginName]
         this.chargeLogFlag = true // 显示充值记录
-        this.chargeLog(options.loginName)
+        this.getChargeLogAjax(options.loginName)
       } else {
         options.loginNames = options.loginName.split(',')
         if (options.loginNames[0] === '') { // 包含全部
@@ -190,23 +203,25 @@ export default {
         } else { 
           if (options.loginNames.length === 1) { //只选择一个客户 需要展示充值记录
             this.chargeLogFlag = true
-            this.chargeLog(options.loginName)
+            this.getChargeLogAjax(options.loginName)
           }
         }
       }
       delete options.loginName
-      this.getBalanceSnapshot(options)
+      this.getBalanceSnapshotAjax(options)
     },
-    getBalanceSnapshot (options) { // 余额快照
-      $http(this.API.downApi.getBalanceSnapshot, options).then((res) => {
-        this.tableData = res.resData
-      })
-    },
-    chargeLog (loginName) { // 余额快照
-      $http(this.API.downApi.chargeLog + '/' + loginName, {}, 'get').then((res) => {
-         this.tableData2 = res.resData
-      })
-    }
+    ...mapActions({
+      getBasicCustomerAjax : "basics/getBasicCustomerAjax",
+      getChargeLogAjax : "usageStatistics/getChargeLogAjax",
+      getBalanceSnapshotAjax : "usageStatistics/getBalanceSnapshotAjax",
+    })
+  },
+  computed: {
+    ...mapGetters({
+      chargeLogList: "usageStatistics/chargeLogList",
+      basicsCustomerList: "basics/basicsCustomerList",
+      balanceSnapshotList: "usageStatistics/balanceSnapshotList"
+    })
   }
 }
 </script>
