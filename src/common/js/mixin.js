@@ -143,7 +143,7 @@ export const loginName = { // 客户登陆名称
 export const services = { // 接口类型
   data () {
     return {
-      services: []
+      services: this.basicsServiceList
     }
   },
   mounted () {

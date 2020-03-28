@@ -21,6 +21,7 @@
 </style>
 
 <script>
+  import { reset } from '@/utils'
   import QueryButton from '@/components/QueryButton'
   export default {
     data () {
@@ -41,6 +42,7 @@
     },
     methods: {
       resetForm () {
+        reset()
         this.$refs.querForm.resetFields()
       },
       onSubmit() {

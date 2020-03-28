@@ -36,7 +36,7 @@
 </template>
 <script>
 import pinyin from 'js-pinyin'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 export default {
   data() {
     return {
@@ -95,12 +95,6 @@ export default {
     }
   },
   watch: {
-    selectedDefault() {
-      // console.log(this.selectedDefault, this.labelTitle)
-      if(this.labelTitle === '行业类型' || this.labelTitle === 'businessType') {
-        this.changeBusinessType(this.selectedDefault)
-      }
-    },
     originArr() {
       if (!this.originArr.length) { // 没有数据 直接返回 防止报错
         this.localDataArr = []
@@ -154,6 +148,12 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      getBasicServiceAjax: 'basics/getBasicServiceAjax',
+      getBasicCustomerAjax: 'basics/getBasicCustomerAjax',
+      getAllBasicServiceAjax: 'basics/getAllBasicServiceAjax',
+      getBasicBusinessTypesAjax: 'basics/getBasicBusinessTypesAjax'
+    }),
     ...mapMutations({ // 获取SET_ACTIVE_MEUN的方法
       changeBusinessType: 'basics/CHANGE_BUSINESS_TYPES',
       changeBasicsService: 'basics/CHANGE_BASICS_SERVICENAME',
@@ -205,9 +205,6 @@ export default {
       this.selectedValue = this.selectedArr.join(',')
       this.selectedDefault = this.selectedDefaultArr.join(',')
     },
-    change() {
-      console.log(this.selectedDefault)
-    },
     searchClick (e,v, k) {
       this.selectedIndex = k
       /**
@@ -227,8 +224,16 @@ export default {
           this.selectedValue = v[this.defaultLable]?v[this.defaultLable]:v
           this.selectedDefault = v[this.defaultValue]?v[this.defaultValue]:v
         }
-        this.toggleExp(e.target.parentNode.parentNode)
-        this.$emit('changeSelect', this.selectedDefault)
+        e.target.parentNode.parentNode.classList.remove('active')
+        if(this.labelTitle === '行业类型' || this.labelTitle === 'businessType') {
+          this.changeBusinessType(this.selectedDefault)
+        } else  if(this.labelTitle === '客户名称' || this.labelTitle === 'loginName') {
+          if(v.customerId) {
+            this.getBasicServiceAjax({customerId: v.customerId})
+          } else {
+            this.getAllBasicServiceAjax()
+          }
+        }
       } else { // 多选
         if (judge) { // 选择的不是 '全部'
           if (this.isSelecltedAll && lis.length === this.selectedArr.length) { // 单击时 取消全部按钮的选中状态，并将相应数组中的字段去掉
