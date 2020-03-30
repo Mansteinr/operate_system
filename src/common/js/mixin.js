@@ -97,12 +97,6 @@ export const businessType = { // 行业类型
 }
 
 export const loginName = { // 客户登陆名称
-  data () {
-    return {
-      loginNameOrigin: this.basicsCustomerList,
-      loginName: this.basicsCustomerList
-    }
-  },
   mounted () {
     this.getBasicCustomerAjax()
   },
@@ -123,32 +117,14 @@ export const loginName = { // 客户登陆名称
   }
 }
 export const services = { // 接口类型
-  data () {
-    return {
-      services: this.basicsServiceList
-    }
-  },
   mounted () {
     this.getAllBasicServiceAjax()
   }
 }
 
 export const company = { // 供应商
-  data () {
-    return {
-      companys: [],
-    }
-  },
   mounted () {
-    this.getAllCompanys()
-  },
-  methods: {
-    getAllCompanys () {
-      $http(this.API.upApi.companys, {}).then((res) => {
-        this.companys = []
-        this.companys = res.resData
-      })
-    }
+    this.getSupplierCompanysAjax()
   }
 }
 

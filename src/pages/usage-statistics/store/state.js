@@ -1,5 +1,8 @@
 const state = {
   chargeLogList: [],
-  balanceSnapshotList: []
+  balanceSnapshotList: [],
+  supplierCompanysList: [],
+  dayCompanyList: [],
+  serviceCompanyList: [],
 }
 export default state

@@ -13,3 +13,25 @@ export const getChargeLogAjax = ({ commit }, options) => {
     commit(types.GET_CHARGELOG_ACTION, res.resData)
   })
 }
+// 获取供应商
+export const getSupplierCompanysAjax = ({ commit }) => {
+  $http(API.upApi.companys, {}).then((res) => {
+    commit(types.GET_SUPPLIER_COMPANYS, res.resData)
+  })
+}
+// 供应商分析
+export const getOutServiceChargeInfoBySupplierAjax = ({ commit }, options) => {
+  $http(API.upApi.getOutServiceChargeInfoBySupplier, options).then((res) => {
+    if (res.resData.serviceCompany.length) {
+      res.resData.serviceCompany.forEach(v => {
+        v.noChargeCount = v.usedCount - v.chargeUsedCount
+      })
+    }
+    if (res.resData.dayCompany.length) {
+      res.resData.dayCompany.forEach(v => {
+        v.noChargeCount = v.usedCount - v.chargeUsedCount
+      })
+    }
+    commit(types.GET_OUTSERVICECHARGEINFOBY_SUPPLIER, res.resData)
+  })
+}

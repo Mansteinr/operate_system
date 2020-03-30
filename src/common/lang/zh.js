@@ -24,6 +24,8 @@ export const m = {
     businessType: '行业类型',
     loginName: '客户名称',
     serviceName: '接口类型',
+    supplierName: '供应商',
+    supplierChartTitle: '供应商服务分析',
     noData: 'No Data',
   },
   login: { //  登陆页面

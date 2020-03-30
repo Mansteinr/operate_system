@@ -32,7 +32,7 @@ const api = {
     logDetail: apiFormat('operator/logDetail'), // g供应商
     customers: apiFormat('operator/customers'), // 所以的客户名称
     hasServices: apiFormat('operator/hasServices'), // 客户拥有的服务
-    companys: apiFormat('operator/supplier/companys'), // g供应商
+    companys: apiFormat('operator/supplier/companys'), // 供应商
     businessTypes: apiFormat('operator/businessTypes'), // 获取行业类型
     logByMvTrackId: apiFormat('operator/logByMvTrackId'),
     queryByDate: apiFormat('operator/margin/queryByDate'), /* 利润分析 */
