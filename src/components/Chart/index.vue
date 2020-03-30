@@ -8,30 +8,54 @@
 </style>
 
 <script>
-  import { setLineData, renderChart } from '@/common/js/myCharts'
+  import { setLineData, setColumnData, setPieData, renderChart } from '@/common/js/myCharts'
   let tempChart = null
   export default {
     props: {
-      options: Object,
-      default: () => {}
+      options: {
+        type: Object,
+        default: () => {}
+      }
     },
     mounted() {
       this.$nextTick(() => {
         if(!this.options) return
-        tempChart = renderChart(this.$refs.charts, setLineData(this.options))
+        if(this.options.type === 'column') {
+          tempChart = renderChart(this.$refs.charts, setColumnData(this.options))
+        } else if(this.options.type === 'pie') {
+            tempChart = renderChart(this.$refs.charts, setPieData(this.options))
+        } else {
+          tempChart = renderChart(this.$refs.charts, setLineData(this.options))
+        }
+        if(this.options.callback) {
+          tempChart.on('click', params => {
+            this.options.callback(params)
+          })
+        }
       })
     },
     watch: {
       options () {
         this.$nextTick(() => {
           if(!this.options) return
-          tempChart = renderChart(this.$refs.charts, setLineData(this.options))
+          if(this.options.type === 'column') {
+            tempChart = renderChart(this.$refs.charts, setColumnData(this.options))
+          } else if(this.options.type === 'pie') {
+            tempChart = renderChart(this.$refs.charts, setPieData(this.options))
+          } else {
+            tempChart = renderChart(this.$refs.charts, setLineData(this.options))
+          }
+          if(this.options.callback) {
+            callback()
+          }
         })   
       }
     }
   }
   // 屏幕改变时 重新渲染 echats 适配
   window.onresize = function () {
-    tempChart.resize()
+    if(tempChart) {
+      tempChart.resize()
+    }
   }
 </script>

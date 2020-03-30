@@ -56,5 +56,6 @@ export const m = {
   usageStatistics: {
     balanceSnapshotTitle: '余额快照',
     chargeLogTitle: '充值记录',
+    upstreamCustomerTitle: '下游客户调用次数和费用',
   }
 }

@@ -56,26 +56,6 @@
         :columns="columns2"
       />
     </Content>
-    <!-- <div class="card-wrapper card-content">
-      <div class="card-title">
-        余额快照
-      </div>
-      <div class="card-container">
-        <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table class="table1" :showSummary="false" :tableData="tableData" :tatalPage="tableData.length" v-show="tableData.length" :columns="columns">
-        </Table>
-      </div>
-    </div>
-    <div class="card-wrapper card-content" v-show="chargeLogFlag">
-      <div class="card-title">
-        充值记录
-      </div>
-      <div class="card-container">
-        <div v-show="!tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <Table :columns="columns2" class="table2" :showSummary="false" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tableData2.length">
-        </Table>
-      </div>
-    </div> -->
   </div>
 </template>
 <script>
@@ -180,6 +160,7 @@ export default {
   },
   methods: {
     changeTime () { // 监听时间变化
+      console.log('0909')
       if (+new Date(this.queryParams.time[0]) === +new Date(this.queryParams.time[1])) { // 同一天为 为多选
         this.multiple = true
         this.all = true

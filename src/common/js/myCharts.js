@@ -285,18 +285,18 @@ export function setOtherLineData (xAxisData, series) {
   return option
 }
 
-export function setColumnData (title, xAxisData, series,subTitle) {
-  var legendData = []
-  var arrLength = series.length > 21 ? 20 : series.length;
-  for (var i = 0; i < arrLength; i++) {
-    legendData.push(series[i].name)
+export function setColumnData (options) {
+// export function setColumnData (title, xAxisData, series,subTitle) {
+  let legendData = [], arrLength = options.series.length > 21 ? 20 : options.series.length
+  for (let i = 0; i < arrLength; i++) {
+    legendData.push(options.series[i].name)
   }
-  var option = {
+  let option = {
     title: {
-      text: title,
-      subtext: subTitle,
-      left: subTitle ? 'center' : '1%',
-      top: subTitle ? '10' : '-1%',
+      text: options.title,
+      subtext: options.subTitle,
+      left: options.subTitle ? 'center' : '1%',
+      top: options.subTitle ? '10' : '-1%',
       textStyle: {
         fontSize: 16,
         fontWeight: "normal",
@@ -313,31 +313,31 @@ export function setColumnData (title, xAxisData, series,subTitle) {
     grid: {
       show: true,
       left: '7%',
-      top: subTitle ? 70 : 34,
+      top: options.subTitle ? 70 : 34,
       bottom: 100,
       right: "3%",
       borderWidth: 0,
     },
     toolbox: toolbox,
-    xAxis: [Object.assign(xAxis, { data: xAxisData })],
+    xAxis: [Object.assign(xAxis, { data: options.xAxisData })],
     yAxis: yAxis,
-    series: series
-  };
-  if (xAxisData.length > 20) {
+    series: options.series
+  }
+  if (options.xAxisData.length > 20) {
     option.dataZoom = dataBar
     option.dataZoom[0].bottom = 35
-    option.grid.bottom = 70 + Math.ceil(legendData.length / 8) * 20;
+    option.grid.bottom = 70 + Math.ceil(legendData.length / 8) * 20
   } else {
-    option.grid.bottom = 100;
+    option.grid.bottom = 100
   }
-  return option;
+  return option
 }
 
-export function setPieData (title, obj) {
+export function setPieData (options) {
   var option = {
     backgroundColor: '#fff',
     title: {
-      text: title,
+      text: options.title,
       x: 'center'
     },
     tooltip: {
@@ -370,15 +370,15 @@ export function setPieData (title, obj) {
       orient: 'vertical',
       x: 'left',
       y: 48,
-      data: obj.legend,
+      data: options.obj.legend,
     },
     toolbox: toolbox,
     series: [{
-      name: obj.name,
+      name: options.obj.name,
       type: 'pie',
       radius: '70%',
       center: ['48%', '50%'],
-      data: obj.data,
+      data: options.obj.data,
       itemStyle: {
         emphasis: {
           shadowBlur: 10,
@@ -397,7 +397,7 @@ export function setPieData (title, obj) {
       }
     }],
     color: ['rgba(0, 175, 159,.5)', 'rgba(41, 168, 227,.5)', 'rgba(53, 117, 88,.5)', 'rgba(221, 129, 187,.5)', 'rgba(120, 208, 123,.5)', 'rgba(119, 146, 202,.5)', 'rgba(155, 141, 175,.5)', 'rgba(215, 191, 110,.5)', 'rgba(125, 193, 213,.5)', 'rgba(133, 137, 184,.5)']
-  };
+  }
   return option
 }
 

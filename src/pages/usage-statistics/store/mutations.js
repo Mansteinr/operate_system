@@ -23,5 +23,9 @@ const mutations = {
     state.dayCompanyList = Object.assign([], dayCompanyList)
     state.serviceCompanyList = Object.assign([], serviceCompanyList)
   },
+  [types.GET_CUSTOMER_CHARGEINFO] (state, list) {
+    let newList = JSON.parse(JSON.stringify(list))
+    state.customerChargeInfoList = Object.assign([], newList)
+  },
 }
 export default mutations

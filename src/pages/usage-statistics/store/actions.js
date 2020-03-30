@@ -35,3 +35,9 @@ export const getOutServiceChargeInfoBySupplierAjax = ({ commit }, options) => {
     commit(types.GET_OUTSERVICECHARGEINFOBY_SUPPLIER, res.resData)
   })
 }
+// 按客户
+export const getCustomerChargeInfoAjax = ({ commit }, options) => {
+  $http(API.upApi.getCustomerChargeInfo, options).then((res) => {
+    commit(types.GET_CUSTOMER_CHARGEINFO, res.resData.outServiceList)
+  })
+}

@@ -11,4 +11,6 @@ export const supplierCompanysList = state => state.supplierCompanysList
 export const dayCompanyList = state => state.dayCompanyList
 // 供应商分析
 export const serviceCompanyList = state => state.serviceCompanyList
+// 按客户分析
+export const customerChargeInfoList = state => state.customerChargeInfoList
 

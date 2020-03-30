@@ -5,8 +5,8 @@
       {{title || $t('m.basics.resultCardTitle')}}
     </div>
     <div class="card-container">
-      <NoData v-show="!data.length && !isOnlyTable"/>
-      <el-tabs v-show="data.length && !isOnlyTable" type="card" class="mv-tabs">
+      <NoData v-if="!data.length"/>
+      <el-tabs v-else-if="data.length && !isOnlyTable && !isOnlyChart" type="card" class="mv-tabs">
         <el-tab-pane :label="$t('m.basics.switchTabChart')">
           <slot name="Chart"></slot>
         </el-tab-pane>
@@ -14,7 +14,8 @@
           <slot name="Table"></slot>
         </el-tab-pane>
       </el-tabs>
-      <slot v-show="data.length && isOnlyTable" name="onlyTable"></slot>
+      <slot v-else-if="data.length && isOnlyTable" name="onlyTable"></slot>
+      <slot v-else-if="data.length && isOnlyChart" name="isOnlyChart"></slot>
     </div>
   </div>
 </template>
@@ -31,6 +32,10 @@ export default {
       default: () => []
     },
     isOnlyTable: {
+      type: Boolean,
+      default: false
+    },
+    isOnlyChart: {
       type: Boolean,
       default: false
     },

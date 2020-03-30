@@ -4,5 +4,6 @@ const state = {
   supplierCompanysList: [],
   dayCompanyList: [],
   serviceCompanyList: [],
+  customerChargeInfoList: [],
 }
 export default state
