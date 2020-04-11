@@ -135,7 +135,8 @@ let color = ['rgba(44,181,171, 1)', 'rgba(44,181,171,.3)', 'rgba(145,191,93,1)',
     },
   }
 export function setLineData (options) {
-  if(!options) return
+  console.log(options)
+  if(!options || options.type) return
   let legendData = [], seriesOpt = [], arrLength = options.series.length > 15 ? 15 : options.series.length
   for (let i = 0; i < options.series.length; i++) {
     if (i <= arrLength) {

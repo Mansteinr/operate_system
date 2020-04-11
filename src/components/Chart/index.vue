@@ -23,9 +23,9 @@
         if(this.options.type === 'column') {
           tempChart = renderChart(this.$refs.charts, setColumnData(this.options))
         } else if(this.options.type === 'pie') {
-            tempChart = renderChart(this.$refs.charts, setPieData(this.options))
+          tempChart = renderChart(this.$refs.charts, setPieData(this.options))
         } else if(this.options.type === 'HollowCircle') {
-            tempChart = renderChart(this.$refs.charts, setRadiiData(this.options))
+          tempChart = renderChart(this.$refs.charts, setRadiiData(this.options))
         } else {
           tempChart = renderChart(this.$refs.charts, setLineData(this.options))
         }
@@ -44,6 +44,8 @@
             tempChart = renderChart(this.$refs.charts, setColumnData(this.options))
           } else if(this.options.type === 'pie') {
             tempChart = renderChart(this.$refs.charts, setPieData(this.options))
+          } else if(this.options.type === 'HollowCircle') {
+          tempChart = renderChart(this.$refs.charts, setRadiiData(this.options))
           } else {
             tempChart = renderChart(this.$refs.charts, setLineData(this.options))
           }

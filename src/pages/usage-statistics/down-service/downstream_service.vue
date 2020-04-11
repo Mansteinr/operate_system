@@ -1,85 +1,70 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper">
-      <div class="card-title">
-        查询条件
+        <!-- 查询模块 -->
+    <Inquiry :queryParams="queryParams" @initFun="initFun">
+    <el-form-item :label="$t('m.basics.datePickerLabel')" prop="time">
+      <div class="block">
+        <el-date-picker
+          v-model="queryParams.time"
+          type="daterange"
+          align="right"
+          unlink-panels
+          :clearable="false"
+          :range-separator="$t('m.basics.datePickerRangeSeparator')"
+          :name="['start', 'end']"
+          :start-placeholder="$t('m.basics.datePickerStartPlaceholder')"
+          :end-placeholder="$t('m.basics.datePickerEndPlaceholder')"
+          :picker-options="pickerOptions2"
+        ></el-date-picker>
       </div>
-      <div class="card-container clearfix">
-        <el-form :inline="true"  ref="querForm" :rules="rules" :model="queryParams" class="query-form">
-          <el-form-item label="选择时间：" prop="time">
-            <div class="block">
-              <el-date-picker
-                type="daterange" 
-                unlink-panels
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :name="['start', 'end']"
-                :clearable="false"
-                v-model="queryParams.time"
-                range-separator="至"
-                :picker-options="pickerOptions2">
-              </el-date-picker>
-            </div>
-          </el-form-item>
-          <serviceSelect 
-            :labelTitle="'接口类型'" 
-            :originArr="services" 
-            :defaultValue="'serviceName'" 
-            :searchInput="true"
-            :defaultLable="'serviceNameZh'">
-          </serviceSelect>
-          <el-form-item label="统计维度：" prop="timesAndMoneyUsed">
-            <el-radio v-model="queryParams.timesAndMoneyUsed" label="customer">按客户</el-radio>
-            <el-radio v-model="queryParams.timesAndMoneyUsed" label="business">按行业</el-radio>
-          </el-form-item>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-        <el-button-group>
-          <el-button :type="tabFlag?'':'primary'" :class="tabFlag?'':'active'" @click="switchTab(false)">图表</el-button>
-          <el-button :type="tabFlag?'primary':''" :class="tabFlag?'active':''"  @click="switchTab(true)">数据</el-button>
-        </el-button-group>
-      </div>
-      <div class="card-container">
-        <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
-        </Table>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-        <el-button-group>
-          <el-button :type="tabFlag2?'':'primary'" :class="tabFlag2?'':'active'" @click="switchTab2(false)">图表</el-button>
-          <el-button :type="tabFlag2?'primary':''" :class="tabFlag2?'active':''"  @click="switchTab2(true)">数据</el-button>
-        </el-button-group>
-      </div>
-      <div class="card-container">
-        <div v-show="!tabFlag2 && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2" :columns="columns1">
-        </Table>
-      </div>
-    </div>
+    </el-form-item>
+    <Select
+      :labelTitle="$t('m.basics.serviceName')"
+      :originArr="basicsServiceList"
+      :defaultValue="'serviceName'"
+      :searchInput="true"
+      :defaultLable="'serviceNameZh'"/>
+      <el-form-item label="统计维度" prop="timesAndMoneyUsed">
+        <el-radio-group v-model="queryParams.timesAndMoneyUsed">
+          <el-radio label="customer">按客户</el-radio>
+          <el-radio label="business">按行业</el-radio>
+        </el-radio-group>
+      </el-form-item>
+    </Inquiry>
+        <!-- 各客户计费调用数量占比 -->
+    <Content :data="computedList">
+      <Chart slot="Chart" :options="downChargedCountChartOption" />
+      <Table
+        slot="Table"
+        :tableData="computedList"
+        :tatalPage="computedList.length"
+        :columns="columns"
+      />
+    </Content>
+    <!-- 各客户调用金额占比 -->
+    <Content :data="computedList">
+      <Chart slot="Chart" :options="downCostOption" />
+      <Table
+        slot="Table"
+        :tableData="computedList"
+        :tatalPage="computedList.length"
+        :columns="columns1"
+      />
+    </Content>
   </div>
 </template>
 
 <script>
-import { $http } from '../../../common/js/ajax'
-import { setRadiiData, renderChart } from '../../../common/js/myCharts'
-import { switchMixin, hotKeyTime, services } from '../../../common/js/mixin'
-import Table from '../../../base/Table'
-import QueryButton from '../../../base/QueryButton'
-import serviceSelect from '../../../base/Select'
+import Table from "@/components/Table"
+import Chart from "@/components/Chart"
+import Select from "@/components/Select"
+import Content from "@/components/Content"
+import Inquiry from "@/components/Inquiry"
+import { mapActions, mapGetters } from "vuex"
+import { hotKeyTime, services } from '@/common/js/mixin'
+
 export default {
-  mixins: [switchMixin, hotKeyTime, services],
+  mixins: [hotKeyTime, services],
   data () {
     return {
       columns: [{
@@ -110,112 +95,116 @@ export default {
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
         timesAndMoneyUsed: 'customer'
-      },
-      tableData: [],
-      tableData2: [],
+      }
     }
   },
   components: {
+    Inquiry,
+    Content,
+    Chart,
     Table,
-    QueryButton,
-    serviceSelect
+    Select
   },
   methods: {
-    reset () {
-      this.$refs.querForm.resetFields()
-    },
-    onSubmit () {
-      let options = {}
-      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
-        if (!v.name) return
-        options[v.name] = v.value
-      })
-      Object.assign(options, {
+    ...mapActions({
+      getAllBasicServiceAjax: "basics/getAllBasicServiceAjax",
+      getUsageByCustomerAjax: "queryIndex/getUsageByCustomerAjax",
+    }),
+    initFun (options) {
+      this.getUsageByCustomerAjax(  Object.assign(options, {
         timesAndMoneyUsed: this.queryParams.timesAndMoneyUsed
-      })
-      this.UsageByCustomer(options)
-    },
-    UsageByCustomer (options) {
-      $http(this.API.downApi.UsageByCustomer, options).then((res) => {
-        if(this.queryParams.timesAndMoneyUsed === 'business') {
-          let objBusiness = {}, businessArray = []
-          res.resData.forEach(v => {
-            if (objBusiness.hasOwnProperty(v.customerTypeZh)) {
-              objBusiness[v.customerTypeZh].push(v)
-            } else {
-              objBusiness[v.customerTypeZh] = [v]
-            }
-          })
-          for (let k in objBusiness) {
-            let obj = {}, arr = objBusiness[k]
-            obj.Name = k
-            obj.downChargedCount = 0
-            obj.downCost = 0
-            obj.usedCount = 0
-            arr.forEach(v => {
-              obj.downChargedCount += v.downChargedCount
-              obj.downCost += v.downCost
-              obj.usedCount += v.usedCount
-            })
-            businessArray.push(obj)
+      }))
+    }
+  },
+  computed: {
+    ...mapGetters({
+      basicsServiceList: "basics/basicsServiceList",
+      UsageByCustomerList: "queryIndex/UsageByCustomerList",
+    }),
+    computedList() {
+      if(this.queryParams.timesAndMoneyUsed === 'business') {
+        let objBusiness = {}, businessArray = []
+        this.UsageByCustomerList.forEach(v => {
+          if (objBusiness.hasOwnProperty(v.customerTypeZh)) {
+            objBusiness[v.customerTypeZh].push(v)
+          } else {
+            objBusiness[v.customerTypeZh] = [v]
           }
-          this.tableData  = businessArray
-          this.tableData2  = businessArray
-        } else {
-          let customerObj = {}, customerArr = []
-          res.resData.forEach(v => {
-            let name = v.customerName || v.customerName
-            if (customerObj.hasOwnProperty(name)) {
-              customerObj[name].push(v)
-            } else {
-              customerObj[name] = [v]
-            }
+        })
+        for (let k in objBusiness) {
+          let obj = {}, arr = objBusiness[k]
+          obj.Name = k
+          obj.downChargedCount = 0
+          obj.downCost = 0
+          obj.usedCount = 0
+          arr.forEach(v => {
+            obj.downChargedCount += v.downChargedCount
+            obj.downCost += v.downCost
+            obj.usedCount += v.usedCount
           })
-          for (let k1 in customerObj) {
-            let obj = {}, arr = customerObj[k1]
-            obj.Name = k1
-            obj.downChargedCount = 0
-            obj.downCost = 0
-            obj.usedCount = 0
-            arr.forEach(v => {
-              obj.downChargedCount += v.downChargedCount
-              obj.downCost += v.downCost
-              obj.usedCount += v.usedCount
-            })
-            customerArr.push(obj)
-          }
-          this.tableData = customerArr
-          this.tableData2 = customerArr
+          businessArray.push(obj)
         }
-
-        let pieCount = {}, pieCharge = {}
-        this.tableData.sort((a, b) => { // 排序 取前十名
-          return -(a.downChargedCount - b.downChargedCount)
-        })
-
-        this.tableData.forEach((v, k) => {
-          if (k <= 10) {
-            pieCount[v.Name] = v.downChargedCount
+        return businessArray
+      } else {
+        let customerObj = {}, customerArr = []
+        this.UsageByCustomerList.forEach(v => {
+          let name = v.customerName || v.customerName
+          if (customerObj.hasOwnProperty(name)) {
+            customerObj[name].push(v)
+          } else {
+            customerObj[name] = [v]
           }
         })
-
-        this.tableData2.sort((a, b) => {// 排序 取前十名
+        for (let k1 in customerObj) {
+          let obj = {}, arr = customerObj[k1]
+          obj.Name = k1
+          obj.downChargedCount = 0
+          obj.downCost = 0
+          obj.usedCount = 0
+          arr.forEach(v => {
+            obj.downChargedCount += v.downChargedCount
+            obj.downCost += v.downCost
+            obj.usedCount += v.usedCount
+          })
+          customerArr.push(obj)
+        }
+        return customerArr
+      }
+    },
+    downCostOption() {
+      let pieCharge = {}, newList = JSON.parse(JSON.stringify(this.computedList))
+        newList.sort((a, b) => { // 排序 取前十名
           return -(a.downCost - b.downCost)
         })
-
-        this.tableData2.forEach((v, k) => {
+        newList.forEach((v, k) => {
           if (k <= 10) {
             pieCharge[v.Name] = v.downCost
           }
         })
-        renderChart(this.$refs.charts, setRadiiData( '各客户计费调用数量占比','计费调用数量', pieCount))
-        renderChart(this.$refs.charts2, setRadiiData( '各客户调用金额占比','调用金额', pieCharge))
-      })
-    }
+       return {
+        type: 'HollowCircle',
+        title: '各客户调用金额占比',
+        tipTitle: '调用金额',
+        obj: pieCharge
+      }
+    },
+    downChargedCountChartOption() {
+      let pieCharge = {}, newList = JSON.parse(JSON.stringify(this.computedList))
+        newList.sort((a, b) => { // 排序 取前十名
+          return -(a.downChargedCount - b.downChargedCount)
+        })
+        newList.forEach((v, k) => {
+          if (k <= 10) {
+            pieCharge[v.Name] = v.downChargedCount
+          }
+        })
+       return {
+        type: 'HollowCircle',
+        title: '各客户计费调用数量占比',
+        tipTitle: '计费调用数量',
+        obj: pieCharge
+      }
+    },
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="stylus" rel="stylesheet/stylus">
-</style>
