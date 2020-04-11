@@ -75,10 +75,7 @@ export default {
           }
         })
       }
-    },
-    // ...mapMutations({ // 修改mutation 拿到定义在mutations里面的修改函数
-    //   setMtk: 'SET_MTK'
-    // })
+    }
   }
 }
 </script>

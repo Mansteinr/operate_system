@@ -132,7 +132,7 @@ const router = new Router({
       name: 'views/statistics/query_upstream_serviceByData.html',
       component: upstreamServiceByData
     }, {
-      path: '/query_downstream_customer',
+      path: '/views/statistics/query_downstream_customer',
       name: 'views/statistics/query_downstream_customer.html',
       component: downstreamCustomer
     }, {

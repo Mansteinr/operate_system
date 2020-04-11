@@ -1,7 +1,7 @@
 
 import axios from 'axios'
 import { Loading } from 'element-ui'
-import { showModal } from '../../utils'
+import { showModal } from '@/utils'
 let loading
 export function $http (url, data, method = 'post', responseType = 'json') {
   showFullScreenLoading()

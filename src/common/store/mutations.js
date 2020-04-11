@@ -10,7 +10,6 @@ const mutations = {
     state.systemMenuList = Object.assign([], newList)
   },
   [types.SET_ACTIVE_MEUN] (state, menuActive) { //左侧标记菜单激活状态
-    console.log(menuActive,  'SET_ACTIVE_MEUN')
     state.menuActive = menuActive
   },
   [types.SET_HEADER_TABS] (state, list) { //顶部导航卡片
@@ -18,7 +17,6 @@ const mutations = {
     state.editableTabs = [...newList, ...list]
   },
   [types.SET_ACTIVE_HEADER_TAB] (state, currentHeader) { //顶部导航激活卡片
-    console.log(currentHeader,  'SET_ACTIVE_HEADER_TAB')
     state.editableTabsValue = currentHeader
   },
   [types.DELETE_HEADER_TAB] (state, list) { //删除导航

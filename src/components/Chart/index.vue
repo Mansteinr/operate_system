@@ -8,7 +8,7 @@
 </style>
 
 <script>
-  import { setLineData, setColumnData, setPieData, renderChart } from '@/common/js/myCharts'
+  import { setLineData, setColumnData, setPieData, renderChart, setRadiiData } from '@/common/js/myCharts'
   let tempChart = null
   export default {
     props: {
@@ -24,6 +24,8 @@
           tempChart = renderChart(this.$refs.charts, setColumnData(this.options))
         } else if(this.options.type === 'pie') {
             tempChart = renderChart(this.$refs.charts, setPieData(this.options))
+        } else if(this.options.type === 'HollowCircle') {
+            tempChart = renderChart(this.$refs.charts, setRadiiData(this.options))
         } else {
           tempChart = renderChart(this.$refs.charts, setLineData(this.options))
         }

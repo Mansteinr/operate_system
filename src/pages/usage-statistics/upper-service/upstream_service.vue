@@ -1,84 +1,66 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper">
-      <div class="card-title">
-        查询条件
-      </div>
-      <div class="card-container">
-        <el-form :inline="true"  ref="querForm" :rules="rules" :model="queryParams" class="query-form">
-          <el-form-item label="选择时间：" prop="time">
-            <div class="block">
-              <el-date-picker
-                type="daterange" 
-                unlink-panels
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :name="['start', 'end']"
-                v-model="queryParams.time"
-                :clearable="false"
-                range-separator="至"
-                :picker-options="pickerOptions2">
-              </el-date-picker>
-            </div>
-          </el-form-item>
-          <serviceSelect 
-            :labelTitle="'接口类型'" 
-            :originArr="services" 
-            :defaultValue="'serviceName'" 
-            :searchInput="true"
-            :isMultiple="true"
-            :isAll="true"
-            :defaultLable="'serviceNameZh'">
-          </serviceSelect>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-        <el-button-group>
-          <el-button :type="tabFlag?'':'primary'" :class="tabFlag?'':'active'" @click="switchTab(false)">图表</el-button>
-          <el-button :type="tabFlag?'primary':''" :class="tabFlag?'active':''"  @click="switchTab(true)">数据</el-button>
-        </el-button-group>
-      </div>
-      <div class="card-container">
-        <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
-        </Table>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-        <el-button-group>
-          <el-button :type="tabFlag2?'':'primary'" :class="tabFlag2?'':'active'" @click="switchTab2(false)">图表</el-button>
-          <el-button :type="tabFlag2?'primary':''" :class="tabFlag2?'active':''"  @click="switchTab2(true)">数据</el-button>
-        </el-button-group>
-      </div>
-      <div class="card-container">
-        <div v-show="!tabFlag2 && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2" :columns="columns1">
-        </Table>
-      </div>
-    </div>
+    <!-- 查询模块 -->
+    <Inquiry :queryParams="queryParams" @initFun="initFun">
+      <el-form-item :label="$t('m.basics.datePickerLabel')" prop="time">
+        <div class="block">
+          <el-date-picker
+            v-model="queryParams.time"
+            type="daterange"
+            align="right"
+            unlink-panels
+            :clearable="false"
+            :range-separator="$t('m.basics.datePickerRangeSeparator')"
+            :name="['start', 'end']"
+            :start-placeholder="$t('m.basics.datePickerStartPlaceholder')"
+            :end-placeholder="$t('m.basics.datePickerEndPlaceholder')"
+            :picker-options="pickerOptions2"
+          ></el-date-picker>
+        </div>
+      </el-form-item>
+      <Select
+        :labelTitle="$t('m.basics.serviceName')"
+        :originArr="basicsServiceList"
+        :defaultValue="'serviceName'"
+        :searchInput="true"
+        :isAll="true"
+        :isMultiple="true"
+        :defaultLable="'serviceNameZh'"/>
+    </Inquiry>
+    <!-- 上游服务占比 -->
+    <Content :data="companyList">
+      <Chart slot="Chart" :options="companyChartOption" />
+      <Table
+        slot="Table"
+        :tableData="companyList"
+        :tatalPage="companyList.length"
+        :columns="columns1"
+      />
+    </Content>
+    <!-- 下游客户占比 -->
+    <Content :data="customerList">
+      <Chart slot="Chart" :options="customerChartOption" />
+      <Table
+        slot="Table"
+        :tableData="customerList"
+        :tatalPage="customerList.length"
+        :columns="columns"
+      />
+    </Content>
   </div>
 </template>
 
 <script>
-import { $http } from '../../../common/js/ajax'
-import { setColumnData, renderChart } from '../../../common/js/myCharts'
-import { switchMixin, hotKeyTime, services } from '../../../common/js/mixin'
-import Table from '../../../base/Table'
-import serviceSelect from '../../../base/Select'
-import QueryButton from '../../../base/QueryButton'
-import { reset } from '../../../utils'
+import Table from "@/components/Table"
+import Chart from "@/components/Chart"
+import Select from "@/components/Select"
+import Content from "@/components/Content"
+import Inquiry from "@/components/Inquiry"
+import { mapActions, mapGetters } from "vuex"
+import { hotKeyTime, services } from '@/common/js/mixin'
+
 export default {
-  mixins: [switchMixin, hotKeyTime, services],
+  mixins: [hotKeyTime, services],
   data () {
     return {
       columns1: [{
@@ -125,83 +107,96 @@ export default {
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
       },
-      tableData: [],
-      tableData2: [],
       titleTips: ''
     }
   },
   components: {
+    Inquiry,
+    Content,
+    Chart,
     Table,
-    QueryButton,
-    serviceSelect
+    Select
+  },
+  computed: {
+    ...mapGetters({
+      companyList: "usageStatistics/companyList",
+      customerList: "usageStatistics/customerList",
+      basicsServiceList: "basics/basicsServiceList",
+    }),
+    companyChartOption () {
+      let xAxisData = [], series = [{
+          name: this.$t("m.usageStatistics.cost"),
+          type: 'bar',
+          data:[]
+        },{
+          name: this.$t("m.usageStatistics.usedCount"),
+          type: 'bar',
+          data:[]
+        },{
+          name: this.$t("m.usageStatistics.chargeUsedCount"),
+          type: 'bar',
+          data:[]
+        }]
+      if(!this.companyList.length) return
+      this.companyList.forEach(v => {
+        xAxisData.push(v.company)
+        series[0].data.push(v.cost)
+        series[1].data.push(v.usedCount)
+        series[2].data.push(v.chargeUsedCount)
+      })
+      return {
+        type: 'column',
+        xAxisData,
+        series,
+        title: this.$t("m.usageStatistics.upstreamServiceTitle")
+      }
+    },
+    customerChartOption() {
+      let xAxisData = [], series = [{
+          name: this.$t("m.usageStatistics.cost"),
+          type: 'bar',
+          data:[]
+        },{
+          name: this.$t("m.usageStatistics.table2UsedCount"),
+          type: 'bar',
+          data:[]
+        },{
+          name: this.$t("m.usageStatistics.table2ChargeUsedCount"),
+          type: 'bar',
+          data:[]
+        }]
+
+        if(!this.customerList.length) return
+
+        this.customerList.forEach(v => {
+          xAxisData.push(v.loginName)
+          series[0].data.push(v.cost)
+          series[1].data.push(v.usedCount)
+          series[2].data.push(v.chargeUsedCount)
+        })
+      return {
+        type: 'column',
+        xAxisData,
+        series,
+        title: this.$t("m.usageStatistics.upstreamCustomerTitle")
+      }
+    }
   },
   methods: {
-    reset () {
-      this.$refs.querForm.resetFields()
-      reset()
-    },
-    onSubmit () {
-      let options = {}
-      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
-        if (v.name) {
-          options[v.name] = v.value
+    initFun (options) {
+      if(options.serviceName) {
+        options.serviceNames = options.serviceName.split(',')
+        if(options.serviceNames[0] === '') {
+          options.serviceNames = []
         }
-      })
-      options.serviceNames = options.serviceName.split(',')
-      if (options.serviceNames[0] === '') {
-        options.serviceNames = []
-      } 
+      }
       delete options.serviceName
-      console.log(options)
-      this.getOutServiceChargeInfo(options)
+      this.getOutServiceChargeInfoAjax(options)
     },
-    getOutServiceChargeInfo (options) {
-      $http(this.API.upApi.getOutServiceChargeInfo, options).then((res) => {
-        // table?
-        this.tableData = res.resData.companyList
-        this.tableData2 = res.resData.customerList
-        // 图标
-        let xAxisData = [], series1= [{
-            name: '金额',
-            type: 'bar',
-            data:[]
-          },{
-            name: '上游调用条数',
-            type: 'bar',
-            data:[]
-          },{
-            name: '上游计费条数',
-            type: 'bar',
-            data:[]
-          }], series2= [{
-            name: '金额',
-            type: 'bar',
-            data:[]
-          },{
-            name: '下游调用条数',
-            type: 'bar',
-            data:[]
-          },{
-            name: '下游计费条数',
-            type: 'bar',
-            data:[]
-          }], xFild = []
-        this.tableData.forEach(v => {
-          xAxisData.push(v.company)
-          series1[0].data.push(v.cost)
-          series1[1].data.push(v.usedCount)
-          series1[2].data.push(v.chargeUsedCount)
-        })
-        this.tableData2.forEach(v => {
-          xFild.push(v.loginName)
-          series2[0].data.push(v.cost)
-          series2[1].data.push(v.usedCount)
-          series2[2].data.push(v.chargeUsedCount)
-        })
-        renderChart(this.$refs.charts, setColumnData( '下游客户调用',xAxisData, series1))
-        renderChart(this.$refs.charts2, setColumnData( '下游客户调用',xFild, series2))
-      })
-    }
+    ...mapActions({
+      getAllBasicServiceAjax: "basics/getAllBasicServiceAjax",
+      getOutServiceChargeInfoAjax: "usageStatistics/getOutServiceChargeInfoAjax",
+    })
   }
 }
 </script>

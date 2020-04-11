@@ -401,19 +401,18 @@ export function setPieData (options) {
   return option
 }
 
-export function setRadiiData (title, tipTitle, obj) {
-  var legendData = [];
-  var seriesData = [];
-  for (var key in obj) {
-    legendData.push(key);
-    var _obj = {};
-    _obj.value = obj[key];
-    _obj.name = key;
-    seriesData.push(_obj);
+export function setRadiiData (options) {
+  let legendData = [], seriesData = []
+  for (let key in options.obj) {
+    legendData.push(key)
+    let _obj = {}
+    _obj.value = options.obj[key]
+    _obj.name = key
+    seriesData.push(_obj)
   }
-  var option = {
+  let option = {
     title: {
-      text: title,
+      text: options.title,
       x: 'center'
     },
     tooltip: {
@@ -454,7 +453,7 @@ export function setRadiiData (title, tipTitle, obj) {
     },
     toolbox: toolbox,
     series: [{
-      name: tipTitle,
+      name: options.tipTitle,
       type: 'pie',
       radius: ['40%', '70%'],
       center: ['50%', '60%'],
@@ -471,10 +470,10 @@ export function setRadiiData (title, tipTitle, obj) {
   };
 
   if (window.innerWidth < 480) {
-    delete option.legend;
-    delete option.toolbox;
+    delete option.legend
+    delete option.toolbox
   }
-  return option;
+  return option
 }
 export function renderChart (container, option) {
   var myChart = echarts.init(container),

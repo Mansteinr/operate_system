@@ -50,16 +50,19 @@ export default {
       overflow-y scroll
       padding 0px 10px 20px 10px !important
       .template-wrapper
-        margin-top 20px
+        margin-top 55px
+        margin-bottom 55px
       .tab-wrapper
-        position relative
+        position fixed
         height 40px
+        width 100%
         overflow hidden
-        background #fff
         padding 0 10px
-        box-shadow 0 5px 10px #ddd
         margin-left -10px
         margin-right -10px
+        z-index 100
+        background #fff
+        box-shadow 0 5px 10px #ddd
         .el-tabs
           height 50px !important
           margin-left -10px

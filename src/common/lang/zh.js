@@ -57,5 +57,12 @@ export const m = {
     balanceSnapshotTitle: '余额快照',
     chargeLogTitle: '充值记录',
     upstreamCustomerTitle: '下游客户调用次数和费用',
+    upstreamServiceTitle: '上游服务调用占比',
+    upstreamCustomerTitle: '下游客户调用占比',
+    cost: '金额',
+    usedCount: '上游调用条数',
+    chargeUsedCount: '上游计费条数',
+    table2UsedCount: '下游调用条数',
+    table2ChargeUsedCount: '下游计费条数',
   }
 }

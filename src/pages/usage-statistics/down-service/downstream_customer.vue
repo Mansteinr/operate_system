@@ -1,92 +1,75 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper">
-      <div class="card-title">
-        查询条件
-      </div>
-      <div class="card-container clearfix">
-        <el-form :inline="true"  ref="querForm" :rules="rules" :model="queryParams" class="query-form">
-          <el-form-item label="选择时间：" prop="time">
-            <div class="block">
-              <el-date-picker
-                type="daterange" 
-                unlink-panels
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :name="['start', 'end']"
-                v-model="queryParams.time"
-                :clearable="false"
-                range-separator="至"
-                :picker-options="pickerOptions2">
-              </el-date-picker>
-            </div>
-          </el-form-item>
-          <Select 
-            :labelTitle="'行业类型'" 
-            :originArr="businessType" 
-            :defaultValue="'typeId'" 
-            :defaultLable="'typeName'"
-            :isAll = true
-            @changeInputValue="changeType"> 
-          </Select>
-          <loginNameSelect 
-            :originArr="loginName" 
-            :defaultValue="'loginName'" 
-            :defaultLable="'customerName'"
-            :searchInput=true
-            :isAll=true
-            :labelTitle="'客户名称'">
-          </loginNameSelect>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-        <el-button-group>
-          <el-button :type="tabFlag?'':'primary'" :class="tabFlag?'':'active'" @click="switchTab(false)">图表</el-button>
-          <el-button :type="tabFlag?'primary':''" :class="tabFlag?'active':''"  @click="switchTab(true)">数据</el-button>
-        </el-button-group>
-      </div>
-      <div class="card-container">
-        <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
-        </Table>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-        <el-button-group>
-          <el-button :type="tabFlag2?'':'primary'" :class="tabFlag2?'':'active'" @click="switchTab2(false)">图表</el-button>
-          <el-button :type="tabFlag2?'primary':''" :class="tabFlag2?'active':''"  @click="switchTab2(true)">数据</el-button>
-        </el-button-group>
-      </div>
-      <div class="card-container">
-        <div v-show="!tabFlag2 && !tableData2.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag2 && tableData2.length" class="charts" ref="charts2" style="height:400px;width:100%;"></div>
-        <Table ref="table" class="table" :tableData="tableData2" :tatalPage="tableData2.length" v-show="tabFlag2" :columns="columns1">
-        </Table>
-      </div>
-    </div>
+    <!-- 查询模块 -->
+    <Inquiry :queryParams="queryParams" @initFun="initFun">
+      <el-form-item :label="$t('m.basics.datePickerLabel')" prop="time">
+        <div class="block">
+          <el-date-picker
+            v-model="queryParams.time"
+            type="daterange"
+            align="right"
+            unlink-panels
+            :clearable="false"
+            :range-separator="$t('m.basics.datePickerRangeSeparator')"
+            :name="['start', 'end']"
+            :start-placeholder="$t('m.basics.datePickerStartPlaceholder')"
+            :end-placeholder="$t('m.basics.datePickerEndPlaceholder')"
+            :picker-options="pickerOptions2"
+          ></el-date-picker>
+        </div>
+      </el-form-item>
+      <Select
+        :labelTitle="$t('m.basics.businessType')"
+        :originArr="businessTypesList"
+        :defaultValue="'typeId'"
+        :defaultLable="'typeName'"
+        :isAll="true"
+        @changeType="changeType"
+      />
+      <Select
+        :labelTitle="$t('m.basics.loginName')"
+        :originArr="basicsCustomerList"
+        :defaultValue="'loginName'"
+        :defaultLable="'customerName'"
+        :needValue="'customerId'"
+        :searchInput="true"
+        :isAll="true"
+        @changeInputValue="changeCustomer"/>
+    </Inquiry>
+    <!-- Top10各服务计费调用 -->
+    <Content :data="allUsageNameSortBydownChargedCountList">
+      <Chart slot="Chart" :options="allUsageNameSortBydownChargedCountChartOption" />
+      <Table
+        slot="Table"
+        :tableData="allUsageNameSortBydownChargedCountList"
+        :tatalPage="allUsageNameSortBydownChargedCountList.length"
+        :columns="columns"
+      />
+    </Content>
+    <!-- Top10各服务调用金额占比 -->
+    <Content :data="allUsageNameSortBydownCostList">
+      <Chart slot="Chart" :options="allUsageNameSortBydownCostChartOption" />
+      <Table
+        slot="Table"
+        :tableData="allUsageNameSortBydownCostList"
+        :tatalPage="allUsageNameSortBydownCostList.length"
+        :columns="columns"
+      />
+    </Content>
   </div>
 </template>
 
 <script>
-import { $http } from '../../../common/js/ajax'
-import { setRadiiData, renderChart } from '../../../common/js/myCharts'
-import { switchMixin, hotKeyTime, loginName,businessType } from '../../../common/js/mixin'
-import Table from '../../../base/Table'
-import Select from '../../../base/Select'
-import loginNameSelect from '../../../base/Select'
-import QueryButton from '../../../base/QueryButton'
-import { reset } from '../../../utils'
+import Table from "@/components/Table"
+import Chart from "@/components/Chart"
+import Select from "@/components/Select"
+import Content from "@/components/Content"
+import Inquiry from "@/components/Inquiry"
+import { mapActions, mapGetters } from "vuex"
+import { hotKeyTime, loginName,businessType } from '@/common/js/mixin'
+
 export default {
-  mixins: [switchMixin, hotKeyTime, businessType, loginName],
+  mixins: [ hotKeyTime, businessType, loginName],
   data () {
     return {
       columns: [{
@@ -120,57 +103,51 @@ export default {
       }],
       queryParams: {
         time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()],/**默认时间最近七天 */
-      },
-      tableData: [],
-      tableData2: [],
+      }
     }
   },
   components: {
+    Inquiry,
+    Content,
+    Chart,
     Table,
-    Select,
-    QueryButton,
-    loginNameSelect
+    Select
   },
   methods: {
-    reset () {
-      this.$refs.querForm.resetFields()
-      reset()
+    initFun (options) {
+      this.getUsageByNameAjax(options)
     },
-    onSubmit () {
-      let options = {}
-      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
-        if (v.name) {
-          options[v.name] = v.value
-        }
-      })
-      options.businessType = options.typeId
-      delete options.typeId
-      this.UsageByName(options)
+    ...mapActions({
+      getBasicCustomerAjax: "basics/getBasicCustomerAjax",
+      getBasicBusinessTypesAjax: "basics/getBasicBusinessTypesAjax",
+      getCustomerChargeInfoAjax: "usageStatistics/getCustomerChargeInfoAjax",
+      getUsageByNameAjax: "usageStatistics/getUsageByNameAjax",
+    })
+  },
+  computed: {
+    ...mapGetters({
+      businessTypesList: "basics/businessTypesList",
+      basicsCustomerList: "basics/basicsCustomerList",
+      allUsageNameSortBydownChargedTop10: "usageStatistics/allUsageNameSortBydownChargedTop10",
+      allUsageNameSortBydownChargedCountList: "usageStatistics/allUsageNameSortBydownChargedCountList",
+      allUsageNameSortBydownCostTop10: "usageStatistics/allUsageNameSortBydownCostTop10",
+      allUsageNameSortBydownCostList: "usageStatistics/allUsageNameSortBydownCostList"
+    }),
+    allUsageNameSortBydownCostChartOption() {
+      return {
+        type: 'HollowCircle',
+        title: 'Top10各服务计费调用数量占比',
+        tipTitle: '计费调用数量',
+        obj: this.allUsageNameSortBydownCostTop10
+      }
     },
-    UsageByName (options) {
-      $http(this.API.downApi.UsageByName, options).then((res) => {
-        this.tableData = res.resData
-        this.tableData2 = res.resData
-        let pieCount = {}, pieCharge ={}
-        this.tableData.sort((a, b) => {
-          return -(a.downChargedCount - b.downChargedCount)
-        })
-        this.tableData.forEach((v, k) => { //取前10名
-          if (k <= 10) {
-            pieCount[v.serviceNameZh] = v.downChargedCount
-          }
-        })
-        this.tableData2.sort((a, b) => {
-          return -(a.downCost - b.downCost)
-        })
-        this.tableData2.forEach((v, k) => {
-          if (k <= 10 ){
-            pieCharge[v.serviceNameZh] = v.downCost
-          }
-        })
-        renderChart(this.$refs.charts, setRadiiData( 'Top10各服务计费调用数量占比','计费调用数量', pieCount))
-        renderChart(this.$refs.charts2, setRadiiData( 'Top10各服务调用金额占比','计费调用数量', pieCharge))
-      })
+    allUsageNameSortBydownChargedCountChartOption() {
+      return {
+        type: 'HollowCircle',
+        title: 'Top10各服务调用金额占比',
+        tipTitle: '计费调用数量',
+        obj: this.allUsageNameSortBydownChargedTop10
+      }
     }
   }
 }

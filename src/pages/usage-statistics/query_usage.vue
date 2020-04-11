@@ -79,7 +79,7 @@ export default {
         time: [
           new Date().getTime() - 3600 * 1000 * 24 * 7,
           new Date()
-        ] /**默认时间最近七天 */
+        ]/**默认时间最近七天 */
       },
       columns: [{
         prop: "dayTime",
@@ -136,7 +136,7 @@ export default {
           series[0].data.push(v.usedCount);
           series[1].data.push(v.downChargedCount);
           series[2].data.push(Math.floor(v.downCost * 100) / 100)
-        });
+        })
       }
       return {
         xAxisData,
