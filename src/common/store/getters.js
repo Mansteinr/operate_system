@@ -21,3 +21,4 @@ export const basicsServiceList = state => state.basicsServiceList
 // 获取客户
 export const basicsCustomerList = state => state.basicsCustomerList
 export const basicsAllCustomerList = state => state.basicsAllCustomerList
+export const queryParamsByServiceNameList = state => state.queryParamsByServiceNameList
