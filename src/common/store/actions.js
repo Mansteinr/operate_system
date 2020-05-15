@@ -41,12 +41,6 @@ export const getBasicCustomerAjax = ({ commit }, option = {}) => {
     commit(types.GET_BASICS_CUSTOMERS, res.resData)
   })
 }
-// 获取客户
-export const queryParamsByServiceNameAjax = ({ commit }, option = {}) => {
-  $http(API.paramsApi.queryParamsByServiceName, option).then((res) => {
-    commit(types.QUERY_PAEAMSBY_SERVICENAME, res.resData)
-  })
-}
 
 //递归遍历实现
 let serachTrueTitle = (list, truePathName) => function(){
