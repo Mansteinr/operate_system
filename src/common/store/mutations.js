@@ -40,6 +40,11 @@ const mutations = {
     newList = value ?  state.basicsAllCustomerList.filter(v => v.businessId === value) : state.basicsAllCustomerList
     
     state.basicsCustomerList = [...[], ...newList]
+  },
+  [types.QUERY_PAEAMS_BY_SERVICENAME] (state, list) { //根据服务名查询参数
+    console.log(list)
+    state.queryParamsByServiceNameList = [...[], ...list]
+    console.log(state.queryParamsByServiceNameList)
   }
 }
 export default mutations

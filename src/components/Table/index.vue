@@ -41,6 +41,24 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-else-if="v.template"
+            :key="k"
+            :label="v.label"
+            :fixed="v.fixed"
+            :class-name="v.className"
+            :width="v.width"
+            :align="v.align"
+            :min-width="v.minWidth"
+            :show-overflow-tooltip="v.showOverflow?v.showOverflow:true"
+            :formatter="v.formatter"
+            :sortable="v.sortable"
+            :type="v.type"
+            :prop='v.prop'>
+            <template slot-scope="scope">
+              <div v-html="v.template(scope)"></div>
+            </template>
+          </el-table-column>
+          <el-table-column
             v-else
             :key="k"
             :label="v.label"
@@ -202,8 +220,14 @@
         return moment(val).format('YYYY-MM-DD HH:mm:ss')
       },
       formatterParams (val) { // 参数展示
-        var html = '';
-        for (var key in val) {
+      //  let val = {}
+      //  for(let k in value) {
+      //    val[k] = value[k]
+      //  }
+      //  console.log(val)
+      //  return
+        let html = ''
+        for (let key in val) {
          if (key !== 'guid' && key !== 'image' && key !== 'shaIdCard' && key !== 'shaName' && key !== 'shaMobile') { // 不需要展示guid
             html += '<span class="param-item" title="' + key + ': ' + val[key] + '">' + key + ': ' + val[key] + '</span>'
           }

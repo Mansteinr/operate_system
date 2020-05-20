@@ -1,9 +1,6 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper">
-      <div class="card-title">
-        查询条件
-      </div>
+    <Inquiry class="card-wrapper" :queryParams="queryParams" @initFun="initFun">
       <div class="card-container clearfix">
         <el-form :inline="true"  ref="querForm" :rules="rules" :model="queryParams" class="query-form">
           <div class="show-query query-form">
@@ -35,63 +32,55 @@
                 </el-time-picker>
               </div>
             </el-form-item>
-            <Select 
-              :labelTitle="'行业类型'" 
-              :originArr="businessType" 
-              :defaultValue="'typeId'" 
+            <Select
+              :labelTitle="$t('m.basics.businessType')"
+              :originArr="businessTypesList"
+              :defaultValue="'typeId'"
               :defaultLable="'typeName'"
               :isAll="true"
-              @changeInputValue="changeType"> 
-            </Select>
-            <loginNameSelect 
-              :labelTitle="'客户名称'" 
-              :originArr="loginName" 
-              :defaultValue="'loginName'" 
-              :defaultLable="'customerName'"
-              :needValue="'customerId'"
+              @changeType="changeType"
+            />
+           <Select
+            :labelTitle="$t('m.basics.loginName')"
+            :originArr="basicsCustomerList"
+            :defaultValue="'loginName'"
+            :defaultLable="'customerName'"
+            :needValue="'customerId'"
+            :searchInput="true"
+            :isAll="true"
+            @changeInputValue="changeCustomer"/>
+            <Select
+              :labelTitle="$t('m.basics.serviceName')"
+              :originArr="basicsServiceList"
+              :defaultValue="'serviceName'"
               :searchInput="true"
-              :isAll="true"
-              @changeInputValue="changeCustomer">
-            </loginNameSelect>
-            <serviceSelect 
-              :labelTitle="'接口类型'" 
-              :originArr="services" 
-              :defaultValue="'serviceName'" 
-              :searchInput = "true"
-              :defaultLable="'serviceNameZh'">
-            </serviceSelect>
+              :defaultLable="'serviceNameZh'"/>
           </div>
           <div class="qurey-btn" style="margin: 10px 0 0 10px;">
             <el-button type="primary" plain size="small" @click="showHideToggle">{{showHideFlag?"显示":"隐藏"}}</el-button>
           </div>
           <div class="query-hide" ref="paramsBox">
-            <el-form-item v-for="(v, key) in paramsArr" :label="`${v.paramNameCh}：`" :key="key">
+            <el-form-item v-for="(v, key) in queryParamsByServiceNameList" :label="`${v.paramNameCh}：`" :key="key">
               <el-input
                 :placeholder="`请选${v.paramNameCh}`"
                 :name="v.paramName">
               </el-input>
             </el-form-item>
           </div>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
         </el-form>
       </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-      </div>
-      <div class="card-container">
-        <Table 
-          :columns="columns" 
-          ref="table" 
-          :tableData="tableData" 
-          :showSummary="false" 
-          :tatalPage="tableData.length">
-        </Table>
-      </div>
-    </div>
+    </Inquiry>
+       <!-- 按日期分析 -->
+    <Content :isOnlyTable="true"  :data="allLogsList">
+      <Table
+        slot="onlyTable"
+        ref="table"
+        :showSummary="false"
+        :tableData="allLogsList"
+        :tatalPage="allLogsList.length"
+        :columns="columns"
+      />
+    </Content>
   </div>
 </template>
 
@@ -113,17 +102,15 @@
  *    }
  * 
  */
-import Table from '../../base/Table'
-import Select from '../../base/Select'
-import { $http } from '../../common/js/ajax'
-import serviceSelect from '../../base/Select'
-import { showModal, reset } from '../../utils'
-import loginNameSelect from '../../base/Select'
-import QueryButton from '../../base/QueryButton'
-import { switchMixin, businessType, loginName, services } from '../../common/js/mixin'
+import Table from "@/components/Table"
+import Select from "@/components/Select"
+import Content from "@/components/Content"
+import Inquiry from "@/components/Inquiry"
+import { mapActions, mapGetters } from "vuex"
+import {businessType, loginName, services } from '@/common/js/mixin'
 
 export default {
-  mixins: [switchMixin, businessType, loginName, services],
+  mixins: [businessType, loginName, services],
   data () {
     let timeRule = (rule, value, callback) => {
       if (!value) {
@@ -161,8 +148,8 @@ export default {
         prop: 'param',
         label: '参数',
         width: '200px',
-        formatter: row => {
-          return this.$refs.table.formatterParams(row.param)
+        template: scope => {
+          return this.$refs.table.formatterParams(scope.row.param)
         }
       }, { 
         prop: 'costTime_all',
@@ -172,6 +159,11 @@ export default {
       }, { 
         prop: 'rsp.RESULT',
         label: 'RESULT',
+        width: "80px",
+        sortble: true
+      }, { 
+        prop: 'rsp.flagCode',
+        label: 'flagCode',
         width: "80px",
         sortble: true
       }, { 
@@ -194,23 +186,35 @@ export default {
         }
       }],
       tableData: [],
-      paramsArr: [], // 渲染后台查询得到的参数
       showHideFlag: false // 控制显示隐藏参数
     }
   },
   components: {
+    Inquiry,
+    Content,
     Table,
-    Select,
-    QueryButton,
-    serviceSelect,
-    loginNameSelect
+    Select
+  },
+  computed: {
+    ...mapGetters({
+      allLogsList: "tools/allLogsList",
+      businessTypesList: "basics/businessTypesList",
+      basicsServiceList: "basics/basicsServiceList",
+      basicsCustomerList: "basics/basicsCustomerList",
+      allBusinessTypesList: "basics/allBusinessTypesList",
+      queryParamsByServiceNameList: "basics/queryParamsByServiceNameList"
+    })
   },
   methods: {
-    reset () {
-      this.$refs.querForm.resetFields()
-      reset()
-    },
-    onSubmit () {
+    ...mapActions({
+      getLogsListAjax: "tools/getLogsListAjax",
+      getBasicServiceAjax: "basics/getBasicServiceAjax",
+      getBasicCustomerAjax: "basics/getBasicCustomerAjax",
+      getAllBasicServiceAjax: "basics/getAllBasicServiceAjax",
+      getBasicBusinessTypesAjax: "basics/getBasicBusinessTypesAjax",
+      getParamsByServiceNameAjax: "basics/getParamsByServiceNameAjax"
+    }),
+    initFun () {
       // 组装参数
       let options = {}
       document.querySelector('.show-query').querySelectorAll('input').forEach(v => {
@@ -239,7 +243,7 @@ export default {
         showModal('输入时间有误', 'error')
         return 
       }
-      this.logs(options)
+      this.getLogsListAjax(options)
     },
     formatterSrc (val) { // 渠道展示
       if (val && val.length) {
@@ -255,9 +259,9 @@ export default {
     showHideToggle() {
       this.showHideFlag = !this.showHideFlag
       let op = {
-        serviceId: this.services[0].serviceId,
-        serviceName: this.services[0].serviceName,
-        serviceNameZh: this.services[0].serviceNameZh
+        serviceId: this.basicsServiceList[0].serviceId,
+        serviceName: this.basicsServiceList[0].serviceName,
+        serviceNameZh: this.basicsServiceList[0].serviceNameZh
       }
       if (this.showHideFlag) {
         this.selectService(op) 
@@ -274,24 +278,7 @@ export default {
     },
     selectService (v) {
       if (!this.showHideFlag) return
-      $http(this.API.paramsApi.queryParamsByServiceName, v).then((res) => {
-        res.resData.paramNameBeans.forEach(v => {
-          this.queryParams.params[v.paramName] = ''
-        })
-        this.paramsArr = [...res.resData.paramNameBeans, ...[{
-          paramName: 'lowerCostTime',
-          paramNameCh: '耗时大于'
-        },{
-          paramName: 'upperCostTime',
-          paramNameCh: '耗时小于'
-        }]]
-      })
-    },
-    logs (options) {
-      $http(this.API.upApi.logs, options).then((res) => {
-        this.tableData = []
-        this.tableData = res.resData
-      })
+      this.getParamsByServiceNameAjax(v)
     }
   }
 }
@@ -301,7 +288,6 @@ export default {
 .query-hide
   .el-form-item
     margin-top 10px
-
 </style>
 
 

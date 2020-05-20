@@ -9,6 +9,8 @@ import queryIndex from '@/pages/query-index/store'
 import lightSignIn from '@/pages/app/store'
 // 用量统计
 import usageStatistics from '@/pages/usage-statistics/store'
+// 运维工具
+import tools from '@/pages/operation-tools/store'
 
 import createLogger from 'vuex/dist/logger' // 通过mutations修改state的时候 在控制台打印相关的修改记录
 
@@ -19,6 +21,7 @@ const debug = process.env.NODE_ENV !== 'prod'
 
 export default new Vuex.Store({ // 导出Store的实例
   modules: {
+    tools,
     basics,
     queryIndex,
     lightSignIn,

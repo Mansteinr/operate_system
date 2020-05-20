@@ -41,6 +41,21 @@ export const getBasicCustomerAjax = ({ commit }, option = {}) => {
     commit(types.GET_BASICS_CUSTOMERS, res.resData)
   })
 }
+// 根据服务名查询参数
+export const getParamsByServiceNameAjax = ({ commit }, option = {}) => {
+  $http(API.paramsApi.queryParamsByServiceName, option).then(res=> {
+    // console.log(res)
+    let commitArr = res.resData.paramNameBeans ? res.resData.paramNameBeans : []
+    console.log(res.resData)
+    commit(types.QUERY_PAEAMS_BY_SERVICENAME, [...commitArr, ...[{
+      paramName: 'lowerCostTime',
+      paramNameCh: '耗时大于'
+    },{
+      paramName: 'upperCostTime',
+      paramNameCh: '耗时小于'
+    }]])
+  })
+}
 
 //递归遍历实现
 let serachTrueTitle = (list, truePathName) => function(){

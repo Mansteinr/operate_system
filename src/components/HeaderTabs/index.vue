@@ -57,17 +57,7 @@ export default {
    computed: {
      ...mapState({
        basics: state => state.basics
-     }),
-    // ...mapGetters([
-    //   'editableTabs',
-    //   'editableTabsValue'
-    // ])
-    // map `this.doneCount` to `this.$store.getters.doneTodosCount`
-    // ...mapGetters({
-    //   // map `this.doneCount` to `this.$store.getters.doneTodosCount`
-    //   editableTabs: 'basics/editableTabs',
-    //   editableTabsValue: 'basics/editableTabsValue',
-    // }),
+     })
   }
 }
 </script>
