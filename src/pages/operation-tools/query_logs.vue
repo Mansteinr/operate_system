@@ -59,10 +59,11 @@
           <div class="qurey-btn" style="margin: 10px 0 0 10px;">
             <el-button type="primary" plain size="small" @click="showHideToggle">{{showHideFlag?"显示":"隐藏"}}</el-button>
           </div>
-          <div class="query-hide" ref="paramsBox">
+          <div class="query-hide" :class="showHideFlag ? 'active' : '' " ref="paramsBox">
             <el-form-item v-for="(v, key) in queryParamsByServiceNameList" :label="`${v.paramNameCh}：`" :key="key">
               <el-input
-                :placeholder="`请选${v.paramNameCh}`"
+                :title="v.paramNameCh"
+                :placeholder="`请输入${v.paramNameCh}`"
                 :name="v.paramName">
               </el-input>
             </el-form-item>
@@ -185,7 +186,6 @@ export default {
          return this.$refs.table.formatterSrc(row.srcQueryReturnList)
         }
       }],
-      tableData: [],
       showHideFlag: false // 控制显示隐藏参数
     }
   },

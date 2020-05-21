@@ -45,6 +45,7 @@ const mutations = {
     console.log(list)
     state.queryParamsByServiceNameList = [...[], ...list]
     console.log(state.queryParamsByServiceNameList)
+    console.log('state.queryParamsByServiceNameList')
   }
 }
 export default mutations

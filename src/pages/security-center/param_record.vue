@@ -373,13 +373,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus" rel="stylesheet/stylus">
-.query-hide 
-  transition height .3s
-  height 0px
-  overflow hidden
-  &.active
-    height 150px
-  .search-item
-    margin-bottom 10px
+
 
 </style>

@@ -47,6 +47,8 @@ export const getParamsByServiceNameAjax = ({ commit }, option = {}) => {
     // console.log(res)
     let commitArr = res.resData.paramNameBeans ? res.resData.paramNameBeans : []
     console.log(res.resData)
+    console.log(commitArr)
+    console.log('commitArrcommitArrcommitArrcommitArr')
     commit(types.QUERY_PAEAMS_BY_SERVICENAME, [...commitArr, ...[{
       paramName: 'lowerCostTime',
       paramNameCh: '耗时大于'

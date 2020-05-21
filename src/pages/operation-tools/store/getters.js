@@ -4,4 +4,8 @@
 // 日志
 export const allLogsList = state => state.allLogsList
 
+// 利润分析
+export const queryByDateList = state => state.queryByDateList
+export const queryByDateCollectInfoList = state => state.queryByDateCollectInfoList
+
 

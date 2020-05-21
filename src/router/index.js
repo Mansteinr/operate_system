@@ -14,7 +14,6 @@ import QueryIndex from '../pages/query-index'
 // const downstreamCustomer = resolve => require(['../pages/usage-statistics/down-service/downstream_customer'], resolve)
 // const upstreamServiceByData = resolve => require(['../pages/usage-statistics/upper-service/upstream_serviceByData'], resolve)
 import QueryUsage from '../pages/usage-statistics/query_usage'
-import QueryProfit from '../pages/usage-statistics/query_profit' // 利润分析
 import QueryFinance from '../pages/usage-statistics/query_finance' // 余额快照
 import upstreamService from '../pages/usage-statistics/upper-service/upstream_service'
 import upstreamCustomer from '../pages/usage-statistics/upper-service/upstream_customer'
@@ -31,6 +30,7 @@ import upstreamServiceByData from '../pages/usage-statistics/upper-service/upstr
 // const queryNewQuality = resolve => require(['../pages/operation-tools/query_newquality'], resolve)
 import QueryLog from '../pages/operation-tools/query_logs'
 import queryGuid from '../pages/operation-tools/query_guid'
+import QueryProfit from '../pages/operation-tools/query_profit' // 利润分析
 import queryQuality from '../pages/operation-tools/query_quality'
 import queryMvTrackId from '../pages/operation-tools/query_mvTrackId'
 import queryNewQuality from '../pages/operation-tools/query_newquality'

@@ -220,12 +220,6 @@
         return moment(val).format('YYYY-MM-DD HH:mm:ss')
       },
       formatterParams (val) { // 参数展示
-      //  let val = {}
-      //  for(let k in value) {
-      //    val[k] = value[k]
-      //  }
-      //  console.log(val)
-      //  return
         let html = ''
         for (let key in val) {
          if (key !== 'guid' && key !== 'image' && key !== 'shaIdCard' && key !== 'shaName' && key !== 'shaMobile') { // 不需要展示guid
