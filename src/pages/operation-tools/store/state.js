@@ -2,6 +2,7 @@ const state = {
   allLogsList: [],
   queryByDateList: [],
   queryByDateCollectInfoList: [],
-  logDetail: {}
+  logDetail: {},
+  UsageByResultList: []
 }
 export default state

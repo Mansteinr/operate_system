@@ -10,3 +10,6 @@ export const queryByDateCollectInfoList = state => state.queryByDateCollectInfoL
 
 // 日志详情
 export const logDetail = state => state.logDetail
+
+// 质量分析
+export const UsageByResultList = state => state.UsageByResultList

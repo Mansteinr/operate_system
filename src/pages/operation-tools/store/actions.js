@@ -23,3 +23,10 @@ export const getLogDetailAjax = ({ commit }, options) => {
     commit(types.GET_LOGS_DETAIL, res.resData)
   })
 }
+
+// 质量分析
+export const getQueryQualityAjax = ({ commit }, options) => {
+  $http(API.downApi.UsageByResult, options).then((res) => {
+    commit(types.GET_QUERY_QUALITY, res.resData)
+  })
+}

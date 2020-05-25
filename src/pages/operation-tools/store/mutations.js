@@ -25,5 +25,8 @@ const mutations = {
   [types.GET_LOGS_DETAIL] (state, data) {
     state.logDetail = data || {}
   },
+  [types.GET_QUERY_QUALITY] (state, list) {
+    state.UsageByResultList = JSON.parse(JSON.stringify(list))
+  },
 }
 export default mutations

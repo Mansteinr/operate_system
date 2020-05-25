@@ -1,106 +1,73 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper">
-      <div class="card-title">
-        查询条件
-      </div>
-      <div class="card-container">
-        <el-form :inline="true" :rules="rules" ref="querForm" :model="queryParams" class="query-form">
-          <el-form-item label="选择时间：" prop="time">
-            <div class="block">
-              <el-date-picker
-                type="daterange" 
-                unlink-panels
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                v-model="queryParams.time"
-                :name='["start", "end"]'
-                range-separator="至"
-                :picker-options="pickerOptions2">
-              </el-date-picker>
-            </div>
-          </el-form-item>
-          <Select 
-            :labelTitle="'行业类型'" 
-            :originArr="businessType" 
-            :defaultValue="'typeId'" 
-            :defaultLable="'typeName'"
-            :isAll = true
-            @changeInputValue="changeType"> 
-          </Select>
-          <loginNameSelect 
-            :labelTitle="'客户名称'" 
-            :originArr="loginName" 
-            :defaultValue="'loginName'" 
+    <Inquiry
+      :queryParams="queryParams"
+      ref="querForm"
+      @initFun="initFun"
+      >
+    <el-form-item label="选择时间：" prop="time">
+      <div class="block">
+        <el-date-picker
+          type="daterange" 
+          unlink-panels
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          v-model="queryParams.time"
+          :name='["start", "end"]'
+          range-separator="至"
+          :picker-options="pickerOptions2">
+        </el-date-picker>
+        </div>
+      </el-form-item>
+        <Select 
+          :labelTitle="'行业类型'" 
+          :originArr="businessTypesList" 
+          :defaultValue="'typeId'" 
+          :defaultLable="'typeName'"
+          :isAll="true"
+          @changeType="changeType"> 
+        </Select>
+          <Select
+            :labelTitle="$t('m.basics.loginName')"
+            :originArr="basicsCustomerList"
+            :defaultValue="'loginName'"
             :defaultLable="'customerName'"
             :needValue="'customerId'"
-            :searchInput=true
-            :isAll=true
-            @changeInputValue="changeCustomer">
-          </loginNameSelect>
-          <serviceSelect 
-            :labelTitle="'接口类型'" 
-            :originArr="services" 
-            :defaultValue="'serviceName'" 
-            :searchInput = true
-            :defaultLable="'serviceNameZh'">
-          </serviceSelect>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-        <el-button-group>
-          <el-button :type="tabFlag?'':'primary'" :class="tabFlag?'':'active'" @click="switchTab(false)">图表</el-button>
-          <el-button :type="tabFlag?'primary':''" :class="tabFlag?'active':''"  @click="switchTab(true)">数据</el-button>
-        </el-button-group>
-      </div>
-      <div class="card-container">
-        <div v-show="!tabFlag && !tableData.length" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <div v-show="!tabFlag && tableData.length" class="charts" ref="charts" style="height:400px;width:100%;"></div>
-        <Table class="table" :tableData="tableData" :tatalPage="tableData.length" v-show="tabFlag" :columns="columns">
-          <!-- <el-table-column
-            label="使用日期"
-            sortable
-            prop="dayTime">
-          </el-table-column>
-          <el-table-column
-            label="共计使用量"
-            sortable
-            prop="usedCount">
-          </el-table-column>
-          <el-table-column
-            label="计费使用量"
-            sortable
-            prop="downChargedCount">
-          </el-table-column>
-          <el-table-column
-            label="消费金额"
-            sortable
-            prop="downCost">
-          </el-table-column> -->
-        </Table>
-      </div>
-    </div>
+            :searchInput="true"
+            :isAll="true"
+            @changeInputValue="changeCustomer"/>
+        <Select
+          :labelTitle="$t('m.basics.serviceName')"
+          :originArr="basicsServiceList"
+          :defaultValue="'serviceName'"
+          :searchInput="true"
+          :defaultLable="'serviceNameZh'"/>
+        </serviceSelect>
+      </Inquiry>
+
+    <Content :data="UsageByResultList">
+      <Chart slot="Chart" :options="UsageByResultChartOption" />
+      <Table
+        slot="Table"
+        ref="table"
+        :tableData="UsageByResultList"
+        :tatalPage="UsageByResultList.length"
+        :columns="columns"
+      />
+    </Content>
   </div>
 </template>
 
 <script>
-import { reset } from '../../utils'
-import Table from '../../base/Table'
-import Select from '../../base/Select'
-import { $http } from '../../common/js/ajax'
-import serviceSelect from '../../base/Select'
-import loginNameSelect from '../../base/Select'
-import QueryButton from '../../base/QueryButton'
-import { setLineData, renderChart } from '../../common/js/myCharts'
-import { switchMixin, hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
+import Table from '@/components/Table'
+import Chart from '@/components/Chart'
+import Select from "@/components/Select"
+import Content from '@/components/Content'
+import Inquiry from '@/components/Inquiry'
+import { mapActions, mapGetters } from 'vuex'
+import { hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
 export default {
-  mixins: [switchMixin, hotKeyTime, businessType, loginName, services],
+  mixins: [ hotKeyTime, businessType, loginName, services],
   data () {
     return {
       queryParams: {
@@ -137,20 +104,52 @@ export default {
     }
   },
   components: {
+    Chart,
     Table,
-    Select,
-    QueryButton,
-    serviceSelect,
-    loginNameSelect
+    Inquiry,
+    Content,
+    Select
+  },
+  computed: {
+    ...mapGetters({
+      UsageByResultList: 'tools/UsageByResultList',
+      businessTypesList: "basics/businessTypesList",
+      basicsServiceList: "basics/basicsServiceList",
+      basicsCustomerList: "basics/basicsCustomerList"
+    }),
+    UsageByResultChartOption() {
+      let xAxisData = [], 
+        series= [{
+          name: '共计使用量',
+          data:[]
+        },{
+          name: '计费使用量',
+          data:[]
+        },{
+          name: '消费金额',
+          data:[]
+        }]
+
+        this.UsageByResultList.forEach(v => {
+          if (v.resultCode) {
+            xAxisData.push(v.result + ':' + v.resultCode)
+          } else {
+              xAxisData.push(v.result)
+          }
+          series[0].data.push(v.usedCount)
+          series[1].data.push(v.downChargedCount)
+          series[2].data.push(Math.floor(v.downCost * 100) / 100)
+        })
+        return {
+          xAxisData,
+          series
+        }
+    }
   },
   methods: {
-    reset () {
-      this.$refs.querForm.resetFields()
-      reset()
-    },
-    onSubmit () {
+    initFun () {
       let options = {}
-      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
+      this.$refs.querForm.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
         if (v.name) {
           if (v.name === 'typeId') {
             options.businessType = v.value
@@ -160,37 +159,15 @@ export default {
         }
       })
       delete options.typeId
-      this.UsageByResult(options)
+      this.getQueryQualityAjax(options)
     },
-    UsageByResult (options) {
-      $http(this.API.downApi.UsageByResult, options).then((res) => {
-        let xAxisData = [], 
-          series= [{
-            name: '共计使用量',
-            data:[]
-          },{
-            name: '计费使用量',
-            data:[]
-          },{
-            name: '消费金额',
-            data:[]
-          }]
-        this.tableData = res.resData
-        if (this.tableData.length) {
-          this.tableData.forEach(v => {
-            if (v.resultCode) {
-              xAxisData.push(v.result + ':' + v.resultCode)
-            } else {
-               xAxisData.push(v.result)
-            }
-            series[0].data.push(v.usedCount)
-            series[1].data.push(v.downChargedCount)
-            series[2].data.push(Math.floor(v.downCost * 100) / 100)
-          })
-          renderChart(this.$refs.charts, setLineData('按RESULT统计', xAxisData, series))
-        }
-      })
-    }
+    ...mapActions({
+      getQueryQualityAjax: "tools/getQueryQualityAjax",
+      getBasicServiceAjax: "basics/getBasicServiceAjax",
+      getBasicCustomerAjax: "basics/getBasicCustomerAjax",
+      getAllBasicServiceAjax: "basics/getAllBasicServiceAjax",
+      getBasicBusinessTypesAjax: "basics/getBasicBusinessTypesAjax"
+    })
   }
 }
 </script>

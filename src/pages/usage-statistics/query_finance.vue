@@ -160,7 +160,6 @@ export default {
   },
   methods: {
     changeTime () { // 监听时间变化
-      console.log('0909')
       if (+new Date(this.queryParams.time[0]) === +new Date(this.queryParams.time[1])) { // 同一天为 为多选
         this.multiple = true
         this.all = true

@@ -7,3 +7,6 @@ export const GET_QUERY_BY_COLLECTINFOS = 'GET_QUERY_BY_COLLECTINFOS'
 
 // 日志详情
 export const GET_LOGS_DETAIL = 'GET_LOGS_DETAIL'
+
+// 质量分析
+export const GET_QUERY_QUALITY = 'GET_QUERY_QUALITY'

@@ -27,13 +27,11 @@ import upstreamServiceByData from '../pages/usage-statistics/upper-service/upstr
 // const queryGuid = resolve => require(['../pages/operation-tools/query_guid'], resolve)
 // const queryQuality = resolve => require(['../pages/operation-tools/query_quality'], resolve)
 // const queryMvTrackId = resolve => require(['../pages/operation-tools/query_mvTrackId'], resolve)
-// const queryNewQuality = resolve => require(['../pages/operation-tools/query_newquality'], resolve)
 import QueryLog from '../pages/operation-tools/query_logs'
 import queryGuid from '../pages/operation-tools/query_guid'
 import QueryProfit from '../pages/operation-tools/query_profit' // 利润分析
 import queryQuality from '../pages/operation-tools/query_quality'
 import queryMvTrackId from '../pages/operation-tools/query_mvTrackId'
-import queryNewQuality from '../pages/operation-tools/query_newquality'
 
 
 // 数据导出
@@ -148,10 +146,6 @@ const router = new Router({
       name: 'views/devops/query_quality.html',
       component: queryQuality
     }, {
-      path: '/views/devops/query_newquality',
-      name: 'views/devops/query_newquality.html',
-      component: queryNewQuality
-    },  {
       path: '/views/devops/query_guid',
       name: 'views/devops/query_guid.html',
       component: queryGuid
