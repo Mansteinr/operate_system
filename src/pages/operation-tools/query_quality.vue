@@ -99,8 +99,7 @@ export default {
         formatter: row => {
           return row.downCost.toFixed(4)
         }
-      }],
-      tableData: []
+      }]
     }
   },
   components: {

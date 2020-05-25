@@ -1,145 +1,176 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper">
-      <div class="card-title">
-        查询条件
-      </div>
-      <div class="card-container clearfix">
-        <el-form :inline="true" :rules="rules" ref="querForm" :model="queryParams" class="query-form">
-          <el-form-item label="选择日期：" prop="date">
-            <div class="block">
-              <el-date-picker
-                v-model="queryParams.date"
-                type="date"
-                :name='"date"'
-                value-format="yyyy-MM-dd"
-                placeholder="选择日期">
-              </el-date-picker>
-            </div>
-          </el-form-item>
-          <el-form-item label="mvTrackId：" prop="mvTrackId" class="mvTrackId">
-            <el-input v-model="queryParams.mvTrackId" :name="'mvTrackId'" placeholder="请输入mvTrackId"></el-input>
-          </el-form-item>
-          <loginNameSelect 
-            :labelTitle="'客户名称'" 
-            :originArr="loginName" 
-            :defaultValue="'loginName'" 
+    <Inquiry
+      :queryParams="queryParams"
+      ref="querForm"
+      @initFun="initFun"
+      >
+    <el-form-item label="选择时间：" prop="time">
+      <div class="block">
+        <el-date-picker
+          type="daterange" 
+          unlink-panels
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          v-model="queryParams.time"
+          :name='["start", "end"]'
+          range-separator="至"
+          :picker-options="pickerOptions2">
+        </el-date-picker>
+        </div>
+      </el-form-item>
+        <Select 
+          :labelTitle="'行业类型'" 
+          :originArr="businessTypesList" 
+          :defaultValue="'typeId'" 
+          :defaultLable="'typeName'"
+          :isAll="true"
+          @changeType="changeType"> 
+        </Select>
+          <Select
+            :labelTitle="$t('m.basics.loginName')"
+            :originArr="basicsCustomerList"
+            :defaultValue="'loginName'"
             :defaultLable="'customerName'"
-            :searchInput="true">
-          </loginNameSelect>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-      </div>
-      <div class="card-container">
-        <Table 
-          :columns="columns" 
-          ref="table" 
-          :tableData="tableData" 
-          :showSummary="false" 
-          :tatalPage="tableData.length">
-        </Table>
-      </div>
-    </div>
+            :needValue="'customerId'"
+            :searchInput="true"
+            :isAll="true"
+            @changeInputValue="changeCustomer"/>
+        <Select
+          :labelTitle="$t('m.basics.serviceName')"
+          :originArr="basicsServiceList"
+          :defaultValue="'serviceName'"
+          :searchInput="true"
+          :defaultLable="'serviceNameZh'"/>
+        </serviceSelect>
+      </Inquiry>
+
+    <Content :data="UsageByResultList">
+      <Chart slot="Chart" :options="UsageByResultChartOption" />
+      <Table
+        slot="Table"
+        ref="table"
+        :tableData="UsageByResultList"
+        :tatalPage="UsageByResultList.length"
+        :columns="columns"
+      />
+    </Content>
   </div>
 </template>
 
 <script>
-import Table from '../../base/Table'
-import { $http } from '../../common/js/ajax'
-import loginNameSelect from '../../base/Select'
-import QueryButton from '../../base/QueryButton'
-import { loginName } from '../../common/js/mixin'
+import Table from '@/components/Table'
+import Chart from '@/components/Chart'
+import Select from "@/components/Select"
+import Content from '@/components/Content'
+import Inquiry from '@/components/Inquiry'
+import { mapActions, mapGetters } from 'vuex'
+import { hotKeyTime, businessType, loginName, services } from '../../common/js/mixin'
 export default {
-  mixins: [ loginName ],
+  mixins: [ hotKeyTime, businessType, loginName, services],
   data () {
-    let guidRule = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('mvTrackId不能为空'));
-      } else {
-        callback()
-      }
-    }
-    let dateRule = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('日期不能为空'));
-      } else {
-        callback()
-      }
-    }
     return {
-      rules: {
-        mvTrackId: [{ validator: guidRule, trigger: 'change' }],
-        date: [{ validator: dateRule, trigger: 'change' }]
-      },
       queryParams: {
-        mvTrackId: '',
-        date: new Date()
+        time: [new Date().getTime() - 3600 * 1000 * 24 * 7, new Date()]/**默认时间最近七天 */
       },
-      tableData: [],
       columns: [{ // 定义table
-        prop: 'guid',
-        width: "270px",
-        label: 'guid'
-      }, {
-        prop: 'status',
-        label: '状态'
-      }, {
+        prop: 'serviceName',
+        minWidth: "160px",
+        label: '服务名'
+      }, { 
+        prop: 'serviceNameZh',
+        minWidth: "160px",
+        label: '服务名(中文)'
+      }, { 
         prop: 'result',
-        label: 'result'
-      }, {
-        prop: 'message',
-        label: '信息'
-      }, {
+        label: 'RESULT'
+      }, { 
         prop: 'resultCode',
         label: 'resultCode'
-      }, {
-        prop: 'resultMsg',
-        label: '详细信息'
+      }, { 
+        prop: 'usedCount',
+        label: '共计使用量'
+      }, { 
+        prop: 'downChargedCount',
+        label: '计费使用量'
+      }, { 
+        prop: 'downCost',
+        label: '消费金额',
+        formatter: row => {
+          return row.downCost.toFixed(4)
+        }
       }]
     }
   },
   components: {
+    Chart,
     Table,
-    QueryButton,
-    loginNameSelect
+    Inquiry,
+    Content,
+    Select
+  },
+  computed: {
+    ...mapGetters({
+      UsageByResultList: 'tools/UsageByResultList',
+      businessTypesList: "basics/businessTypesList",
+      basicsServiceList: "basics/basicsServiceList",
+      basicsCustomerList: "basics/basicsCustomerList"
+    }),
+    UsageByResultChartOption() {
+      let xAxisData = [], 
+        series= [{
+          name: '共计使用量',
+          data:[]
+        },{
+          name: '计费使用量',
+          data:[]
+        },{
+          name: '消费金额',
+          data:[]
+        }]
+
+        this.UsageByResultList.forEach(v => {
+          if (v.resultCode) {
+            xAxisData.push(v.result + ':' + v.resultCode)
+          } else {
+              xAxisData.push(v.result)
+          }
+          series[0].data.push(v.usedCount)
+          series[1].data.push(v.downChargedCount)
+          series[2].data.push(Math.floor(v.downCost * 100) / 100)
+        })
+        return {
+          xAxisData,
+          series
+        }
+    }
   },
   methods: {
-    reset () {
-      // 重置
-      this.$refs.querForm.resetFields()
-    },
-    onSubmit () {
-      // 组装参数
+    initFun () {
       let options = {}
-      this.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
-        if (v.name === 'date') {
-          options[v.name] = v.value.replace(/-/g, "")
-        } else {
-          options[v.name] = v.value.replace(/(^\s*)|(\s*$)/g, "")
+      this.$refs.querForm.$refs.querForm.$el.querySelectorAll('input').forEach(v => {
+        if (v.name) {
+          if (v.name === 'typeId') {
+            options.businessType = v.value
+          } else {
+            options[v.name] = v.value
+          }
         }
       })
-      this.logByMvTrackId(options)
+      delete options.typeId
+      this.getQueryQualityAjax(options)
     },
-    logByMvTrackId (options) { // 发送请求
-      $http(this.API.upApi.logByMvTrackId, options).then((res) => {
-        this.tableData = [] // 清空数据
-        this.tableData.push(res.resData)
-        console.log(this.tableData)
-      })
-    }
+    ...mapActions({
+      getQueryQualityAjax: "tools/getQueryQualityAjax",
+      getBasicServiceAjax: "basics/getBasicServiceAjax",
+      getBasicCustomerAjax: "basics/getBasicCustomerAjax",
+      getAllBasicServiceAjax: "basics/getAllBasicServiceAjax",
+      getBasicBusinessTypesAjax: "basics/getBasicBusinessTypesAjax"
+    })
   }
 }
 </script>
+
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="stylus" rel="stylesheet/stylus">
-  .mvTrackId
-    label
-      padding-right 0 !important
+<style scoped lang="stylus" rel="stylesheet/stylus">
 </style>
