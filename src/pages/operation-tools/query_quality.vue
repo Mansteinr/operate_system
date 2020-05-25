@@ -160,10 +160,10 @@ export default {
         }
       })
       delete options.typeId
-      this.UsageByResultNew(options)
+      this.UsageByResult(options)
     },
-    UsageByResultNew (options) {
-      $http(this.API.downApi.UsageByResultNew, options).then((res) => {
+    UsageByResult (options) {
+      $http(this.API.downApi.UsageByResult, options).then((res) => {
         let xAxisData = [], 
           series= [{
             name: '共计使用量',

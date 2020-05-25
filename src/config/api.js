@@ -48,7 +48,7 @@ const api = {
     UsageByDate: apiFormat('operator/down/UsageByDate'), // 
     chargeLog: apiFormat('operator/accounting/chargeLog'), // 余额快照
     UsageByCustomer: apiFormat('operator/down/UsageByCustomer'),
-    UsageByResultNew: apiFormat('operator/down/UsageByResultNew'),
+    UsageByResult: apiFormat('operator/down/UsageByResult'),
     getBalanceSnapshot: apiFormat('operator/accounting/getBalanceSnapshot') // 余额快照
   },
   secureApi: { // 安全中心
