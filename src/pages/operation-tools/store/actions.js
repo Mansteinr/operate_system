@@ -16,3 +16,10 @@ export const getQueryByDateAjax = ({ commit }, options) => {
     commit(types.GET_QUERY_BY_COLLECTINFOS, res.resData.collectInfos)
   })
 }
+
+// 利润分析
+export const getLogDetailAjax = ({ commit }, options) => {
+  $http(API.upApi.logDetail, options).then((res) => {
+    commit(types.GET_LOGS_DETAIL, res.resData)
+  })
+}

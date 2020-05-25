@@ -5,7 +5,7 @@
       {{ title || $t('m.basics.queryCardTitle') }}
     </div>
     <div class="card-container">
-      <el-form :inline="true" :model="queryParams" ref="querForm" class="query-form">
+      <el-form :inline="true" :model="queryParams" ref="querForm" :rules="rules" class="query-form">
         <slot></slot>
         <el-form-item class="query-item">
           <query-button @reset="resetForm" @submit="onSubmit"></query-button>
@@ -25,9 +25,15 @@
   import QueryButton from '@/components/QueryButton'
   export default {
     data () {
-      return { }
+      return {
+        
+       }
     },
     props: {
+      rules: {
+        type: Object,
+        default: () => { }
+      },
       title: {
         type: String,
         default: ''

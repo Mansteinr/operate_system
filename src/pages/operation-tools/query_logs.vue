@@ -71,7 +71,7 @@
         </el-form>
       </div>
     </Inquiry>
-       <!-- 按日期分析 -->
+    
     <Content :isOnlyTable="true"  :data="allLogsList">
       <Table
         slot="onlyTable"

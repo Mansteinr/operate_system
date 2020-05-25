@@ -8,4 +8,5 @@ export const allLogsList = state => state.allLogsList
 export const queryByDateList = state => state.queryByDateList
 export const queryByDateCollectInfoList = state => state.queryByDateCollectInfoList
 
-
+// 日志详情
+export const logDetail = state => state.logDetail

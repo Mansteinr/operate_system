@@ -22,5 +22,8 @@ const mutations = {
     let newList = JSON.parse(JSON.stringify(list))
     state.queryByDateCollectInfoList = Object.assign([], newList)
   },
+  [types.GET_LOGS_DETAIL] (state, data) {
+    state.logDetail = data || {}
+  },
 }
 export default mutations

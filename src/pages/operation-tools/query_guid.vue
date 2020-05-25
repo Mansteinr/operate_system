@@ -1,36 +1,29 @@
 <template>
   <div class="template-wrapper">
-    <div class="card-wrapper">
-      <div class="card-title">
-        查询条件
-      </div>
-      <div class="card-container">
-        <el-form :inline="true" :rules="rules" ref="querForm" :model="queryParams" class="query-form">
-          <el-form-item label="guid：" prop="guid" style="width: 45%;">
-            <el-input v-model="queryParams.guid" placeholder="请输入guid"></el-input>
-          </el-form-item>
-          <el-form-item class="query-item">
-           <query-button @reset="reset" @submit="onSubmit"></query-button>
-          </el-form-item>
-        </el-form>
-      </div>
-    </div>
-    <div class="card-wrapper card-content">
-      <div class="card-title">
-        查询结果
-      </div>
-      <div class="card-container">
-        <div v-show="!showFlag" ref="nocharts" class="no-charts" style="height:400px;width:100%;"></div>
-        <JsonEditor v-show="showFlag" :data="json"></JsonEditor>
-      </div>
-    </div>
+    <Inquiry
+      :queryParams="queryParams"
+      @initFun="initFun"
+      :rules="rules"
+      ref="querForm"
+      >
+      <el-form-item label="guid：" prop="guid" style="width: 45%;">
+        <el-input v-model="queryParams.guid" placeholder="请输入guid"></el-input>
+      </el-form-item>
+    </Inquiry>
+
+    <Content :isOnlyTable="true" :data="[logDetail]">
+      <JsonEditor slot="onlyTable" :data="logDetail"></JsonEditor>
+    </Content>
+
   </div>
 </template>
 
 <script>
-import { $http } from '../../common/js/ajax'
-import JsonEditor from '../../base/JsonEditor'
-import QueryButton from '../../base/QueryButton'
+import Content from "@/components/Content"
+import Inquiry from "@/components/Inquiry"
+import JsonEditor from '@/components/JsonEditor'
+import { mapActions, mapGetters } from "vuex"
+
 export default {
   data () {
     let guidRule = (rule, value, callback) => {
@@ -44,32 +37,30 @@ export default {
       rules: {
         guid: [{ validator: guidRule, trigger: 'change' },]
       },
-      showFlag: false,
       queryParams: {
         guid: '20200525090019_C5furv27_2042224'
-      },
-      json: {}
+      }
     }
   },
   components: {
     JsonEditor,
-    QueryButton
+    Content,
+    Inquiry
+  },
+  computed: {
+     ...mapGetters({
+      logDetail: "tools/logDetail",
+    })
   },
   methods: {
-    reset () {
-      this.$refs.querForm.resetFields()
-    },
-    onSubmit () {
-      this.$refs.querForm.validate((valid) => {
+    ...mapActions({
+      getLogDetailAjax: "tools/getLogDetailAjax"
+    }),
+    initFun () {
+      this.$refs.querForm.$refs.querForm.validate((valid) => {
         if (valid) {
-         this.logDetail()
+         this.getLogDetailAjax(this.queryParams)
         }
-      })
-    },
-    logDetail () {
-      $http(this.API.upApi.logDetail, this.queryParams).then((res) => {
-        this.showFlag = true
-        this.json = res.resData || {}
       })
     }
   }
