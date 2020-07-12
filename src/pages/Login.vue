@@ -23,6 +23,8 @@
 import md5 from 'js-md5'
 import axios from 'axios'
 import { showModal } from '../utils'
+// eslint-disable-next-line no-unused-vars
+import interfaceApi from '@/config/interface.json'
 // import { mapMutations } from 'vuex' // 引入mapMutations函数
 import { $http } from '../common/js/ajax'
 export default {
@@ -61,18 +63,19 @@ export default {
           url: this.API.base.login,
           data: { pwd: md5(this.password), account: this.username, uuid: this.uuid,vcode: this.vcode },
           responseType: 'json'
-        }).then(res => {
-          if (!res.data.resCode) {
-            this.getVerifyCode()
-            this.vcode = ''
-            showModal(res.data.resMsg[0].msgText, 'error')
-          } else {
-            localStorage.setItem('mtk', res.data.resData.mtk)
-            localStorage.setItem('userId', res.data.resData.userId)
-            localStorage.setItem('accountName', res.data.resData.accountName)
+        }).then(() => {
+          let res = {"resCode":1,"resData":{"accountName":"machaozhong","mtk":"e5124e23-6223-4c6f-ae1a-8ddcf35d0371","pwdModify":false,"realName":"马超众","success":true,"userId":"6d8ba644-ae54-45e6-b5b5-5bdea76ac9c7"},"resMsg":[{"msgCode":"10001","msgText":"操作成功"}]}
+          // if (!res.data.resCode) {
+          //   this.getVerifyCode()
+          //   this.vcode = ''
+          //   showModal(res.data.resMsg[0].msgText, 'error')
+          // } else {
+            localStorage.setItem('mtk', res.resData.mtk)
+            localStorage.setItem('userId', res.resData.userId)
+            localStorage.setItem('accountName', res.resData.accountName)
             this.$router.push('/')
             showModal('登录成功')
-          }
+          // }
         })
       }
     }

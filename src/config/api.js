@@ -12,7 +12,8 @@ baseConfig = {
 
 /*设置api转换*/
 let apiFormat = (api = '', hostkey = 'upapi', pt = protocol) => {
-  return baseConfig.protocols[pt] + interfaceApi[mode][hostkey] + api
+  // return baseConfig.protocols[pt] + interfaceApi[mode][hostkey] + api
+  return api
 }
 
 const api = {

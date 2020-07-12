@@ -2,6 +2,7 @@
 import axios from 'axios'
 import { Loading } from 'element-ui'
 import { showModal } from '@/utils'
+import localData from '@/config/localData.json'
 let loading
 export function $http (url, data, method = 'post', responseType = 'json') {
   showFullScreenLoading()
@@ -20,26 +21,36 @@ export function $http (url, data, method = 'post', responseType = 'json') {
     options = Object.assign(options, {params: data})
   }
   return new Promise((resolve, reject) => {
+    
     axios(options).then(res => {
       // 成功
-      if (res.data.resCode) { // 成功并且返回码为1
-        resolve(res.data)
-      } else if (responseType === 'blob') {
-        resolve(res.data)
-      } else { // 返回吗 不为1
-        if (res.data.resMsg[0].msgCode === '10005') { // 若没有登录 则强制到登录页面
-          window.location.href = window.location.origin + '/Login' // 跳转页面
-        } else if (res.data.resMsg[0].msgCode === '40001005') {
-          showModal(res.data.resMsg[0].msgText, 'warning')
-        } else {
-          showModal(res.data.resMsg[0].msgText, 'warning')
-        }
-      }
+      // if (res.data.resCode) { // 成功并且返回码为1
+      //   resolve(res.data)
+      // } else if (responseType === 'blob') {
+      //   resolve(res.data)
+      // } else { // 返回吗 不为1
+        console.log(localData)
+        console.log(url)
+        console.log(localData[url])
+        resolve(localData[url])
+        // if (res.data.resMsg[0].msgCode === '10005') { // 若没有登录 则强制到登录页面
+        //   window.location.href = window.location.origin + '/Login' // 跳转页面
+        // } else if (res.data.resMsg[0].msgCode === '40001005') {
+        //   showModal(res.data.resMsg[0].msgText, 'warning')
+        // } else {
+        //   showModal(res.data.resMsg[0].msgText, 'warning')
+        // }
+      // }
       tryHideFullScreenLoading()
     }).catch(err => { // 错误
-      reject(err)
+      console.log(localData)
+      console.log(url)
+      console.log(localData[url])
+      resolve(localData[url])
+      
+      // reject(err)
       tryHideFullScreenLoading()
-      showModal('网络有问题', 'warning')
+      // showModal('网络有问题', 'warning')
     })
   })
 }

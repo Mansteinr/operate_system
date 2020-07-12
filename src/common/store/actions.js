@@ -5,6 +5,7 @@ import API from '@/config/api'
 // 获取菜单
 export const getSystemMenuAjax = ({ commit }) => {
   $http(API.base.querymenus, { 'systemName': '服务平台' }).then((res) => {
+    console.log(res)
     let truePathName = location.pathname ? location.pathname.substring(1).trim()+'.html' : res.resData[0].resourceUrl.trim(),
         trueTitle = serachTrueTitle(res.resData, truePathName)()
     commit(types.GET_SYSTEMMENU_AJAX_LIST, res.resData)
