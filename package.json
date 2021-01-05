@@ -10,7 +10,7 @@
     "test": "vue-cli-service build --mode test"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "echarts": "^4.2.0-rc.2",
     "element-ui": "^2.8.2",
     "file-saver": "^2.0.0",
